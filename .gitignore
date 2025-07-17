@@ -1,0 +1,14 @@
+# Archivos de sistema de macOS (ocultos)
+.DS_Store
+
+# Archivo de credenciales de Google (NUNCA subir)
+*.json
+
+# Carpeta de dependencias de Node (se instala automáticamente)
+node_modules
+
+# Carpeta de estado local de Netlify (no necesaria en el repo)
+.netlify
+
+# Archivos de log de errores de npm
+npm-debug.log*

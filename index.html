@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expediente Clínico - Sansce</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Montserrat -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Estilos personalizados -->
+    <style>
+        :root {
+            --color-title: #5ac4c6;
+            --color-subtitle: #b7e1cd;
+            --color-text: #000000;
+        }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f8fafc;
+            color: var(--color-text);
+        }
+        .hub-button {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 1.5rem; background-color: white; border: 1px solid #e5e7eb;
+            border-radius: 1rem; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            text-align: center; color: #374151; font-weight: 600; transition: all 0.3s ease-in-out;
+            cursor: pointer;
+        }
+        .hub-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            border-color: var(--color-title);
+        }
+        .hub-button img { width: 3.5rem; height: 3.5rem; margin-bottom: 1rem; object-fit: contain; }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            padding: 0.75rem;
+            background-color: #f3f4f6;
+            border-radius: 0.5rem;
+        }
+        .section-title {
+            color: var(--color-title);
+            font-weight: bold;
+            font-size: 1.25rem; /* 20px */
+        }
+        .section-content {
+            padding-top: 1.5rem;
+            display: block;
+        }
+        .section-content.hidden {
+            display: none;
+        }
+        .subsection-title {
+            color: #4a5568; /* Un color más oscuro para subtítulos */
+            font-weight: bold;
+            font-size: 1.125rem; /* 18px */
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 0.5rem;
+        }
+        .form-input, .form-select, .form-textarea {
+            @apply w-full p-2 border border-gray-300 rounded-md bg-white shadow-sm focus:ring-2 focus:ring-blue-400 focus:border-transparent transition;
+        }
+        .form-label { @apply font-semibold text-gray-700 text-sm mb-1 block; }
+        .form-data { @apply mt-1 block p-2 border border-transparent bg-gray-50 rounded-md; min-height: 2.5rem; }
+        .form-group { @apply mb-4; }
+
+        /* Notificación Toast */
+        #notification-toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
+            color: white;
+            font-weight: 600;
+            z-index: 1000;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        #notification-toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        #notification-toast.success { background-color: #28a745; }
+        #notification-toast.error { background-color: #dc3545; }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <!-- Encabezado Fijo -->
+    <header class="bg-white shadow-md sticky top-0 z-20">
+        <div class="container mx-auto px-4 py-2 flex justify-between items-center">
+            <img src="https://i.imgur.com/lOVHzNY.jpeg" alt="Logotipo de SANSCE" class="h-12">
+            <h1 class="hidden md:block text-xl font-bold text-gray-700">Expediente Clínico</h1>
+            <div class="text-sm text-right text-gray-600 font-semibold">
+                <p>CLI-FR-01</p>
+                <p>Ed. 0</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Contenedor Principal -->
+    <main class="flex-grow container mx-auto p-4">
+        
+        <!-- Vista de Áreas Clínicas -->
+        <div id="view-hub" class="flex flex-col flex-grow">
+             <div class="w-full max-w-4xl mx-auto p-4 sm:p-8 flex-grow flex flex-col justify-center">
+                <h2 class="text-2xl sm:text-3xl font-bold text-center mb-8 text-gray-800">Áreas Clínicas</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
+                    <div data-view="medicina" class="hub-button">
+                        <img src="https://i.imgur.com/89rRCYY.png" alt="Icono de estetoscopio">
+                        <span>Medicina</span>
+                    </div>
+                    <div class="hub-button opacity-50 cursor-not-allowed" title="Próximamente">
+                        <img src="https://i.imgur.com/PSVahTu.png" alt="Icono de la letra psi">
+                        <span>Psicología</span>
+                    </div>
+                    <div class="hub-button opacity-50 cursor-not-allowed" title="Próximamente">
+                        <img src="https://i.imgur.com/KSk7YEr.png" alt="Icono de figura humana">
+                        <span>Fisioterapia</span>
+                    </div>
+                    <div class="hub-button opacity-50 cursor-not-allowed" title="Próximamente">
+                        <img src="https://i.imgur.com/h6NrGSk.png" alt="Icono de manzana">
+                        <span>Nutrición</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vista de Historia Clínica (Contenedor) -->
+        <div id="view-clinical-record" class="hidden">
+            <!-- El contenido se generará dinámicamente aquí -->
+        </div>
+
+    </main>
+    
+    <!-- Pie de Página -->
+    <footer class="bg-white text-gray-700 text-sm p-4 text-center border-t">
+        <p>&copy; 2024 Sansce. Todos los derechos reservados.</p>
+        <div id="professional-footer" class="hidden mt-2">
+            <span id="prof-name"></span> | Cédula: <span id="prof-cedula"></span>
+        </div>
+    </footer>
+
+    <!-- Elemento para Notificaciones -->
+    <div id="notification-toast"></div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- DEFINICIÓN DE VISTAS Y ESTADO GLOBAL ---
+        const views = {
+            hub: document.getElementById('view-hub'),
+            clinicalRecord: document.getElementById('view-clinical-record')
+        };
+        const professionalFooter = document.getElementById('professional-footer');
+        const profNameEl = document.getElementById('prof-name');
+        const profCedulaEl = document.getElementById('prof-cedula');
+        
+        const professionalInfo = {
+            medicina: { nombre: 'Dra. Alejandra Méndez Pérez', cedula: '5052492' },
+        };
+
+        let currentPatientId = null; // Guardará el ID del paciente actual
+        let currentSpecialty = null; // Guardará la especialidad actual
+        
+        const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:8888' : '';
+
+        // --- NAVEGACIÓN ENTRE VISTAS ---
+        function showView(viewName) {
+            Object.values(views).forEach(view => view.classList.add('hidden'));
+            if (views[viewName]) {
+                views[viewName].classList.remove('hidden');
+            }
+            professionalFooter.classList.toggle('hidden', viewName === 'hub');
+        }
+
+        document.querySelectorAll('.hub-button[data-view]').forEach(button => {
+            button.addEventListener('click', (e) => {
+                const area = e.currentTarget.dataset.view;
+                currentSpecialty = area;
+                profNameEl.textContent = professionalInfo[area].nombre;
+                profCedulaEl.textContent = professionalInfo[area].cedula;
+                views.clinicalRecord.innerHTML = renderClinicalViewHTML(area);
+                attachEventListeners(area);
+                loadDropdowns();
+                showView('clinicalRecord');
+            });
+        });
+
+        // --- LÓGICA DE LA API (NETLIFY FUNCTIONS) ---
+        async function findPatient(patientId) {
+            const searchButton = document.getElementById('search-patient-btn');
+            const searchInput = document.getElementById('patient-search-input');
+            const originalButtonText = searchButton.innerHTML;
+            searchButton.innerHTML = '<span class="animate-spin h-5 w-5 border-b-2 border-white rounded-full inline-block"></span>';
+            searchButton.disabled = true;
+            searchInput.disabled = true;
+
+            try {
+                const response = await fetch(`${baseUrl}/.netlify/functions/get-patient-data?id=${patientId}`);
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || `Error ${response.status}`);
+                }
+                const patientData = await response.json();
+                populateForm(patientData);
+                currentPatientId = patientData.id;
+                showNotification('Paciente cargado exitosamente.', 'success');
+            } catch (error) {
+                console.error('Error al buscar paciente:', error);
+                showNotification(`Error: ${error.message}`, 'error');
+                clearForm();
+                currentPatientId = null;
+            } finally {
+                searchButton.innerHTML = "Buscar";
+                searchButton.disabled = false;
+                searchInput.disabled = false;
+            }
+        }
+
+        async function loadDropdowns() {
+            try {
+                const response = await fetch(`${baseUrl}/.netlify/functions/get-dropdown-lists`);
+                if (!response.ok) throw new Error('No se pudieron cargar las listas.');
+                
+                const lists = await response.json();
+                
+                for (const listName in lists) {
+                    const selectElements = document.querySelectorAll(`select[data-list="${listName}"]`);
+                    selectElements.forEach(select => {
+                        const options = lists[listName];
+                        select.innerHTML = '<option value="">Seleccione...</option>';
+                        options.forEach(option => {
+                            select.innerHTML += `<option value="${option}">${option}</option>`;
+                        });
+                    });
+                }
+            } catch (error) {
+                console.error('Error al cargar listas desplegables:', error);
+                showNotification(error.message, 'error');
+            }
+        }
+
+        async function saveConsultation() {
+            if (!currentPatientId) {
+                showNotification('Primero debe buscar y cargar un paciente.', 'error');
+                return;
+            }
+
+            const saveButton = document.getElementById('save-patient-btn');
+            const originalButtonText = saveButton.innerHTML;
+            saveButton.innerHTML = 'Guardando...';
+            saveButton.disabled = true;
+
+            try {
+                const form = document.getElementById('clinical-record-form');
+                const formData = new FormData(form);
+                const dataToSave = {};
+                for (let [key, value] of formData.entries()) {
+                    const element = document.getElementById(key);
+                    if (element && element.type === 'checkbox') {
+                         dataToSave[key] = element.checked ? 'Sí' : 'No';
+                    } else {
+                        dataToSave[key] = value;
+                    }
+                }
+                // FormData no captura checkboxes no marcados, así que los añadimos manualmente
+                form.querySelectorAll('input[type="checkbox"]:not(:checked)').forEach(cb => {
+                    dataToSave[cb.name] = 'No';
+                });
+
+
+                const payload = {
+                    patientId: currentPatientId,
+                    specialty: currentSpecialty,
+                    professionalId: professionalInfo[currentSpecialty].cedula,
+                    formData: dataToSave
+                };
+
+                const response = await fetch(`${baseUrl}/.netlify/functions/save-patient-data`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || `Error ${response.status}`);
+                }
+
+                const result = await response.json();
+                showNotification(result.message, 'success');
+                clearForm();
+
+            } catch (error) {
+                console.error('Error al guardar consulta:', error);
+                showNotification(`Error al guardar: ${error.message}`, 'error');
+            } finally {
+                saveButton.innerHTML = originalButtonText;
+                saveButton.disabled = false;
+            }
+        }
+        
+        // --- MANEJO DEL FORMULARIO ---
+        function populateForm(data) {
+            for (const key in data) {
+                const element = document.getElementById(key);
+                if (element) {
+                    if(element.type === 'checkbox') {
+                        element.checked = data[key] === 'Sí';
+                    } else if(element.tagName === 'INPUT' || element.tagName === 'TEXTAREA' || element.tagName === 'SELECT') {
+                        element.value = data[key];
+                    } else {
+                        element.textContent = data[key];
+                    }
+                }
+            }
+        }
+
+        function clearForm() {
+            const form = document.getElementById('clinical-record-form');
+            if (form) {
+                form.reset();
+                form.querySelectorAll('span[id], input[readonly]').forEach(el => {
+                    if (el.tagName === 'INPUT') el.value = '';
+                    else el.textContent = '';
+                });
+                document.getElementById('patient-search-input').value = '';
+                currentPatientId = null;
+            }
+        }
+
+        // --- MANEJO DE EVENTOS ---
+        function attachEventListeners(area) {
+            document.getElementById('btn-back-to-hub').addEventListener('click', () => showView('hub'));
+            
+            document.getElementById('search-patient-btn').addEventListener('click', () => {
+                const patientId = document.getElementById('patient-search-input').value;
+                if (patientId) findPatient(patientId);
+                else showNotification('Por favor, ingrese un ID de paciente.', 'error');
+            });
+
+            document.getElementById('save-patient-btn').addEventListener('click', saveConsultation);
+
+            document.querySelectorAll('.section-header').forEach(header => {
+                header.addEventListener('click', () => {
+                    const content = header.nextElementSibling;
+                    const icon = header.querySelector('svg');
+                    content.classList.toggle('hidden');
+                    icon.classList.toggle('rotate-180');
+                });
+            });
+        }
+
+        // --- NOTIFICACIONES ---
+        function showNotification(message, type = 'success') {
+            const toast = document.getElementById('notification-toast');
+            toast.textContent = message;
+            toast.className = ``;
+            toast.classList.add(type, 'show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 4000);
+        }
+
+        // --- RENDERIZADO DINÁMICO DE LA VISTA CLÍNICA ---
+        function renderClinicalViewHTML(area) {
+            return `
+                <div class="flex flex-col lg:flex-row gap-8">
+                    <!-- Menú Lateral -->
+                    <aside class="w-full lg:w-1/4">
+                        <div class="bg-white p-4 rounded-lg shadow-md sticky top-24">
+                            <h3 class="font-bold text-lg mb-4">Secciones</h3>
+                            <ul class="space-y-2 text-sm">
+                                <li><a href="#section-1" class="text-gray-700 hover:text-blue-600 font-semibold">1. Ficha de Identificación</a></li>
+                                <li><a href="#section-2" class="text-gray-700 hover:text-blue-600 font-semibold">2. Antecedentes Clínicos</a></li>
+                                <li><a href="#section-3" class="text-gray-700 hover:text-blue-600 font-semibold">3. Padecimiento Actual</a></li>
+                                <li><a href="#section-4" class="text-gray-700 hover:text-blue-600 font-semibold">4. Exploración Física</a></li>
+                                <li><a href="#section-5" class="text-gray-700 hover:text-blue-600 font-semibold">5. Estudios</a></li>
+                                <li><a href="#section-6" class="text-gray-700 hover:text-blue-600 font-semibold">6. Análisis / Pronóstico</a></li>
+                                <li><a href="#section-7" class="text-gray-700 hover:text-blue-600 font-semibold">7. Diagnóstico</a></li>
+                                <li><a href="#section-8" class="text-gray-700 hover:text-blue-600 font-semibold">8. Plan Terapéutico</a></li>
+                            </ul>
+                            <button id="btn-back-to-hub" class="mt-8 w-full px-4 py-2 bg-gray-200 text-gray-800 font-semibold rounded-md hover:bg-gray-300 transition">Volver a Áreas</button>
+                        </div>
+                    </aside>
+
+                    <!-- Contenido Principal del Formulario -->
+                    <main class="w-full lg:w-3/4">
+                        <form id="clinical-record-form" onsubmit="return false;">
+                            
+                            <!-- SECCIÓN 1: FICHA DE IDENTIFICACIÓN -->
+                            <section id="section-1" class="bg-white p-6 rounded-lg shadow-md mb-8">
+                                <div class="section-header">
+                                    <h2 class="section-title">1. Ficha de Identificación</h2>
+                                    <svg class="w-6 h-6 transform transition-transform rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                </div>
+                                <div class="section-content grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                                    <div class="form-group md:col-span-2 flex items-end space-x-2">
+                                        <div class="flex-grow"><label for="patient-search-input" class="form-label">Buscar por ID de Paciente:</label><input type="text" id="patient-search-input" class="form-input" placeholder="Ej. SAN-0001"></div>
+                                        <button id="search-patient-btn" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 h-10">Buscar</button>
+                                    </div>
+                                    <div class="form-group"><label class="form-label">Fecha de consulta:</label><span id="fechaConsulta" class="form-data">${new Date().toLocaleDateString('es-MX')}</span></div>
+                                    <div class="form-group md:col-span-3"><label for="nombre" class="form-label">Nombre del paciente:</label><input type="text" id="nombre" name="nombre" class="form-input font-bold" readonly></div>
+                                    <div class="form-group"><label for="convenio" class="form-label">Convenio:</label><input type="text" id="convenio" name="convenio" class="form-input" readonly></div>
+                                    <div class="form-group"><label for="edad" class="form-label">Edad:</label><input type="text" id="edad" name="edad" class="form-input" readonly></div>
+                                    <div class="form-group"><label for="nacimiento" class="form-label">Fecha de Nacimiento:</label><input type="date" id="nacimiento" name="nacimiento" class="form-input" readonly></div>
+                                    <div class="form-group"><label for="genero" class="form-label">Género:</label><input type="text" id="genero" name="genero" class="form-input" readonly></div>
+                                    <div class="form-group"><label for="origen" class="form-label">Lugar de Origen:</label><input type="text" id="origen" name="origen" class="form-input" readonly></div>
+                                    <div class="form-group"><label for="residencia" class="form-label">Lugar de Residencia:</label><input type="text" id="residencia" name="residencia" class="form-input" readonly></div>
+                                    <div class="form-group"><label for="estadoCivil" class="form-label">Estado Civil:</label><input type="text" id="estadoCivil" name="estadoCivil" class="form-input" readonly></div>
+                                    <div class="form-group"><label for="religion" class="form-label">Religión:</label><input type="text" id="religion" name="religion" class="form-input" readonly></div>
+                                    <div class="form-group"><label for="escolaridad" class="form-label">Escolaridad:</label><input type="text" id="escolaridad" name="escolaridad" class="form-input" readonly></div>
+                                    <div class="form-group md:col-span-3"><label for="ocupacion" class="form-label">Ocupación:</label><input type="text" id="ocupacion" name="ocupacion" class="form-input" readonly></div>
+                                    <div class="form-group"><label for="email" class="form-label">Correo electrónico:</label><input type="email" id="email" name="email" class="form-input" readonly></div>
+                                    <div class="form-group"><label for="movil" class="form-label">Teléfono móvil:</label><input type="tel" id="movil" name="movil" class="form-input" readonly></div>
+                                    <div class="form-group"><label for="fijo" class="form-label">Teléfono fijo:</label><input type="tel" id="fijo" name="fijo" class="form-input" readonly></div>
+                                </div>
+                            </section>
+
+                            <!-- SECCIÓN 2: ANTECEDENTES CLÍNICOS -->
+                            <section id="section-2" class="bg-white p-6 rounded-lg shadow-md mb-8">
+                                <div class="section-header"><h2 class="section-title">2. Antecedentes Clínicos</h2><svg class="w-6 h-6 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></div>
+                                <div class="section-content hidden">
+                                    <h3 class="subsection-title">2.2 Enfermedades crónico degenerativas</h3>
+                                    <div class="form-group">
+                                        <label class="form-label">Marque las enfermedades que apliquen:</label>
+                                        <div class="grid grid-cols-2 md:grid-cols-3 gap-2 text-sm">
+                                            <div><input type="checkbox" id="diabetes" name="diabetes" class="mr-2"><label for="diabetes">Diabetes</label></div>
+                                            <div><input type="checkbox" id="cardiacas" name="cardiacas" class="mr-2"><label for="cardiacas">Cardiacas</label></div>
+                                            <div><input type="checkbox" id="gastro" name="gastro" class="mr-2"><label for="gastro">Gastrointestinales</label></div>
+                                            <div><input type="checkbox" id="pulmonares" name="pulmonares" class="mr-2"><label for="pulmonares">Pulmonares</label></div>
+                                            <div><input type="checkbox" id="dermato" name="dermato" class="mr-2"><label for="dermato">Dermatológicas</label></div>
+                                            <div><input type="checkbox" id="hta" name="hta" class="mr-2"><label for="hta">Hipertensión arterial</label></div>
+                                        </div>
+                                    </div>
+                                    <h3 class="subsection-title">2.9 Toxicomanías</h3>
+                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div class="form-group"><label for="alcohol-tipo" class="form-label">Tipo de alcohol:</label><select id="alcohol-tipo" name="alcohol-tipo" class="form-select" data-list="tipo_alcohol"></select></div>
+                                        <div class="form-group"><label for="alcohol-cantidad" class="form-label">Cantidad (sem.):</label><input type="text" id="alcohol-cantidad" name="alcohol-cantidad" class="form-input"></div>
+                                     </div>
+                                </div>
+                            </section>
+                            
+                            <!-- SECCIÓN 3: PADECIMIENTO ACTUAL -->
+                            <section id="section-3" class="bg-white p-6 rounded-lg shadow-md mb-8">
+                                <div class="section-header"><h2 class="section-title">3. Padecimiento Actual</h2><svg class="w-6 h-6 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></div>
+                                <div class="section-content hidden">
+                                    <div class="form-group"><label for="padecimiento-actual" class="form-label">Descripción del Padecimiento Actual:</label><textarea id="padecimiento-actual" name="padecimiento-actual" rows="5" class="form-textarea"></textarea></div>
+                                </div>
+                            </section>
+
+                            <!-- SECCIÓN 4: EXPLORACIÓN FÍSICA -->
+                             <section id="section-4" class="bg-white p-6 rounded-lg shadow-md mb-8">
+                                <div class="section-header"><h2 class="section-title">4. Exploración Física</h2><svg class="w-6 h-6 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></div>
+                                <div class="section-content hidden">
+                                     <h3 class="subsection-title">4.1 Signos Vitales</h3>
+                                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                        <div class="form-group"><label for="peso" class="form-label">Peso (kg):</label><input type="number" id="peso" name="peso" class="form-input"></div>
+                                        <div class="form-group"><label for="talla" class="form-label">Talla (m):</label><input type="number" id="talla" name="talla" class="form-input"></div>
+                                        <div class="form-group"><label for="fc" class="form-label">F. Cardíaca (lpm):</label><input type="number" id="fc" name="fc" class="form-input"></div>
+                                        <div class="form-group"><label for="fr" class="form-label">F. Respiratoria (rpm):</label><input type="number" id="fr" name="fr" class="form-input"></div>
+                                        <div class="form-group"><label for="temp" class="form-label">Temperatura (°C):</label><input type="number" id="temp" name="temp" class="form-input"></div>
+                                        <div class="form-group"><label for="ta_sistolica" class="form-label">TA Sistólica (mmHg):</label><input type="number" id="ta_sistolica" name="ta_sistolica" class="form-input"></div>
+                                        <div class="form-group"><label for="ta_diastolica" class="form-label">TA Diastólica (mmHg):</label><input type="number" id="ta_diastolica" name="ta_diastolica" class="form-input"></div>
+                                        <div class="form-group"><label for="sato2" class="form-label">Sat. O2 (%):</label><input type="number" id="sato2" name="sato2" class="form-input"></div>
+                                     </div>
+                                     <h3 class="subsection-title">4.2 Exploración Física General</h3>
+                                     <div class="form-group"><label for="exploracion-general" class="form-label">Notas de Exploración:</label><textarea id="exploracion-general" name="exploracion-general" rows="5" class="form-textarea"></textarea></div>
+                                </div>
+                            </section>
+                            
+                            <!-- SECCIÓN 5: ESTUDIOS -->
+                            <section id="section-5" class="bg-white p-6 rounded-lg shadow-md mb-8">
+                                <div class="section-header"><h2 class="section-title">5. Estudios de Laboratorio y Gabinete</h2><svg class="w-6 h-6 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></div>
+                                <div class="section-content hidden">
+                                    <div class="form-group"><label for="estudios-gabinete" class="form-label">Observaciones de Estudios:</label><textarea id="estudios-gabinete" name="estudios-gabinete" rows="5" class="form-textarea"></textarea></div>
+                                </div>
+                            </section>
+
+                            <!-- SECCIÓN 6: ANÁLISIS / PRONÓSTICO -->
+                            <section id="section-6" class="bg-white p-6 rounded-lg shadow-md mb-8">
+                                <div class="section-header"><h2 class="section-title">6. Análisis / Pronóstico</h2><svg class="w-6 h-6 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></div>
+                                <div class="section-content hidden">
+                                    <div class="form-group"><label for="analisis-pronostico" class="form-label">Análisis y Pronóstico:</label><textarea id="analisis-pronostico" name="analisis-pronostico" rows="5" class="form-textarea"></textarea></div>
+                                </div>
+                            </section>
+
+                            <!-- SECCIÓN 7: DIAGNÓSTICO -->
+                            <section id="section-7" class="bg-white p-6 rounded-lg shadow-md mb-8">
+                                <div class="section-header"><h2 class="section-title">7. Diagnóstico</h2><svg class="w-6 h-6 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></div>
+                                <div class="section-content hidden">
+                                    <div class="form-group"><label for="diagnostico" class="form-label">Diagnósticos:</label><textarea id="diagnostico" name="diagnostico" rows="5" class="form-textarea" placeholder="Listar diagnósticos, uno por línea"></textarea></div>
+                                </div>
+                            </section>
+
+                            <!-- SECCIÓN 8: PLAN TERAPÉUTICO -->
+                            <section id="section-8" class="bg-white p-6 rounded-lg shadow-md mb-8">
+                                <div class="section-header"><h2 class="section-title">8. Plan Terapéutico</h2><svg class="w-6 h-6 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></div>
+                                <div class="section-content hidden">
+                                    <div class="form-group"><label for="plan-terapeutico" class="form-label">Indicaciones y Plan:</label><textarea id="plan-terapeutico" name="plan-terapeutico" rows="5" class="form-textarea"></textarea></div>
+                                </div>
+                            </section>
+
+                            <!-- Botones de Acción -->
+                            <div class="flex justify-end gap-4 mt-8">
+                                <button id="print-btn" class="px-6 py-2 bg-gray-600 text-white font-semibold rounded-lg shadow-md hover:bg-gray-700 transition">Imprimir</button>
+                                <button id="save-patient-btn" class="px-6 py-2 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 transition">Guardar Consulta</button>
+                            </div>
+                        </form>
+                    </main>
+                </div>
+            `;
+        }
+
+        // --- INICIO DE LA APLICACIÓN ---
+        showView('hub');
+    });
+    </script>
+</body>
+</html>
