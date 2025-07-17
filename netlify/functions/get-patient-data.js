@@ -35,7 +35,24 @@ exports.handler = async (event) => {
 
     const patientData = {};
     headers.forEach((header, index) => {
-      patientData[header] = patientRow[index] || '';
+      let value = patientRow[index] || '';
+      
+      // **INICIO DE LA CORRECCIÓN**
+      // Si el campo es 'nacimiento' y tiene un valor
+      if (header === 'nacimiento' && value) {
+        // Asumimos que la fecha viene como D/M/AAAA
+        const parts = value.split('/');
+        if (parts.length === 3) {
+          const day = parts[0].padStart(2, '0');
+          const month = parts[1].padStart(2, '0');
+          const year = parts[2];
+          // La formateamos a AAAA-MM-DD, que es lo que el input de fecha entiende
+          value = `${year}-${month}-${day}`;
+        }
+      }
+      // **FIN DE LA CORRECCIÓN**
+      
+      patientData[header] = value;
     });
 
     return {
@@ -50,4 +67,3 @@ exports.handler = async (event) => {
     };
   }
 };
-
