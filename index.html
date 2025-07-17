@@ -225,14 +225,12 @@
                     throw new Error(errorData.message || `Error ${response.status}`);
                 }
                 const patientFullData = await response.json();
-                populateForm(patientFullData); // Llama a la nueva función
-                currentPatientId = patientFullData.demographics.id;
+                populateForm(patientFullData);
                 showNotification('Paciente cargado exitosamente.', 'success');
             } catch (error) {
                 console.error('Error al buscar paciente:', error);
                 showNotification(`Error: ${error.message}`, 'error');
                 clearForm();
-                currentPatientId = null;
             } finally {
                 searchButton.innerHTML = "Buscar";
                 searchButton.disabled = false;
@@ -324,8 +322,16 @@
         
         // --- MANEJO DEL FORMULARIO ---
         function populateForm(data) {
-            // Limpia el formulario antes de poblar
             clearForm();
+
+            if (!data || !data.demographics) {
+                console.error("Datos recibidos no tienen la estructura esperada:", data);
+                showNotification("Error: Respuesta inesperada del servidor.", "error");
+                currentPatientId = null;
+                return;
+            }
+            
+            currentPatientId = data.demographics.id;
 
             // 1. Poblar datos demográficos
             const demographics = data.demographics;
@@ -344,14 +350,12 @@
             const history = data.history || [];
             const latestValues = {};
 
-            // Recopila el valor más reciente para cada campo
             history.forEach(consult => {
                 for(const field in consult.data){
                     latestValues[field] = consult.data[field];
                 }
             });
             
-            // Poblar campos de entrada con el valor más reciente
             for(const field in latestValues){
                 const inputElement = document.getElementById(field);
                 if(inputElement){
@@ -363,7 +367,6 @@
                 }
             }
 
-            // Poblar áreas de historial
             const historyFields = document.querySelectorAll('[data-history-for]');
             historyFields.forEach(historyArea => {
                 const fieldName = historyArea.dataset.historyFor;
