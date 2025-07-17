@@ -76,6 +76,14 @@
         .form-label { @apply font-semibold text-gray-700 text-sm mb-1 block; }
         .form-data { @apply mt-1 block p-2 border border-transparent bg-gray-50 rounded-md; min-height: 2.5rem; }
         .form-group { @apply mb-4; }
+        
+        /* Estilos para el historial */
+        .history-area {
+            @apply w-full p-2 border border-dashed border-gray-200 rounded-md bg-gray-50 text-xs text-gray-600 mb-2;
+            min-height: 50px;
+            font-family: monospace;
+        }
+
 
         /* Notificación Toast */
         #notification-toast {
@@ -216,9 +224,9 @@
                     const errorData = await response.json();
                     throw new Error(errorData.message || `Error ${response.status}`);
                 }
-                const patientData = await response.json();
-                populateForm(patientData);
-                currentPatientId = patientData.id;
+                const patientFullData = await response.json();
+                populateForm(patientFullData); // Llama a la nueva función
+                currentPatientId = patientFullData.demographics.id;
                 showNotification('Paciente cargado exitosamente.', 'success');
             } catch (error) {
                 console.error('Error al buscar paciente:', error);
@@ -278,7 +286,6 @@
                         dataToSave[key] = value;
                     }
                 }
-                // FormData no captura checkboxes no marcados, así que los añadimos manualmente
                 form.querySelectorAll('input[type="checkbox"]:not(:checked)').forEach(cb => {
                     dataToSave[cb.name] = 'No';
                 });
@@ -317,26 +324,67 @@
         
         // --- MANEJO DEL FORMULARIO ---
         function populateForm(data) {
-            for (const key in data) {
+            // Limpia el formulario antes de poblar
+            clearForm();
+
+            // 1. Poblar datos demográficos
+            const demographics = data.demographics;
+            for (const key in demographics) {
                 const element = document.getElementById(key);
                 if (element) {
-                    if(element.type === 'checkbox') {
-                        element.checked = data[key] === 'Sí';
-                    } else if(element.tagName === 'INPUT' || element.tagName === 'TEXTAREA' || element.tagName === 'SELECT') {
-                        element.value = data[key];
+                    if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA' || element.tagName === 'SELECT') {
+                        element.value = demographics[key];
                     } else {
-                        element.textContent = data[key];
+                        element.textContent = demographics[key];
                     }
                 }
             }
+            
+            // 2. Poblar historial y el valor más reciente
+            const history = data.history || [];
+            const latestValues = {};
+
+            // Recopila el valor más reciente para cada campo
+            history.forEach(consult => {
+                for(const field in consult.data){
+                    latestValues[field] = consult.data[field];
+                }
+            });
+            
+            // Poblar campos de entrada con el valor más reciente
+            for(const field in latestValues){
+                const inputElement = document.getElementById(field);
+                if(inputElement){
+                    if(inputElement.type === 'checkbox'){
+                        inputElement.checked = latestValues[field] === 'Sí';
+                    } else {
+                        inputElement.value = latestValues[field];
+                    }
+                }
+            }
+
+            // Poblar áreas de historial
+            const historyFields = document.querySelectorAll('[data-history-for]');
+            historyFields.forEach(historyArea => {
+                const fieldName = historyArea.dataset.historyFor;
+                let historyContent = '';
+                history.forEach(consult => {
+                    if (consult.data[fieldName]) {
+                        const consultDate = new Date(consult.date).toLocaleDateString('es-MX');
+                        historyContent += `${consultDate}: ${consult.data[fieldName]}\n`;
+                    }
+                });
+                historyArea.value = historyContent || 'Sin historial registrado.';
+            });
         }
+
 
         function clearForm() {
             const form = document.getElementById('clinical-record-form');
             if (form) {
                 form.reset();
-                form.querySelectorAll('span[id], input[readonly]').forEach(el => {
-                    if (el.tagName === 'INPUT') el.value = '';
+                form.querySelectorAll('span[id], input[readonly], textarea[readonly]').forEach(el => {
+                    if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') el.value = '';
                     else el.textContent = '';
                 });
                 document.getElementById('patient-search-input').value = '';
@@ -437,14 +485,13 @@
                                 <div class="section-header"><h2 class="section-title">2. Antecedentes Clínicos</h2><svg class="w-6 h-6 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></div>
                                 <div class="section-content hidden">
                                     
-                                    <!-- INICIO DE LA NUEVA SECCIÓN 2.1 -->
                                     <h3 class="subsection-title">2.1 Antecedentes Heredo-familiares</h3>
                                     <!-- Madre -->
                                     <div class="p-4 border rounded-lg mb-4">
                                         <p class="font-bold text-gray-700 mb-2">Madre</p>
                                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                             <div class="form-group"><label for="madre_vive" class="form-label">¿Vive actualmente?</label><select id="madre_vive" name="madre_vive" class="form-select"><option value="Sí">Sí</option><option value="No">No</option></select></div>
-                                            <div class="form-group"><label for="madre_padecimientos" class="form-label">Padecimientos</label><select id="madre_padecimientos" name="madre_padecimientos" class="form-select" data-list="padecimientos_familiares"></select></div>
+                                            <div class="form-group"><label for="madre_padecimientos" class="form-label">Padecimientos</label><textarea data-history-for="madre_padecimientos" class="history-area" readonly></textarea><select id="madre_padecimientos" name="madre_padecimientos" class="form-select" data-list="padecimientos_medicina"></select></div>
                                             <div class="form-group"><label for="madre_otra_enf" class="form-label">Otra enfermedad</label><input type="text" id="madre_otra_enf" name="madre_otra_enf" class="form-input"></div>
                                             <div class="form-group"><label for="madre_fallecio_causa" class="form-label">¿Muerte por enfermedad listada?</label><select id="madre_fallecio_causa" name="madre_fallecio_causa" class="form-select"><option value="Sí">Sí</option><option value="No">No</option></select></div>
                                             <div class="form-group md:col-span-2"><label for="madre_fallecio_otra_causa" class="form-label">Especificar otra causa de muerte</label><input type="text" id="madre_fallecio_otra_causa" name="madre_fallecio_otra_causa" class="form-input"></div>
@@ -455,7 +502,7 @@
                                         <p class="font-bold text-gray-700 mb-2">Padre</p>
                                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                             <div class="form-group"><label for="padre_vive" class="form-label">¿Vive actualmente?</label><select id="padre_vive" name="padre_vive" class="form-select"><option value="Sí">Sí</option><option value="No">No</option></select></div>
-                                            <div class="form-group"><label for="padre_padecimientos" class="form-label">Padecimientos</label><select id="padre_padecimientos" name="padre_padecimientos" class="form-select" data-list="padecimientos_familiares"></select></div>
+                                            <div class="form-group"><label for="padre_padecimientos" class="form-label">Padecimientos</label><textarea data-history-for="padre_padecimientos" class="history-area" readonly></textarea><select id="padre_padecimientos" name="padre_padecimientos" class="form-select" data-list="padecimientos_medicina"></select></div>
                                             <div class="form-group"><label for="padre_otra_enf" class="form-label">Otra enfermedad</label><input type="text" id="padre_otra_enf" name="padre_otra_enf" class="form-input"></div>
                                             <div class="form-group"><label for="padre_fallecio_causa" class="form-label">¿Muerte por enfermedad listada?</label><select id="padre_fallecio_causa" name="padre_fallecio_causa" class="form-select"><option value="Sí">Sí</option><option value="No">No</option></select></div>
                                             <div class="form-group md:col-span-2"><label for="padre_fallecio_otra_causa" class="form-label">Especificar otra causa de muerte</label><input type="text" id="padre_fallecio_otra_causa" name="padre_fallecio_otra_causa" class="form-input"></div>
@@ -469,7 +516,7 @@
                                             <div class="form-group"><label for="hermanos_vivos" class="form-label">Vivos</label><input type="number" id="hermanos_vivos" name="hermanos_vivos" class="form-input"></div>
                                             <div class="form-group"><label for="hermanos_fallecidos" class="form-label">Fallecidos</label><input type="number" id="hermanos_fallecidos" name="hermanos_fallecidos" class="form-input"></div>
                                             <div class="form-group md:col-span-3"><label for="hermanos_motivo_fallecimiento" class="form-label">Motivo de fallecimiento</label><input type="text" id="hermanos_motivo_fallecimiento" name="hermanos_motivo_fallecimiento" class="form-input"></div>
-                                            <div class="form-group"><label for="hermanos_padecimientos" class="form-label">Padecimientos</label><select id="hermanos_padecimientos" name="hermanos_padecimientos" class="form-select" data-list="padecimientos_familiares"></select></div>
+                                            <div class="form-group"><label for="hermanos_padecimientos" class="form-label">Padecimientos</label><textarea data-history-for="hermanos_padecimientos" class="history-area" readonly></textarea><select id="hermanos_padecimientos" name="hermanos_padecimientos" class="form-select" data-list="padecimientos_medicina"></select></div>
                                             <div class="form-group md:col-span-2"><label for="hermanos_otras_enf" class="form-label">Otras enfermedades</label><input type="text" id="hermanos_otras_enf" name="hermanos_otras_enf" class="form-input"></div>
                                         </div>
                                     </div>
@@ -481,29 +528,10 @@
                                             <div class="form-group"><label for="hijos_vivos" class="form-label">Vivos</label><input type="number" id="hijos_vivos" name="hijos_vivos" class="form-input"></div>
                                             <div class="form-group"><label for="hijos_fallecidos" class="form-label">Fallecidos</label><input type="number" id="hijos_fallecidos" name="hijos_fallecidos" class="form-input"></div>
                                             <div class="form-group md:col-span-3"><label for="hijos_motivo_fallecimiento" class="form-label">Motivo de fallecimiento</label><input type="text" id="hijos_motivo_fallecimiento" name="hijos_motivo_fallecimiento" class="form-input"></div>
-                                            <div class="form-group"><label for="hijos_padecimientos" class="form-label">Padecimientos</label><select id="hijos_padecimientos" name="hijos_padecimientos" class="form-select" data-list="padecimientos_familiares"></select></div>
+                                            <div class="form-group"><label for="hijos_padecimientos" class="form-label">Padecimientos</label><textarea data-history-for="hijos_padecimientos" class="history-area" readonly></textarea><select id="hijos_padecimientos" name="hijos_padecimientos" class="form-select" data-list="padecimientos_medicina"></select></div>
                                             <div class="form-group md:col-span-2"><label for="hijos_otras_enf" class="form-label">Otras enfermedades</label><input type="text" id="hijos_otras_enf" name="hijos_otras_enf" class="form-input"></div>
                                         </div>
                                     </div>
-                                    <!-- FIN DE LA NUEVA SECCIÓN 2.1 -->
-
-                                    <h3 class="subsection-title">2.2 Enfermedades crónico degenerativas</h3>
-                                    <div class="form-group">
-                                        <label class="form-label">Marque las enfermedades que apliquen:</label>
-                                        <div class="grid grid-cols-2 md:grid-cols-3 gap-2 text-sm">
-                                            <div><input type="checkbox" id="diabetes" name="diabetes" class="mr-2"><label for="diabetes">Diabetes</label></div>
-                                            <div><input type="checkbox" id="cardiacas" name="cardiacas" class="mr-2"><label for="cardiacas">Cardiacas</label></div>
-                                            <div><input type="checkbox" id="gastro" name="gastro" class="mr-2"><label for="gastro">Gastrointestinales</label></div>
-                                            <div><input type="checkbox" id="pulmonares" name="pulmonares" class="mr-2"><label for="pulmonares">Pulmonares</label></div>
-                                            <div><input type="checkbox" id="dermato" name="dermato" class="mr-2"><label for="dermato">Dermatológicas</label></div>
-                                            <div><input type="checkbox" id="hta" name="hta" class="mr-2"><label for="hta">Hipertensión arterial</label></div>
-                                        </div>
-                                    </div>
-                                    <h3 class="subsection-title">2.9 Toxicomanías</h3>
-                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div class="form-group"><label for="alcohol-tipo" class="form-label">Tipo de alcohol:</label><select id="alcohol-tipo" name="alcohol-tipo" class="form-select" data-list="tipo_alcohol"></select></div>
-                                        <div class="form-group"><label for="alcohol-cantidad" class="form-label">Cantidad (sem.):</label><input type="text" id="alcohol-cantidad" name="alcohol-cantidad" class="form-input"></div>
-                                     </div>
                                 </div>
                             </section>
                             
