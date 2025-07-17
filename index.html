@@ -436,6 +436,57 @@
                             <section id="section-2" class="bg-white p-6 rounded-lg shadow-md mb-8">
                                 <div class="section-header"><h2 class="section-title">2. Antecedentes Clínicos</h2><svg class="w-6 h-6 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></div>
                                 <div class="section-content hidden">
+                                    
+                                    <!-- INICIO DE LA NUEVA SECCIÓN 2.1 -->
+                                    <h3 class="subsection-title">2.1 Antecedentes Heredo-familiares</h3>
+                                    <!-- Madre -->
+                                    <div class="p-4 border rounded-lg mb-4">
+                                        <p class="font-bold text-gray-700 mb-2">Madre</p>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                            <div class="form-group"><label for="madre_vive" class="form-label">¿Vive actualmente?</label><select id="madre_vive" name="madre_vive" class="form-select"><option value="Sí">Sí</option><option value="No">No</option></select></div>
+                                            <div class="form-group"><label for="madre_padecimientos" class="form-label">Padecimientos</label><select id="madre_padecimientos" name="madre_padecimientos" class="form-select" data-list="padecimientos_familiares"></select></div>
+                                            <div class="form-group"><label for="madre_otra_enf" class="form-label">Otra enfermedad</label><input type="text" id="madre_otra_enf" name="madre_otra_enf" class="form-input"></div>
+                                            <div class="form-group"><label for="madre_fallecio_causa" class="form-label">¿Muerte por enfermedad listada?</label><select id="madre_fallecio_causa" name="madre_fallecio_causa" class="form-select"><option value="Sí">Sí</option><option value="No">No</option></select></div>
+                                            <div class="form-group md:col-span-2"><label for="madre_fallecio_otra_causa" class="form-label">Especificar otra causa de muerte</label><input type="text" id="madre_fallecio_otra_causa" name="madre_fallecio_otra_causa" class="form-input"></div>
+                                        </div>
+                                    </div>
+                                    <!-- Padre -->
+                                    <div class="p-4 border rounded-lg mb-4">
+                                        <p class="font-bold text-gray-700 mb-2">Padre</p>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                            <div class="form-group"><label for="padre_vive" class="form-label">¿Vive actualmente?</label><select id="padre_vive" name="padre_vive" class="form-select"><option value="Sí">Sí</option><option value="No">No</option></select></div>
+                                            <div class="form-group"><label for="padre_padecimientos" class="form-label">Padecimientos</label><select id="padre_padecimientos" name="padre_padecimientos" class="form-select" data-list="padecimientos_familiares"></select></div>
+                                            <div class="form-group"><label for="padre_otra_enf" class="form-label">Otra enfermedad</label><input type="text" id="padre_otra_enf" name="padre_otra_enf" class="form-input"></div>
+                                            <div class="form-group"><label for="padre_fallecio_causa" class="form-label">¿Muerte por enfermedad listada?</label><select id="padre_fallecio_causa" name="padre_fallecio_causa" class="form-select"><option value="Sí">Sí</option><option value="No">No</option></select></div>
+                                            <div class="form-group md:col-span-2"><label for="padre_fallecio_otra_causa" class="form-label">Especificar otra causa de muerte</label><input type="text" id="padre_fallecio_otra_causa" name="padre_fallecio_otra_causa" class="form-input"></div>
+                                        </div>
+                                    </div>
+                                    <!-- Hermanos -->
+                                    <div class="p-4 border rounded-lg mb-4">
+                                        <p class="font-bold text-gray-700 mb-2">Hermanos</p>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                            <div class="form-group"><label for="hermanos_total" class="form-label">No. Total</label><input type="number" id="hermanos_total" name="hermanos_total" class="form-input"></div>
+                                            <div class="form-group"><label for="hermanos_vivos" class="form-label">Vivos</label><input type="number" id="hermanos_vivos" name="hermanos_vivos" class="form-input"></div>
+                                            <div class="form-group"><label for="hermanos_fallecidos" class="form-label">Fallecidos</label><input type="number" id="hermanos_fallecidos" name="hermanos_fallecidos" class="form-input"></div>
+                                            <div class="form-group md:col-span-3"><label for="hermanos_motivo_fallecimiento" class="form-label">Motivo de fallecimiento</label><input type="text" id="hermanos_motivo_fallecimiento" name="hermanos_motivo_fallecimiento" class="form-input"></div>
+                                            <div class="form-group"><label for="hermanos_padecimientos" class="form-label">Padecimientos</label><select id="hermanos_padecimientos" name="hermanos_padecimientos" class="form-select" data-list="padecimientos_familiares"></select></div>
+                                            <div class="form-group md:col-span-2"><label for="hermanos_otras_enf" class="form-label">Otras enfermedades</label><input type="text" id="hermanos_otras_enf" name="hermanos_otras_enf" class="form-input"></div>
+                                        </div>
+                                    </div>
+                                    <!-- Hijos -->
+                                    <div class="p-4 border rounded-lg mb-4">
+                                        <p class="font-bold text-gray-700 mb-2">Hijos</p>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                            <div class="form-group"><label for="hijos_total" class="form-label">No. Total</label><input type="number" id="hijos_total" name="hijos_total" class="form-input"></div>
+                                            <div class="form-group"><label for="hijos_vivos" class="form-label">Vivos</label><input type="number" id="hijos_vivos" name="hijos_vivos" class="form-input"></div>
+                                            <div class="form-group"><label for="hijos_fallecidos" class="form-label">Fallecidos</label><input type="number" id="hijos_fallecidos" name="hijos_fallecidos" class="form-input"></div>
+                                            <div class="form-group md:col-span-3"><label for="hijos_motivo_fallecimiento" class="form-label">Motivo de fallecimiento</label><input type="text" id="hijos_motivo_fallecimiento" name="hijos_motivo_fallecimiento" class="form-input"></div>
+                                            <div class="form-group"><label for="hijos_padecimientos" class="form-label">Padecimientos</label><select id="hijos_padecimientos" name="hijos_padecimientos" class="form-select" data-list="padecimientos_familiares"></select></div>
+                                            <div class="form-group md:col-span-2"><label for="hijos_otras_enf" class="form-label">Otras enfermedades</label><input type="text" id="hijos_otras_enf" name="hijos_otras_enf" class="form-input"></div>
+                                        </div>
+                                    </div>
+                                    <!-- FIN DE LA NUEVA SECCIÓN 2.1 -->
+
                                     <h3 class="subsection-title">2.2 Enfermedades crónico degenerativas</h3>
                                     <div class="form-group">
                                         <label class="form-label">Marque las enfermedades que apliquen:</label>
