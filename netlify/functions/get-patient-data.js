@@ -20,42 +20,47 @@ exports.handler = async (event) => {
     });
 
     const sheets = google.sheets({ version: 'v4', auth });
-    const response = await sheets.spreadsheets.values.get({
+    
+    // 1. Obtener datos demográficos
+    const patientResponse = await sheets.spreadsheets.values.get({
       spreadsheetId: process.env.GOOGLE_SHEET_ID_PATIENTS,
-      range: 'Pacientes!A:P', // Lee todas las columnas para seguridad
+      range: 'Pacientes!A:P',
     });
 
-    const rows = response.data.values || [];
-    // Los encabezados deben coincidir EXACTAMENTE con los de tu Google Sheet
-    const headers = ["ID_Paciente", "NombredelPaciente", "Fecha", "ConvenioconSansce", "Edad", "LugardeOrigen", "LugardeResidencia", "FechadeNacimiento", "Religión", "Sexo", "Escolaridad", "EstadoCivil", "Ocupación", "CorreoElectrónico", "TeléfonoMóvil", "TeléfonoFijo"];
+    const patientRows = patientResponse.data.values || [];
+    const patientHeaders = ["id", "nombre", "fecha", "convenio", "edad", "origen", "residencia", "nacimiento", "religion", "genero", "escolaridad", "estadoCivil", "ocupacion", "email", "movil", "fijo"];
     
-    const patientRow = rows.find(row => row[0] && row[0].toUpperCase() === patientId.toUpperCase());
+    const patientRow = patientRows.find(row => row[0] && row[0].toUpperCase() === patientId.toUpperCase());
 
     if (!patientRow) {
       return { statusCode: 404, body: JSON.stringify({ message: 'Paciente no encontrado' }) };
     }
 
-    const patientData = {};
-    headers.forEach((header, index) => {
+    const patientDemographics = {};
+    patientHeaders.forEach((header, index) => {
       let value = patientRow[index] || '';
-      
-      // Formatear la fecha de nacimiento
-      if (header === 'FechadeNacimiento' && value) {
+      if (header === 'nacimiento' && value) {
         const parts = value.split('/');
-        if (parts.length === 3) {
-          const day = parts[0].padStart(2, '0');
-          const month = parts[1].padStart(2, '0');
-          const year = parts[2];
-          value = `${year}-${month}-${day}`;
-        }
+        if (parts.length === 3) value = `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
       }
-      patientData[header] = value;
+      patientDemographics[header] = value;
     });
+
+    // 2. Obtener historial (aunque aún no se llene, preparamos la estructura)
+    //    Esta lógica se completará más adelante.
+    const history = [];
+
+    // 3. Devolver la estructura correcta
+    const responsePayload = {
+        demographics: patientDemographics,
+        history: history
+    };
 
     return {
       statusCode: 200,
-      body: JSON.stringify(patientData),
+      body: JSON.stringify(responsePayload), // <-- CAMBIO CLAVE: Se envía el payload completo
     };
+
   } catch (error) {
     console.error('Error en get-patient-data:', error);
     return {
