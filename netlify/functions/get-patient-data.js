@@ -22,11 +22,13 @@ exports.handler = async (event) => {
     const sheets = google.sheets({ version: 'v4', auth });
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId: process.env.GOOGLE_SHEET_ID_PATIENTS,
-      range: 'Pacientes!A2:P',
+      range: 'Pacientes!A:P', // Lee todas las columnas para seguridad
     });
 
     const rows = response.data.values || [];
-    const headers = ["id", "nombre", "fecha", "convenio", "edad", "origen", "residencia", "nacimiento", "religion", "genero", "escolaridad", "estadoCivil", "ocupacion", "email", "movil", "fijo"];
+    // Los encabezados deben coincidir EXACTAMENTE con los de tu Google Sheet
+    const headers = ["ID_Paciente", "NombredelPaciente", "Fecha", "ConvenioconSansce", "Edad", "LugardeOrigen", "LugardeResidencia", "FechadeNacimiento", "Religión", "Sexo", "Escolaridad", "EstadoCivil", "Ocupación", "CorreoElectrónico", "TeléfonoMóvil", "TeléfonoFijo"];
+    
     const patientRow = rows.find(row => row[0] && row[0].toUpperCase() === patientId.toUpperCase());
 
     if (!patientRow) {
@@ -37,21 +39,16 @@ exports.handler = async (event) => {
     headers.forEach((header, index) => {
       let value = patientRow[index] || '';
       
-      // **INICIO DE LA CORRECCIÓN**
-      // Si el campo es 'nacimiento' y tiene un valor
-      if (header === 'nacimiento' && value) {
-        // Asumimos que la fecha viene como D/M/AAAA
+      // Formatear la fecha de nacimiento
+      if (header === 'FechadeNacimiento' && value) {
         const parts = value.split('/');
         if (parts.length === 3) {
           const day = parts[0].padStart(2, '0');
           const month = parts[1].padStart(2, '0');
           const year = parts[2];
-          // La formateamos a AAAA-MM-DD, que es lo que el input de fecha entiende
           value = `${year}-${month}-${day}`;
         }
       }
-      // **FIN DE LA CORRECCIÓN**
-      
       patientData[header] = value;
     });
 

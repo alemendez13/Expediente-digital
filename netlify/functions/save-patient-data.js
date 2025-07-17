@@ -1,5 +1,5 @@
 const { google } = require('googleapis');
-const { v4: uuidv4 } = require('uuid'); // Usaremos UUID para IDs únicos
+const { v4: uuidv4 } = require('uuid');
 
 exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') {
@@ -24,7 +24,6 @@ exports.handler = async (event) => {
     const sheets = google.sheets({ version: 'v4', auth });
     const spreadsheetId = process.env.GOOGLE_SHEET_ID_PATIENTS;
     
-    // 1. Crear una nueva entrada en la hoja "Consultas"
     const consultationId = uuidv4();
     const consultationDate = new Date().toISOString();
     const newConsultationRow = [[consultationId, patientId, consultationDate, specialty, professionalId]];
@@ -36,15 +35,11 @@ exports.handler = async (event) => {
       resource: { values: newConsultationRow },
     });
 
-    // 2. Preparar los datos clínicos para la hoja "Datos_Clinicos"
     const clinicalDataRows = Object.entries(formData).map(([key, value]) => {
-        // Ignorar valores vacíos
         if (value === null || value === '') return null;
-        
         const dataId = uuidv4();
-        // El 'key' del formulario debe ser el nombre del campo. Ej: "padecimiento-actual"
         return [dataId, consultationId, key, value];
-    }).filter(Boolean); // Eliminar las filas nulas
+    }).filter(Boolean);
 
     if (clinicalDataRows.length > 0) {
         await sheets.spreadsheets.values.append({
