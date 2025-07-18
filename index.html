@@ -186,31 +186,18 @@
             professionalFooter.classList.toggle('hidden', viewName === 'hub');
         }
         
-        // CORRECCIÓN: Event listener principal para los botones del HUB
         document.querySelectorAll('.hub-button[data-view]').forEach(button => {
             button.addEventListener('click', (e) => {
                 const area = e.currentTarget.dataset.view;
                 currentSpecialty = area;
-
-                // 1. Setear info del profesional
                 profNameEl.textContent = professionalInfo[area].nombre;
                 profCedulaEl.textContent = professionalInfo[area].cedula;
-                
-                // 2. Renderizar el HTML base de la historia clínica
                 views.clinicalRecord.innerHTML = renderClinicalViewHTML(area);
-                
-                // 3. Si es medicina, renderizar la sección especial 2.2
                 if (area === 'medicina') {
                     renderChronicDiseases(); 
                 }
-
-                // 4. ATTACH EVENT LISTENERS a los nuevos elementos
                 attachEventListeners(area);
-
-                // 5. Cargar dropdowns
                 loadDropdowns();
-                
-                // 6. Mostrar la vista
                 showView('clinicalRecord');
             });
         });
@@ -286,7 +273,6 @@
                 const formData = new FormData(form);
                 const dataToSave = {};
 
-                // Recolectar datos de todos los campos, incluyendo checkboxes
                 for (let [key, value] of formData.entries()) {
                     const element = document.querySelector(`[name="${key}"]`);
                      if (element && element.type === 'checkbox') {
@@ -296,7 +282,6 @@
                     }
                 }
                 
-                // Asegurar que los checkboxes no marcados se guarden como 'No'
                 form.querySelectorAll('input[type="checkbox"]:not(:checked)').forEach(cb => {
                     dataToSave[cb.name] = 'No';
                 });
@@ -345,7 +330,6 @@
             
             currentPatientId = data.demographics.id;
 
-            // 1. Poblar datos demográficos
             const demographics = data.demographics;
             for (const key in demographics) {
                 const element = document.getElementById(key);
@@ -354,10 +338,8 @@
                 }
             }
             
-            // 2. Poblar historial y el valor más reciente para campos normales
             const history = data.history || [];
             
-            // Poblar áreas de historial de texto
             const historyFields = document.querySelectorAll('[data-history-for]');
             historyFields.forEach(historyArea => {
                 const fieldName = historyArea.dataset.historyFor;
@@ -371,7 +353,6 @@
                 historyArea.value = historyContent || 'Sin historial registrado.';
             });
 
-            // Poblar el valor más reciente en los campos editables
             const latestValues = {};
             history.forEach(consult => {
                 Object.assign(latestValues, consult.data);
@@ -400,7 +381,8 @@
                     el.value = '';
                 });
                  document.querySelectorAll('.disease-details').forEach(detail => detail.classList.add('hidden'));
-                document.getElementById('patient-search-input').value = '';
+                const searchInput = document.getElementById('patient-search-input');
+                if(searchInput) searchInput.value = '';
                  const historySummary = document.getElementById('chronic-diseases-history-summary');
                 if (historySummary) {
                     historySummary.innerHTML = '<p class="text-gray-500">Busque un paciente para ver su historial.</p>';
@@ -511,7 +493,8 @@
                     totalScore += valueMap[select.value] || 0;
                 });
             }
-            document.getElementById(`${questionnaireId}_score`).textContent = totalScore;
+            const scoreEl = document.getElementById(`${questionnaireId}_score`);
+            if(scoreEl) scoreEl.textContent = totalScore;
         }
 
         function populateChronicDiseaseHistory(history) {
@@ -565,23 +548,18 @@
             summaryContainer.innerHTML = summaryHtml;
         }
 
-
-        // CORRECCIÓN: Función centralizada para todos los event listeners de la vista clínica
+        // --- MANEJO DE EVENTOS ---
         function attachEventListeners(area) {
-            // Botón para volver al HUB
             document.getElementById('btn-back-to-hub')?.addEventListener('click', () => showView('hub'));
             
-            // Botón para buscar paciente
             document.getElementById('search-patient-btn')?.addEventListener('click', () => {
                 const patientId = document.getElementById('patient-search-input').value;
                 if (patientId) findPatient(patientId);
                 else showNotification('Por favor, ingrese un ID de paciente.', 'error');
             });
 
-            // Botón para guardar consulta
             document.getElementById('save-patient-btn')?.addEventListener('click', saveConsultation);
 
-            // Desplegar secciones principales
             document.querySelectorAll('.section-header').forEach(header => {
                 header.addEventListener('click', () => {
                     const content = header.nextElementSibling;
@@ -590,10 +568,18 @@
                     icon.classList.toggle('rotate-180');
                 });
             });
+
+            // CORRECCIÓN: Event listener para los vínculos del menú lateral
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
             
-            // Listeners específicos para la sección de medicina
             if (area === 'medicina') {
-                // Desplegar sistemas en sección 2.2
                 document.querySelectorAll('.system-header').forEach(header => {
                     header.addEventListener('click', () => {
                         const targetId = header.dataset.target;
@@ -604,7 +590,6 @@
                     });
                 });
 
-                // Mostrar detalles de enfermedad al marcar checkbox
                 document.querySelectorAll('.disease-checkbox').forEach(checkbox => {
                     checkbox.addEventListener('change', (e) => {
                         const targetId = e.target.dataset.target;
@@ -613,7 +598,6 @@
                     });
                 });
 
-                // Calcular scores de cuestionarios al cambiar selección
                 document.querySelectorAll('.questionnaire-select').forEach(select => {
                     select.addEventListener('change', (e) => {
                         calculateScores(e.target.dataset.questionnaire);
@@ -687,6 +671,22 @@
                                             <div class="form-group"><label for="madre_otra_enf" class="form-label">Otra enfermedad</label><input type="text" name="madre_otra_enf" class="form-input"></div>
                                         </div>
                                     </div>
+                                    <div class="p-4 border rounded-lg mb-4">
+                                        <p class="font-bold text-gray-700 mb-2">Padre</p>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                            <div class="form-group"><label for="padre_vive" class="form-label">¿Vive actualmente?</label><select name="padre_vive" class="form-select" data-list="opciones_binarias"></select></div>
+                                            <div class="form-group"><label for="padre_padecimientos" class="form-label">Padecimientos</label><textarea data-history-for="padre_padecimientos" class="history-area" readonly></textarea><select name="padre_padecimientos" class="form-select" data-list="padecimientos_medicina"></select></div>
+                                            <div class="form-group"><label for="padre_otra_enf" class="form-label">Otra enfermedad</label><input type="text" name="padre_otra_enf" class="form-input"></div>
+                                        </div>
+                                    </div>
+                                    <div class="p-4 border rounded-lg mb-4">
+                                        <p class="font-bold text-gray-700 mb-2">Hermanos</p>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                            <div class="form-group"><label for="hermanos_total" class="form-label">No. Total</label><input type="number" name="hermanos_total" class="form-input"></div>
+                                            <div class="form-group"><label for="hermanos_vivos" class="form-label">Vivos</label><input type="number" name="hermanos_vivos" class="form-input"></div>
+                                            <div class="form-group"><label for="hermanos_fallecidos" class="form-label">Fallecidos</label><input type="number" name="hermanos_fallecidos" class="form-input"></div>
+                                        </div>
+                                    </div>
 
                                     <h3 class="subsection-title">2.2 Enfermedades Crónico Degenerativas</h3>
                                     <div class="p-4 border-2 border-blue-200 rounded-lg mb-6 bg-blue-50">
@@ -707,6 +707,13 @@
                                     <div class="form-group"><label for="padecimiento-actual" class="form-label">Descripción del Padecimiento Actual:</label><textarea name="padecimiento_actual" rows="5" class="form-textarea"></textarea></div>
                                 </div>
                             </section>
+                            
+                            <section id="section-4" class="bg-white p-6 rounded-lg shadow-md mb-8"><div class="section-header"><h2 class="section-title">4. Exploración Física</h2><svg class="w-6 h-6 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></div><div class="section-content hidden"></div></section>
+                            <section id="section-5" class="bg-white p-6 rounded-lg shadow-md mb-8"><div class="section-header"><h2 class="section-title">5. Estudios</h2><svg class="w-6 h-6 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></div><div class="section-content hidden"></div></section>
+                            <section id="section-6" class="bg-white p-6 rounded-lg shadow-md mb-8"><div class="section-header"><h2 class="section-title">6. Análisis / Pronóstico</h2><svg class="w-6 h-6 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></div><div class="section-content hidden"></div></section>
+                            <section id="section-7" class="bg-white p-6 rounded-lg shadow-md mb-8"><div class="section-header"><h2 class="section-title">7. Diagnóstico</h2><svg class="w-6 h-6 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></div><div class="section-content hidden"></div></section>
+                            <section id="section-8" class="bg-white p-6 rounded-lg shadow-md mb-8"><div class="section-header"><h2 class="section-title">8. Plan Terapéutico</h2><svg class="w-6 h-6 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></div><div class="section-content hidden"></div></section>
+
 
                             <div class="flex justify-end gap-4 mt-8">
                                 <button type="button" id="print-btn" class="px-6 py-2 bg-gray-600 text-white font-semibold rounded-lg shadow-md hover:bg-gray-700 transition">Imprimir</button>
