@@ -4,14 +4,15 @@
         <div class="bg-white p-4 rounded-lg shadow-md sticky top-24">
             <h3 class="font-bold text-lg mb-4">Secciones</h3>
             <ul class="space-y-2 text-sm">
-                <li><a href="#section-1" class="text-gray-700 hover:text-blue-600 font-semibold">1. Ficha de Identificación</a></li>
-                <li><a href="#section-2" class="text-gray-700 hover:text-blue-600 font-semibold">2. Antecedentes Clínicos</a></li>
-                <li><a href="#section-3" class="text-gray-700 hover:text-blue-600 font-semibold">3. Padecimiento Actual</a></li>
-                <li><a href="#section-4" class="text-gray-700 hover:text-blue-600 font-semibold">4. Exploración Física</a></li>
-                <li><a href="#section-5" class="text-gray-700 hover:text-blue-600 font-semibold">5. Estudios</a></li>
+                <li><a href="#section-1" class="text-gray-700 hover:text-blue-600 font-semibold">1. Ficha de identificación</a></li>
+                <li><a href="#section-2" class="text-gray-700 hover:text-blue-600 font-semibold">2. Antecedentes clínicos</a></li>
+                <li><a href="#section-3" class="text-gray-700 hover:text-blue-600 font-semibold">3. Padecimiento actual</a></li>
+                <li><a href="#section-4" class="text-gray-700 hover:text-blue-600 font-semibold">4. Exploración física</a></li>
+                <li><a href="#section-5" class="text-gray-700 hover:text-blue-600 font-semibold">5. Estudios de laboratorio y gabinete</a></li>
                 <li><a href="#section-6" class="text-gray-700 hover:text-blue-600 font-semibold">6. Diagnóstico</a></li>
                 <li><a href="#section-7" class="text-gray-700 hover:text-blue-600 font-semibold">7. Análisis / Pronóstico</a></li>
-                <li><a href="#section-8" class="text-gray-700 hover:text-blue-600 font-semibold">8. Plan Terapéutico</a></li>
+                <li><a href="#section-8" class="text-gray-700 hover:text-blue-600 font-semibold">8. Plan terapéutico</a></li>
+                <li><a href="#section-9" class="text-gray-700 hover:text-blue-600 font-semibold">9. Vista previa para imprimir</a></li>
             </ul>
             <button id="btn-back-to-hub" class="mt-8 w-full px-4 py-2 bg-gray-200 text-gray-800 font-semibold rounded-md hover:bg-gray-300 transition">Volver a Áreas</button>
         </div>
@@ -33,10 +34,10 @@
                         <button type="button" id="search-patient-btn" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 h-10">Buscar</button>
                     </div>
                     <div class="form-group"><label class="form-label">Fecha de consulta:</label><input type="text" value="${new Date().toLocaleDateString('es-MX')}" class="form-input" readonly></div>
-                    <div class="form-group md:col-span-3"><label for="nombre" class="form-label">Nombre:</label><input type="text" id="nombre" name="nombre" class="form-input font-bold" readonly></div>
+                    <div class="form-group md:col-span-3"><label for="nombre" class="form-label">Nombre del paciente:</label><input type="text" id="nombre" name="nombre" class="form-input font-bold" readonly></div>
                     <div class="form-group"><label for="convenio" class="form-label">Convenio:</label><input type="text" id="convenio" name="convenio" class="form-input" readonly></div>
                     <div class="form-group"><label for="edad" class="form-label">Edad:</label><input type="text" id="edad" name="edad" class="form-input" readonly></div>
-                    <div class="form-group"><label for="nacimiento" class="form-label">F. Nacimiento:</label><input type="date" id="nacimiento" name="nacimiento" class="form-input" readonly></div>
+                    <div class="form-group"><label for="nacimiento" class="form-label">Fecha de Nacimiento:</label><input type="date" id="nacimiento" name="nacimiento" class="form-input" readonly></div>
                     <div class="form-group"><label for="genero" class="form-label">Género:</label><input type="text" id="genero" name="genero" class="form-input" readonly></div>
                     <div class="form-group"><label for="origen" class="form-label">Lugar de Origen:</label><input type="text" id="origen" name="origen" class="form-input" readonly></div>
                     <div class="form-group"><label for="residencia" class="form-label">Lugar de Residencia:</label><input type="text" id="residencia" name="residencia" class="form-input" readonly></div>
@@ -55,51 +56,62 @@
                 <div class="section-header"><h2 class="section-title">2. Antecedentes Clínicos</h2><svg class="w-6 h-6 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></div>
                 <div class="section-content hidden">
                     <h3 class="subsection-title">2.1 Antecedentes Heredo-familiares</h3>
+                    
+                    <!-- NUEVO: Histórico Consolidado -->
+                    <div class="p-4 border-2 border-blue-200 rounded-lg mb-6 bg-blue-50">
+                        <h4 class="font-bold text-blue-800 mb-2">Histórico Familiar</h4>
+                        <textarea id="ahf_historico" name="ahf_historico" class="w-full p-2 border border-blue-100 rounded-md bg-white text-xs" rows="6" readonly placeholder="Busque un paciente para ver su historial familiar..."></textarea>
+                    </div>
+
+                    <!-- Campos de Registro de la Consulta Actual -->
+                    <p class="text-sm font-semibold text-gray-600 mb-3">Registrar / Actualizar en Consulta Actual:</p>
+                    
                     <!-- Madre -->
-                    <div class="p-4 border rounded-lg mb-4">
+                    <div class="p-4 border rounded-lg mb-4 bg-gray-50">
                         <p class="font-bold text-gray-700 mb-2">Madre</p>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div class="form-group"><label class="form-label">¿Vive actualmente?</label><select name="madre_vive" class="form-select" data-list="opciones_binarias"></select></div>
                             <div class="form-group"><label class="form-label">Si falleció, ¿fue por enf. listada?</label><select name="madre_fallecio_causa" class="form-select" data-list="opciones_binarias"></select></div>
-                            <div class="form-group md:col-span-2"><label class="form-label">Padecimientos</label><textarea data-history-for="madre_padecimientos" class="history-area" readonly></textarea><select name="madre_padecimientos" class="form-select" data-list="padecimientos_medicina"></select></div>
+                            <div class="form-group md:col-span-2"><label class="form-label">Padecimientos</label><select name="madre_padecimientos" class="form-select" data-list="padecimientos_medicina"></select></div>
                             <div class="form-group md:col-span-2"><label class="form-label">Otra enfermedad / Especificar causa de muerte</label><input type="text" name="madre_otra_enf" class="form-input"></div>
                         </div>
                     </div>
                     <!-- Padre -->
-                    <div class="p-4 border rounded-lg mb-4">
+                    <div class="p-4 border rounded-lg mb-4 bg-gray-50">
                         <p class="font-bold text-gray-700 mb-2">Padre</p>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div class="form-group"><label class="form-label">¿Vive actualmente?</label><select name="padre_vive" class="form-select" data-list="opciones_binarias"></select></div>
                             <div class="form-group"><label class="form-label">Si falleció, ¿fue por enf. listada?</label><select name="padre_fallecio_causa" class="form-select" data-list="opciones_binarias"></select></div>
-                            <div class="form-group md:col-span-2"><label class="form-label">Padecimientos</label><textarea data-history-for="padre_padecimientos" class="history-area" readonly></textarea><select name="padre_padecimientos" class="form-select" data-list="padecimientos_medicina"></select></div>
+                            <div class="form-group md:col-span-2"><label class="form-label">Padecimientos</label><select name="padre_padecimientos" class="form-select" data-list="padecimientos_medicina"></select></div>
                             <div class="form-group md:col-span-2"><label class="form-label">Otra enfermedad / Especificar causa de muerte</label><input type="text" name="padre_otra_enf" class="form-input"></div>
                         </div>
                     </div>
                     <!-- Hermanos -->
-                    <div class="p-4 border rounded-lg mb-4">
+                    <div class="p-4 border rounded-lg mb-4 bg-gray-50">
                         <p class="font-bold text-gray-700 mb-2">Hermanos</p>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div class="form-group"><label class="form-label">Número total</label><input type="number" name="hermanos_total" class="form-input"></div>
                             <div class="form-group"><label class="form-label">Hermanos vivos</label><input type="number" name="hermanos_vivos" class="form-input"></div>
                             <div class="form-group"><label class="form-label">Hermanos fallecidos</label><input type="number" name="hermanos_fallecidos" class="form-input"></div>
-                            <div class="form-group md:col-span-3"><label class="form-label">Padecimientos</label><textarea data-history-for="hermanos_padecimientos" class="history-area" readonly></textarea><select name="hermanos_padecimientos" class="form-select" data-list="padecimientos_medicina"></select></div>
+                            <div class="form-group md:col-span-3"><label class="form-label">Padecimientos</label><select name="hermanos_padecimientos" class="form-select" data-list="padecimientos_medicina"></select></div>
                             <div class="form-group md:col-span-3"><label class="form-label">Otras enfermedades / Motivo de fallecimiento</label><input type="text" name="hermanos_otras_enf" class="form-input"></div>
                         </div>
                     </div>
                     <!-- Hijos -->
-                    <div class="p-4 border rounded-lg mb-4">
+                    <div class="p-4 border rounded-lg mb-4 bg-gray-50">
                         <p class="font-bold text-gray-700 mb-2">Hijos</p>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div class="form-group"><label class="form-label">Número total</label><input type="number" name="hijos_total" class="form-input"></div>
                             <div class="form-group"><label class="form-label">Hijos vivos</label><input type="number" name="hijos_vivos" class="form-input"></div>
                             <div class="form-group"><label class="form-label">Hijos fallecidos</label><input type="number" name="hijos_fallecidos" class="form-input"></div>
-                            <div class="form-group md:col-span-3"><label class="form-label">Padecimientos</label><textarea data-history-for="hijos_padecimientos" class="history-area" readonly></textarea><select name="hijos_padecimientos" class="form-select" data-list="padecimientos_medicina"></select></div>
+                            <div class="form-group md:col-span-3"><label class="form-label">Padecimientos</label><select name="hijos_padecimientos" class="form-select" data-list="padecimientos_medicina"></select></div>
                             <div class="form-group md:col-span-3"><label class="form-label">Otras enfermedades / Motivo de fallecimiento</label><input type="text" name="hijos_otras_enf" class="form-input"></div>
                         </div>
                     </div>
                 </div>
             </section>
-            <!-- ... Las demás secciones (3 a 8) irían aquí ... -->
+            
+            <!-- Botones de Acción -->
             <div class="flex justify-end gap-4 mt-8">
                 <button type="button" id="print-btn" class="px-6 py-2 bg-gray-600 text-white font-semibold rounded-lg shadow-md hover:bg-gray-700 transition">Imprimir</button>
                 <button type="button" id="save-patient-btn" class="px-6 py-2 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 transition">Guardar Consulta</button>
