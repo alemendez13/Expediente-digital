@@ -231,21 +231,43 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // CORRECCIÓN: Función de limpieza mejorada para no usar form.reset()
     function clearForm() {
         const form = document.getElementById('clinical-record-form');
         if (form) {
-            form.reset();
-            // CORRECCIÓN: Se añade una condición para no borrar el campo de la fecha
-            document.querySelectorAll('input[readonly], textarea[readonly]').forEach(el => {
-                if (el.id !== 'fecha_consulta') {
-                    el.value = '';
+            const elements = form.elements;
+            for (let i = 0; i < elements.length; i++) {
+                const item = elements.item(i);
+                
+                // No limpiar la fecha, los botones, ni la fecha de la consulta
+                if (item.id === 'fecha_consulta' || item.type === 'button' || item.type === 'submit') {
+                    continue;
                 }
-            });
-            const searchInput = document.getElementById('patient-search-input');
-            if(searchInput) searchInput.value = '';
+
+                switch (item.type) {
+                    case 'text':
+                    case 'textarea':
+                    case 'number':
+                    case 'date':
+                    case 'email':
+                    case 'tel':
+                    case 'hidden':
+                        item.value = '';
+                        break;
+                    case 'checkbox':
+                    case 'radio':
+                        item.checked = false;
+                        break;
+                    case 'select-one':
+                    case 'select-multiple':
+                        item.selectedIndex = 0; // Reset to "Seleccione..."
+                        break;
+                }
+            }
             currentPatientId = null;
         }
     }
+
 
     // --- MANEJO DE EVENTOS ---
     function attachEventListeners(area) {
