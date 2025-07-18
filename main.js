@@ -17,8 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let currentPatientId = null; 
     let currentSpecialty = null; 
-    
-    const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:8888' : '';
+    const baseUrl = ''; // Para Netlify, la URL base es la raíz
 
     // --- NAVEGACIÓN Y CARGA DE VISTAS ---
     function showView(viewName) {
@@ -30,10 +29,16 @@ document.addEventListener('DOMContentLoaded', () => {
     async function loadView(area) {
         try {
             const response = await fetch(`./views/${area}.html`);
-            if (!response.ok) throw new Error(`La vista para '${area}' no fue encontrada.`);
+            if (!response.ok) throw new Error(`La historia clínica para '${area}' aún no ha sido creada.`);
             
             const html = await response.text();
             views.clinicalRecord.innerHTML = html;
+
+            // CORRECCIÓN: Establecer la fecha de la consulta dinámicamente
+            const fechaConsultaInput = document.getElementById('fecha_consulta');
+            if (fechaConsultaInput) {
+                fechaConsultaInput.value = new Date().toLocaleDateString('es-MX', { year: 'numeric', month: '2-digit', day: '2-digit' });
+            }
             
             attachEventListeners(area);
             loadDropdowns();
@@ -42,6 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             console.error('Error al cargar la vista:', error);
             showNotification(error.message, 'error');
+            showView('hub');
         }
     }
     
@@ -90,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function loadDropdowns() {
         try {
             const response = await fetch(`${baseUrl}/.netlify/functions/get-dropdown-lists`);
-            if (!response.ok) throw new Error('No se pudieron cargar las listas.');
+            if (!response.ok) throw new Error('No se pudieron cargar las listas desplegables.');
             
             const lists = await response.json();
             
@@ -98,10 +104,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 const selectElements = document.querySelectorAll(`select[data-list="${listName}"]`);
                 selectElements.forEach(select => {
                     const options = lists[listName];
+                    const currentValue = select.value; // Guardar valor actual si existe
                     select.innerHTML = '<option value="">Seleccione...</option>';
                     options.forEach(option => {
                         select.innerHTML += `<option value="${option}">${option}</option>`;
                     });
+                    if (currentValue) {
+                        select.value = currentValue; // Restaurar valor si es posible
+                    }
                 });
             }
         } catch (error) {
@@ -227,7 +237,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (form) {
             form.reset();
             document.querySelectorAll('input[readonly], textarea[readonly]').forEach(el => {
-                el.value = '';
+                if(el.id !== 'fecha_consulta') { // No borrar la fecha de consulta
+                    el.value = '';
+                }
             });
             const searchInput = document.getElementById('patient-search-input');
             if(searchInput) searchInput.value = '';
