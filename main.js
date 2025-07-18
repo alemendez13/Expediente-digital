@@ -34,7 +34,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const html = await response.text();
             views.clinicalRecord.innerHTML = html;
 
-            // CORRECCIÓN: Establecer la fecha de la consulta dinámicamente
             const fechaConsultaInput = document.getElementById('fecha_consulta');
             if (fechaConsultaInput) {
                 fechaConsultaInput.value = new Date().toLocaleDateString('es-MX', { year: 'numeric', month: '2-digit', day: '2-digit' });
@@ -104,13 +103,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 const selectElements = document.querySelectorAll(`select[data-list="${listName}"]`);
                 selectElements.forEach(select => {
                     const options = lists[listName];
-                    const currentValue = select.value; // Guardar valor actual si existe
+                    const currentValue = select.value;
                     select.innerHTML = '<option value="">Seleccione...</option>';
                     options.forEach(option => {
                         select.innerHTML += `<option value="${option}">${option}</option>`;
                     });
                     if (currentValue) {
-                        select.value = currentValue; // Restaurar valor si es posible
+                        select.value = currentValue;
                     }
                 });
             }
@@ -181,7 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function populateForm(data) {
-        clearForm();
+        clearForm(); // Llama a la función de limpieza corregida
 
         if (!data || !data.demographics) {
             console.error("Datos recibidos no tienen la estructura esperada:", data);
@@ -236,8 +235,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const form = document.getElementById('clinical-record-form');
         if (form) {
             form.reset();
+            // CORRECCIÓN: Se añade una condición para no borrar el campo de la fecha
             document.querySelectorAll('input[readonly], textarea[readonly]').forEach(el => {
-                if(el.id !== 'fecha_consulta') { // No borrar la fecha de consulta
+                if (el.id !== 'fecha_consulta') {
                     el.value = '';
                 }
             });
