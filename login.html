@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sansce - Iniciar Sesión</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f0f9ff; /* Un azul cielo muy claro */
+        }
+        /* Estilos para el efecto de la etiqueta flotante */
+        .peer:focus ~ label, .peer:not(:placeholder-shown) ~ label {
+            @apply -top-3.5 text-sm text-cyan-600;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen">
+
+    <div class="w-full max-w-md p-8 space-y-8 bg-white rounded-2xl shadow-xl">
+        <div class="text-center">
+            <!-- Reemplaza con tu logo si lo tienes, si no, este funciona bien -->
+            <img src="https://i.imgur.com/lOVHzNY.jpeg" alt="Logotipo de SANSCE" class="w-32 mx-auto mb-4">
+            <h2 class="text-2xl font-bold text-gray-800">Bienvenido</h2>
+            <p class="text-gray-500">Inicia sesión para acceder al sistema de expedientes.</p>
+        </div>
+
+        <form id="login-form" class="space-y-6">
+            <div class="relative">
+                <input id="username" placeholder="Usuario" class="peer h-10 w-full border-b-2 border-gray-300 text-gray-900 placeholder-transparent focus:outline-none focus:border-cyan-500" type="text" name="username" required>
+                <label for="username" class="absolute left-0 -top-3.5 text-gray-600 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-2">
+                    Correo Electrónico
+                </label>
+            </div>
+
+            <div class="relative">
+                <input id="password" placeholder="Contraseña" class="peer h-10 w-full border-b-2 border-gray-300 text-gray-900 placeholder-transparent focus:outline-none focus:border-cyan-500" type="password" name="password" required>
+                <label for="password" class="absolute left-0 -top-3.5 text-gray-600 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-2">
+                    Contraseña
+                </label>
+            </div>
+            
+            <p id="error-message" class="text-center text-sm text-red-600 h-4"></p>
+
+            <div>
+                <button type="submit" class="w-full px-4 py-3 font-bold text-white bg-cyan-600 rounded-md hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500 transition-transform transform hover:scale-105">
+                    Ingresar
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('login-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            // Base de datos de usuarios y contraseñas.
+            // En una aplicación de producción, esto NUNCA debe estar en el frontend.
+            // Se debe llamar a un servicio de backend seguro para la autenticación.
+            const users = {
+                'alejandra.mendez@sansce.com': { password: 'S4nSc3_medicina_interna', specialty: 'medicina' },
+                'gabriel.perez@sansce.com': { password: 'S4nSc3_psicologia', specialty: 'psicologia' },
+                'nutricion@sansce.com': { password: 'S4nSc3_nutricion', specialty: 'nutricion' },
+                'fisioterapia@sansce.com': { password: 'S4nSc3_fisioterapia', specialty: 'fisioterapia' },
+                'medicina.general@sansce.com': { password: 'S4nSc3_medicina.general', specialty: 'medicina' }
+            };
+
+            const usernameInput = document.getElementById('username');
+            const passwordInput = document.getElementById('password');
+            const errorMessage = document.getElementById('error-message');
+
+            const username = usernameInput.value;
+            const password = passwordInput.value;
+            
+            const user = users[username];
+
+            if (user && user.password === password) {
+                // Credenciales correctas
+                errorMessage.textContent = '';
+                // Guardamos la especialidad del usuario en el almacenamiento local para que la otra página la pueda leer
+                localStorage.setItem('userSpecialty', user.specialty);
+                // Redirigimos al expediente
+                window.location.href = 'index.html';
+            } else {
+                // Credenciales incorrectas
+                errorMessage.textContent = 'Usuario o contraseña incorrectos.';
+                // Opcional: limpiar campos tras un intento fallido
+                // usernameInput.value = '';
+                // passwordInput.value = '';
+            }
+        });
+    </script>
+</body>
+</html>

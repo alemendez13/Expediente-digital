@@ -5,16 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Expediente Clínico - Sansce</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root { --color-title: #5ac4c6; --color-subtitle: #b7e1cd; --color-text: #000000; }
         html { scroll-behavior: smooth; }
         body { font-family: 'Montserrat', sans-serif; background-color: #f8fafc; color: var(--color-text); }
-        .hub-button { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1.5rem; background-color: white; border: 1px solid #e5e7eb; border-radius: 1rem; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); text-align: center; color: #374151; font-weight: 600; transition: all 0.3s ease-in-out; cursor: pointer; }
-        .hub-button:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); border-color: var(--color-title); }
-        .hub-button img { width: 3.5rem; height: 3.5rem; margin-bottom: 1rem; object-fit: contain; }
         .section-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 0.75rem; background-color: #f3f4f6; border-radius: 0.5rem; }
         .section-title { color: var(--color-title); font-weight: bold; font-size: 1.25rem; }
         .section-content { padding-top: 1.5rem; display: block; }
@@ -33,45 +28,35 @@
     <header class="bg-white shadow-md sticky top-0 z-20">
         <div class="container mx-auto px-4 py-2 flex justify-between items-center">
             <img src="https://i.imgur.com/lOVHzNY.jpeg" alt="Logotipo de SANSCE" class="h-12">
-            <h1 class="hidden md:block text-xl font-bold text-gray-700">Expediente Clínico</h1>
-            <div class="text-sm text-right text-gray-600 font-semibold">
-                <p>CLI-FR-01</p>
-                <p>Ed. 0</p>
+            <h1 id="main-title" class="hidden md:block text-xl font-bold text-gray-700">Expediente Clínico</h1>
+            <div class="text-right">
+                <p id="prof-name" class="font-semibold text-gray-800"></p>
+                <button id="logout-btn" class="text-sm text-red-600 hover:underline">Cerrar Sesión</button>
             </div>
         </div>
     </header>
 
     <main class="flex-grow container mx-auto p-4">
-        <div id="view-hub">
-             <div class="w-full max-w-4xl mx-auto p-4 sm:p-8 flex-grow flex flex-col justify-center">
-                <h2 class="text-2xl sm:text-3xl font-bold text-center mb-8 text-gray-800">Áreas Clínicas</h2>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
-                    <div data-view="medicina" class="hub-button">
-                        <img src="https://i.imgur.com/89rRCYY.png" alt="Icono de estetoscopio"><span>Medicina</span>
-                    </div>
-                    <div class="hub-button opacity-50 cursor-not-allowed" title="Próximamente">
-                        <img src="https://i.imgur.com/PSVahTu.png" alt="Icono de la letra psi"><span>Psicología</span>
-                    </div>
-                    <div class="hub-button opacity-50 cursor-not-allowed" title="Próximamente">
-                        <img src="https://i.imgur.com/KSk7YEr.png" alt="Icono de figura humana"><span>Fisioterapia</span>
-                    </div>
-                    <div class="hub-button opacity-50 cursor-not-allowed" title="Próximamente">
-                        <img src="https://i.imgur.com/h6NrGSk.png" alt="Icono de manzana"><span>Nutrición</span>
-                    </div>
-                </div>
+        <!-- El contenido del expediente se cargará aquí dinámicamente -->
+        <div id="clinical-record-container">
+            <!-- Loader -->
+            <div id="loader" class="text-center py-10">
+                <p class="text-lg font-semibold text-gray-600">Cargando expediente...</p>
             </div>
         </div>
-        <div id="view-clinical-record" class="hidden"></div>
     </main>
     
     <footer class="bg-white text-gray-700 text-sm p-4 text-center border-t">
         <p>&copy; 2024 Sansce. Todos los derechos reservados.</p>
-        <div id="professional-footer" class="hidden mt-2">
-            <span id="prof-name"></span> | Cédula: <span id="prof-cedula"></span>
+        <div id="professional-footer" class="mt-2">
+            Cédula: <span id="prof-cedula"></span>
         </div>
     </footer>
 
     <div id="notification-toast"></div>
-    <script src="main.js" defer></script>
+
+    <!-- Scripts -->
+    <script src="clinical-record-config.js"></script>
+    <script src="main.js"></script>
 </body>
 </html>
