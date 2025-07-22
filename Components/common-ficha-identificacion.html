@@ -1,0 +1,93 @@
+<!-- 
+  Componente: Ficha de Identificación
+  Descripción: Este componente es común para todas las especialidades.
+  Contiene los campos para buscar un paciente y mostrar sus datos demográficos.
+-->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-x-6 gap-y-4 text-sm">
+    
+    <!-- Fila de Búsqueda -->
+    <div class="md:col-span-2">
+        <label for="patient-id-input" class="form-label">Buscar por ID de Paciente:</label>
+        <div class="flex items-center space-x-2">
+            <input type="text" id="patient-id-input" class="form-input" placeholder="Ej. SAN-0001">
+            <button type="button" id="search-by-id-btn" class="px-4 py-2 bg-cyan-600 text-white font-semibold rounded-md hover:bg-cyan-700 h-10 transition-transform transform hover:scale-105">Buscar</button>
+        </div>
+    </div>
+    <div class="md:col-span-2">
+        <label for="patient-name-input" class="form-label">Buscar por Nombre de Paciente:</label>
+        <div class="flex items-center space-x-2">
+            <input type="text" id="patient-name-input" class="form-input" placeholder="Escriba el nombre completo...">
+            <button type="button" id="search-by-name-btn" class="px-4 py-2 bg-gray-400 text-white font-semibold rounded-md hover:bg-gray-500 h-10 transition-transform transform hover:scale-105" title="Funcionalidad en desarrollo">Buscar</button>
+        </div>
+    </div>
+
+    <!-- Fila de Datos Generales -->
+    <div class="md:col-span-3">
+        <label for="nombre" class="form-label">Nombre completo del paciente:</label>
+        <input type="text" id="nombre" name="nombre" class="form-input bg-gray-100 font-bold" readonly>
+    </div>
+    <div>
+        <label for="fecha_consulta" class="form-label">Fecha de consulta:</label>
+        <input type="text" id="fecha_consulta" name="fecha_consulta" class="form-input bg-gray-100" readonly>
+    </div>
+
+    <!-- Fila de Datos Demográficos 1 -->
+    <div>
+        <label for="edad" class="form-label">Edad:</label>
+        <input type="text" id="edad" name="edad" class="form-input bg-gray-100" readonly>
+    </div>
+    <div>
+        <label for="nacimiento" class="form-label">Fecha de Nacimiento:</label>
+        <input type="text" id="nacimiento" name="nacimiento" class="form-input bg-gray-100" readonly>
+    </div>
+    <div>
+        <label for="genero" class="form-label">Género:</label>
+        <input type="text" id="genero" name="genero" class="form-input bg-gray-100" readonly>
+    </div>
+    <div>
+        <label for="convenio" class="form-label">Convenio:</label>
+        <input type="text" id="convenio" name="convenio" class="form-input bg-gray-100" readonly>
+    </div>
+
+    <!-- Fila de Datos Demográficos 2 -->
+    <div>
+        <label for="origen" class="form-label">Lugar de Origen:</label>
+        <input type="text" id="origen" name="origen" class="form-input bg-gray-100" readonly>
+    </div>
+    <div>
+        <label for="residencia" class="form-label">Lugar de Residencia:</label>
+        <input type="text" id="residencia" name="residencia" class="form-input bg-gray-100" readonly>
+    </div>
+    <div>
+        <label for="estadoCivil" class="form-label">Estado Civil:</label>
+        <input type="text" id="estadoCivil" name="estadoCivil" class="form-input bg-gray-100" readonly>
+    </div>
+     <div>
+        <label for="religion" class="form-label">Religión:</label>
+        <input type="text" id="religion" name="religion" class="form-input bg-gray-100" readonly>
+    </div>
+
+    <!-- Fila de Datos Demográficos 3 -->
+    <div class="md:col-span-2">
+        <label for="escolaridad" class="form-label">Escolaridad:</label>
+        <input type="text" id="escolaridad" name="escolaridad" class="form-input bg-gray-100" readonly>
+    </div>
+    <div class="md:col-span-2">
+        <label for="ocupacion" class="form-label">Ocupación:</label>
+        <input type="text" id="ocupacion" name="ocupacion" class="form-input bg-gray-100" readonly>
+    </div>
+
+    <!-- Fila de Contacto -->
+    <div class="md:col-span-2">
+        <label for="email" class="form-label">Correo electrónico:</label>
+        <input type="email" id="email" name="email" class="form-input bg-gray-100" readonly>
+    </div>
+    <div>
+        <label for="movil" class="form-label">Teléfono móvil:</label>
+        <input type="tel" id="movil" name="movil" class="form-input bg-gray-100" readonly>
+    </div>
+    <div>
+        <label for="fijo" class="form-label">Teléfono fijo:</label>
+        <input type="tel" id="fijo" name="fijo" class="form-input bg-gray-100" readonly>
+    </div>
+</div>
