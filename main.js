@@ -39,64 +39,85 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- CONSTRUCCIÓN DINÁMICA DEL FORMULARIO ---
     async function buildClinicalRecordForm() {
-        const sections = clinicalRecordConfig.sections;
-        const commonComponents = clinicalRecordConfig.components.common;
-        const specialtyComponents = clinicalRecordConfig.components.specialty[userSpecialty] || {};
+        try {
+            const sections = clinicalRecordConfig.sections;
+            const commonComponents = clinicalRecordConfig.components.common;
+            const specialtyComponents = clinicalRecordConfig.components.specialty[userSpecialty] || {};
 
-        let formHtml = `
-            <div class="flex flex-col lg:flex-row gap-8">
-                <!-- Menú Lateral -->
-                <aside class="w-full lg:w-1/4">
-                    <div class="bg-white p-4 rounded-lg shadow-md sticky top-24">
-                        <h3 class="font-bold text-lg mb-4">Secciones</h3>
-                        <ul class="space-y-2 text-sm">
-                            ${sections.map(section => `<li><a href="#section-${section.id}" class="text-gray-700 hover:text-cyan-600 font-semibold">${section.title}</a></li>`).join('')}
-                        </ul>
-                    </div>
-                </aside>
-
-                <!-- Contenido Principal -->
-                <main class="w-full lg:w-3/4">
-                    <form id="clinical-record-form" onsubmit="return false;">
-                        ${await Promise.all(sections.map(async (section) => {
-                            const commonComponentPath = commonComponents[section.id];
-                            const specialtyComponentPath = specialtyComponents[section.id];
-                            let content = '';
-
-                            if (commonComponentPath) {
-                                content += await fetchComponent(commonComponentPath);
-                            }
-                            if (specialtyComponentPath) {
-                                content += await fetchComponent(specialtyComponentPath);
-                            }
-                            
-                            if (!content && section.id !== 'vista-previa') {
-                                content = `<p class="text-sm text-gray-500">No hay campos definidos para esta sección.</p>`;
-                            }
-                             if (section.id === 'vista-previa') {
-                                content = `<div class="text-center"><button type="button" id="print-btn" class="px-6 py-2 bg-gray-600 text-white font-semibold rounded-lg shadow-md hover:bg-gray-700 transition">Generar e Imprimir Nota</button></div>`;
-                            }
-
-                            return `
-                                <section id="section-${section.id}" class="bg-white p-6 rounded-lg shadow-md mb-8">
-                                    <div class="section-header">
-                                        <h2 class="section-title">${section.title}</h2>
-                                        <svg class="w-6 h-6 transform transition-transform ${section.id === 'ficha-identificacion' ? '' : 'rotate-180'}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                                    </div>
-                                    <div class="section-content ${section.id === 'ficha-identificacion' ? 'block' : 'hidden'}">
-                                        ${content}
-                                    </div>
-                                </section>
-                            `;
-                        })).join('')}
-                        
-                        <div class="flex justify-end gap-4 mt-8">
-                            <button type="button" id="save-patient-btn" class="px-6 py-2 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 transition">Guardar Consulta</button>
+            let formHtml = `
+                <div class="flex flex-col lg:flex-row gap-8">
+                    <!-- Menú Lateral -->
+                    <aside class="w-full lg:w-1/4">
+                        <div class="bg-white p-4 rounded-lg shadow-md sticky top-24">
+                            <h3 class="font-bold text-lg mb-4">Secciones</h3>
+                            <ul class="space-y-2 text-sm">
+                                ${sections.map(section => `<li><a href="#section-${section.id}" class="text-gray-700 hover:text-cyan-600 font-semibold">${section.title}</a></li>`).join('')}
+                            </ul>
                         </div>
-                    </form>
-                </main>
-            </div>
-        `;
+                    </aside>
+
+                    <!-- Contenido Principal -->
+                    <main class="w-full lg:w-3/4">
+                        <form id="clinical-record-form" onsubmit="return false;">
+                            ${await Promise.all(sections.map(async (section) => {
+                                const commonComponentPath = commonComponents[section.id];
+                                const specialtyComponentPath = specialtyComponents[section.id];
+                                let content = '';
+
+                                if (commonComponentPath) {
+                                    content += await fetchComponent(commonComponentPath);
+                                }
+                                if (specialtyComponentPath) {
+                                    content += await fetchComponent(specialtyComponentPath);
+                                }
+                                
+                                if (!content && section.id !== 'vista-previa') {
+                                    content = `<p class="text-sm text-gray-500">No hay campos definidos para esta sección.</p>`;
+                                }
+                                 if (section.id === 'vista-previa') {
+                                    content = `<div class="text-center"><button type="button" id="print-btn" class="px-6 py-2 bg-gray-600 text-white font-semibold rounded-lg shadow-md hover:bg-gray-700 transition">Generar e Imprimir Nota</button></div>`;
+                                }
+
+                                return `
+                                    <section id="section-${section.id}" class="bg-white p-6 rounded-lg shadow-md mb-8">
+                                        <div class="section-header">
+                                            <h2 class="section-title">${section.title}</h2>
+                                            {/* AJUSTE CORREGIDO: La flecha de la primera sección debe apuntar hacia arriba (abierta) */}
+                                            <svg class="w-6 h-6 transform transition-transform ${section.id === 'ficha-identificacion' ? 'rotate-180' : ''}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                        </div>
+                                        <div class="section-content ${section.id === 'ficha-identificacion' ? 'block' : 'hidden'}">
+                                            ${content}
+                                        </div>
+                                    </section>
+                                `;
+                            })).join('')}
+                            
+                            <div class="flex justify-end gap-4 mt-8">
+                                <button type="button" id="save-patient-btn" class="px-6 py-2 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 transition">Guardar Consulta</button>
+                            </div>
+                        </form>
+                    </main>
+                </div>
+            `;
+            
+            clinicalRecordContainer.innerHTML = formHtml;
+            attachEventListeners();
+            // loadDropdowns(); // Se llamará después si es necesario
+
+        } catch (error) {
+            // --- AJUSTE AÑADIDO: MANEJO DE ERRORES ---
+            // Si algo falla en el bloque 'try', se ejecutará este código.
+            console.error("Error al construir el formulario:", error);
+            clinicalRecordContainer.innerHTML = `
+                <div class="text-center py-10 bg-red-50 text-red-700 p-4 rounded-lg">
+                    <h3 class="font-bold text-lg">¡Oops! Ocurrió un error</h3>
+                    <p>No se pudo cargar la estructura del expediente.</p>
+                    <p class="text-sm mt-2 font-mono">Detalle: ${error.message}</p>
+                </div>
+            `;
+        }
+    }
+
         
         clinicalRecordContainer.innerHTML = formHtml;
         attachEventListeners();
