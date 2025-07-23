@@ -223,6 +223,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- MANEJO DE EVENTOS ---
     function attachEventListeners() {
+        // Navegación del menú lateral
         document.querySelectorAll('aside a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
@@ -230,6 +231,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
+        // Acordeones de secciones
         document.querySelectorAll('.section-header').forEach(header => {
             header.addEventListener('click', () => {
                 const content = header.nextElementSibling;
@@ -238,6 +240,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
         
+        // Botones de búsqueda
         document.getElementById('search-by-id-btn')?.addEventListener('click', () => {
              const patientId = document.getElementById('patient-id-input').value;
              findPatient(patientId, 'id');
@@ -248,11 +251,26 @@ document.addEventListener('DOMContentLoaded', () => {
              findPatient(patientName, 'name');
         });
 
+        // Botón de guardado
         document.getElementById('save-patient-btn')?.addEventListener('click', saveConsultation);
 
-        // --- AJUSTE AÑADIDO AQUÍ ---
-        // Llamar a la función para cargar las listas desplegables
+        // Cargar listas desplegables
         loadDropdowns();
+
+        // --- AJUSTE AÑADIDO AQUÍ: Lógica para cálculos automáticos ---
+        const horasInput = document.getElementById('apnp_actividad_horas');
+        const minutosInput = document.getElementById('apnp_actividad_minutos');
+
+        if (horasInput && minutosInput) {
+            horasInput.addEventListener('input', (e) => {
+                const horas = parseFloat(e.target.value);
+                if (!isNaN(horas)) {
+                    minutosInput.value = horas * 60;
+                } else {
+                    minutosInput.value = '';
+                }
+            });
+        }
     }
 
     async function loadDropdowns() {
