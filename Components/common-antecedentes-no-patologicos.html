@@ -1,0 +1,237 @@
+<!--
+  Componente: Antecedentes Personales No Patológicos
+  Descripción: Contiene campos comunes para todas las especialidades relacionados 
+  con el estilo de vida, contexto social y hábitos del paciente.
+-->
+
+<!-- 1. Actividad Física -->
+<div class="p-4 border rounded-lg mb-4 bg-white">
+    <h3 class="subsection-title">Actividad física</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4 text-sm">
+        <div class="lg:col-span-2">
+            <label for="apnp_que_realiza" class="form-label">¿Qué realiza?</label>
+            <select id="apnp_que_realiza" name="apnp_que_realiza" class="form-select" data-list="¿Qué realiza?" multiple size="5"></select>
+        </div>
+        <div>
+            <label for="apnp_intensidad" class="form-label">Intensidad</label>
+            <input type="text" id="apnp_intensidad" name="apnp_intensidad" class="form-input bg-gray-200" readonly>
+        </div>
+        <div>
+            <label for="apnp_ipaq_score" class="form-label">Puntuación IPAQ (MET min/sem)</label>
+            <input type="text" id="apnp_ipaq_score" name="apnp_ipaq_score" class="form-input bg-gray-200" readonly>
+        </div>
+        <div>
+            <label for="apnp_actividad_dias" class="form-label">Frecuencia: Días/semana</label>
+            <input type="number" id="apnp_actividad_dias" name="apnp_actividad_dias" class="form-input" placeholder="Ej. 3">
+        </div>
+        <div>
+            <label for="apnp_actividad_horas" class="form-label">Duración: Horas/día</label>
+            <input type="number" id="apnp_actividad_horas" name="apnp_actividad_horas" class="form-input" placeholder="Ej. 1">
+        </div>
+        <div>
+            <label for="apnp_actividad_minutos" class="form-label">Duración: Minutos/día</label>
+            <input type="number" id="apnp_actividad_minutos" name="apnp_actividad_minutos" class="form-input" placeholder="Ej. 30">
+        </div>
+    </div>
+</div>
+
+<!-- 2. Sedentarismo -->
+<div class="p-4 border rounded-lg mb-4 bg-white">
+    <h3 class="subsection-title">Sedentarismo</h3>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4 text-sm">
+        <div>
+            <label for="apnp_sedentarismo_horas" class="form-label">Horas al día</label>
+            <input type="number" id="apnp_sedentarismo_horas" name="apnp_sedentarismo_horas" class="form-input">
+        </div>
+        <div>
+            <label for="apnp_sedentarismo_dias" class="form-label">Días por semana</label>
+            <input type="number" id="apnp_sedentarismo_dias" name="apnp_sedentarismo_dias" class="form-input">
+        </div>
+        <div class="md:col-span-3">
+            <label for="apnp_sedentarismo_desc" class="form-label">Descripción</label>
+            <textarea data-history-for="apnp_sedentarismo_desc" class="history-area bg-gray-100" readonly></textarea>
+            <textarea id="apnp_sedentarismo_desc" name="apnp_sedentarismo_desc" class="form-textarea mt-1" rows="2" placeholder="Describa actividades sedentarias..."></textarea>
+        </div>
+    </div>
+</div>
+
+<!-- 3. Actitud Postural -->
+<div class="p-4 border rounded-lg mb-4 bg-white">
+    <h3 class="subsection-title">Actitud postural</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 text-sm">
+        <div>
+            <label for="apnp_actitud_postural" class="form-label">Tipo</label>
+            <select id="apnp_actitud_postural" name="apnp_actitud_postural" class="form-select" data-list="Actitud postural"></select>
+        </div>
+        <div>
+            <label for="apnp_postural_desc" class="form-label">Descripción</label>
+            <textarea data-history-for="apnp_postural_desc" class="history-area bg-gray-100" readonly></textarea>
+            <textarea id="apnp_postural_desc" name="apnp_postural_desc" class="form-textarea mt-1" rows="2" placeholder="Detalles de la postura..."></textarea>
+        </div>
+    </div>
+</div>
+
+<!-- 4. Uso de Aparatos Tecnológicos -->
+<div class="p-4 border rounded-lg mb-4 bg-white">
+    <h3 class="subsection-title">Uso de aparatos tecnológicos</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 text-sm">
+        <div>
+            <label for="apnp_tecnologia_horas" class="form-label">Horas al día</label>
+            <input type="number" id="apnp_tecnologia_horas" name="apnp_tecnologia_horas" class="form-input">
+        </div>
+        <div>
+            <label for="apnp_tecnologia_dias" class="form-label">Días por semana</label>
+            <input type="number" id="apnp_tecnologia_dias" name="apnp_tecnologia_dias" class="form-input">
+        </div>
+        <div>
+            <label for="apnp_tec_cognitivos" class="form-label">Efectos cognitivos</label>
+            <textarea data-history-for="apnp_tec_cognitivos" class="history-area bg-gray-100" readonly></textarea>
+            <textarea id="apnp_tec_cognitivos" name="apnp_tec_cognitivos" class="form-textarea mt-1" rows="2" placeholder="Memoria, atención, etc."></textarea>
+        </div>
+        <div>
+            <label for="apnp_tec_emocionales" class="form-label">Efectos emocionales</label>
+            <textarea data-history-for="apnp_tec_emocionales" class="history-area bg-gray-100" readonly></textarea>
+            <textarea id="apnp_tec_emocionales" name="apnp_tec_emocionales" class="form-textarea mt-1" rows="2" placeholder="Ansiedad, irritabilidad, etc."></textarea>
+        </div>
+    </div>
+</div>
+
+<!-- 5. Situaciones de Violencia -->
+<div class="p-4 border rounded-lg mb-4 bg-white">
+    <h3 class="subsection-title">Situaciones de Violencia</h3>
+    <!-- Violencia Familiar -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4 text-sm pt-2 border-t">
+        <p class="md:col-span-3 font-semibold text-gray-600">Familiar</p>
+        <div>
+            <label for="apnp_violencia_familiar_confirmacion" class="form-label">¿Ha vivido violencia?</label>
+            <select id="apnp_violencia_familiar_confirmacion" name="apnp_violencia_familiar_confirmacion" class="form-select" data-list="opciones_binarias"></select>
+        </div>
+        <div class="md:col-span-2">
+            <label for="apnp_violencia_familiar_especificacion" class="form-label">Especificación</label>
+            <textarea data-history-for="apnp_violencia_familiar_especificacion" class="history-area bg-gray-100" readonly></textarea>
+            <textarea id="apnp_violencia_familiar_especificacion" name="apnp_violencia_familiar_especificacion" class="form-textarea mt-1" rows="2" placeholder="Tipo de violencia, frecuencia..."></textarea>
+        </div>
+    </div>
+    <!-- Violencia Laboral -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4 text-sm pt-2 border-t">
+        <p class="md:col-span-3 font-semibold text-gray-600">Laboral</p>
+        <div>
+            <label for="apnp_violencia_laboral_confirmacion" class="form-label">¿Ha vivido violencia?</label>
+            <select id="apnp_violencia_laboral_confirmacion" name="apnp_violencia_laboral_confirmacion" class="form-select" data-list="opciones_binarias"></select>
+        </div>
+        <div class="md:col-span-2">
+            <label for="apnp_violencia_laboral_especificacion" class="form-label">Especificación</label>
+            <textarea data-history-for="apnp_violencia_laboral_especificacion" class="history-area bg-gray-100" readonly></textarea>
+            <textarea id="apnp_violencia_laboral_especificacion" name="apnp_violencia_laboral_especificacion" class="form-textarea mt-1" rows="2" placeholder="Tipo de violencia, frecuencia..."></textarea>
+        </div>
+    </div>
+    <!-- Violencia Social -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4 text-sm pt-2 border-t">
+        <p class="md:col-span-3 font-semibold text-gray-600">Social</p>
+        <div>
+            <label for="apnp_violencia_social_confirmacion" class="form-label">¿Ha vivido violencia?</label>
+            <select id="apnp_violencia_social_confirmacion" name="apnp_violencia_social_confirmacion" class="form-select" data-list="opciones_binarias"></select>
+        </div>
+        <div class="md:col-span-2">
+            <label for="apnp_violencia_social_especificacion" class="form-label">Especificación</label>
+            <textarea data-history-for="apnp_violencia_social_especificacion" class="history-area bg-gray-100" readonly></textarea>
+            <textarea id="apnp_violencia_social_especificacion" name="apnp_violencia_social_especificacion" class="form-textarea mt-1" rows="2" placeholder="Tipo de violencia, frecuencia..."></textarea>
+        </div>
+    </div>
+</div>
+
+<!-- 6. Aislamiento Social -->
+<div class="p-4 border rounded-lg mb-4 bg-white">
+    <h3 class="subsection-title">Aislamiento social</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 text-sm">
+        <div>
+            <label for="apnp_aislamiento_nivel" class="form-label">Nivel</label>
+            <select id="apnp_aislamiento_nivel" name="apnp_aislamiento_nivel" class="form-select" data-list="Nivel"></select>
+        </div>
+        <div>
+            <label for="apnp_aislamiento_desc" class="form-label">Descripción</label>
+            <textarea data-history-for="apnp_aislamiento_desc" class="history-area bg-gray-100" readonly></textarea>
+            <textarea id="apnp_aislamiento_desc" name="apnp_aislamiento_desc" class="form-textarea mt-1" rows="2" placeholder="Detalles del aislamiento..."></textarea>
+        </div>
+    </div>
+</div>
+
+<!-- 7. Contexto Socio-demográfico y Socio-económico -->
+<div class="p-4 border rounded-lg mb-4 bg-white">
+    <h3 class="subsection-title">Contexto Social</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 text-sm">
+        <!-- Contexto Socio-demográfico -->
+        <div>
+            <label for="apnp_contexto_demografico" class="form-label">Contexto Socio-demográfico</label>
+            <select id="apnp_contexto_demografico" name="apnp_contexto_demografico" class="form-select" data-list="Tipo"></select>
+            <textarea data-history-for="apnp_contexto_demo_desc" class="history-area bg-gray-100 mt-2" readonly></textarea>
+            <textarea id="apnp_contexto_demo_desc" name="apnp_contexto_demo_desc" class="form-textarea mt-1" rows="2" placeholder="Descripción del contexto..."></textarea>
+        </div>
+        <!-- Contexto Socio-económico -->
+        <div>
+            <label for="apnp_contexto_economico" class="form-label">Contexto Socio-económico</label>
+            <select id="apnp_contexto_economico" name="apnp_contexto_economico" class="form-select" data-list="Nivel económico"></select>
+            <textarea data-history-for="apnp_contexto_econ_desc" class="history-area bg-gray-100 mt-2" readonly></textarea>
+            <textarea id="apnp_contexto_econ_desc" name="apnp_contexto_econ_desc" class="form-textarea mt-1" rows="2" placeholder="Descripción del contexto..."></textarea>
+        </div>
+    </div>
+</div>
+
+<!-- 8. Cribado de Alimentación -->
+<div class="p-4 border rounded-lg mb-4 bg-white">
+    <h3 class="subsection-title">Cribado de alimentación</h3>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4 text-sm">
+        <div>
+            <label for="apnp_cribado_comidas_dia" class="form-label">¿Cuántas veces come al día?</label>
+            <input type="number" id="apnp_cribado_comidas_dia" name="apnp_cribado_comidas_dia" class="form-input">
+        </div>
+        <div>
+            <label for="apnp_cribado_omite" class="form-label">¿Omite comidas?</label>
+            <select id="apnp_cribado_omite" name="apnp_cribado_omite" class="form-select" data-list="opciones_binarias"></select>
+        </div>
+        <div>
+            <label for="apnp_cribado_cual_omite" class="form-label">Si omite, ¿cuál?</label>
+            <input type="text" id="apnp_cribado_cual_omite" name="apnp_cribado_cual_omite" class="form-input" placeholder="Desayuno, comida, cena...">
+        </div>
+    </div>
+    <!-- Bloques de consumo -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-4 mt-4 text-sm">
+        <!-- Frutas y verduras -->
+        <div class="p-2 border rounded-md">
+            <label class="form-label">Consumo de frutas y verduras</label>
+            <div class="flex items-center gap-2">
+                <select name="apnp_cribado_frutasyverduras_freq" class="form-select" data-list="frecuencia_consumo"></select>
+                <input type="text" name="apnp_cribado_frutasyverduras_puntuacion" class="form-input bg-gray-200 w-20 text-center" placeholder="Puntos" readonly>
+            </div>
+        </div>
+        <!-- Pescado o pollo -->
+        <div class="p-2 border rounded-md">
+            <label class="form-label">Consumo de pescado o pollo</label>
+            <div class="flex items-center gap-2">
+                <select name="apnp_cribado_pescadopollo_freq" class="form-select" data-list="frecuencia_consumo"></select>
+                <input type="text" name="apnp_cribado_pescadopollo_puntuacion" class="form-input bg-gray-200 w-20 text-center" placeholder="Puntos" readonly>
+            </div>
+        </div>
+        <!-- Granos integrales -->
+        <div class="p-2 border rounded-md">
+            <label class="form-label">Consumo de granos integrales</label>
+            <div class="flex items-center gap-2">
+                <select name="apnp_cribado_granos_freq" class="form-select" data-list="frecuencia_consumo"></select>
+                <input type="text" name="apnp_cribado_granos_puntuacion" class="form-input bg-gray-200 w-20 text-center" placeholder="Puntos" readonly>
+            </div>
+        </div>
+        <!-- Embutidos/procesados -->
+        <div class="p-2 border rounded-md">
+            <label class="form-label">Consumo de embutidos/procesados</label>
+            <div class="flex items-center gap-2">
+                <select name="apnp_cribado_procesados_freq" class="form-select" data-list="frecuencia_consumo"></select>
+                <input type="text" name="apnp_cribado_procesados_puntuacion" class="form-input bg-gray-200 w-20 text-center" placeholder="Puntos" readonly>
+            </div>
+        </div>
+    </div>
+    <!-- Resultado -->
+    <div class="mt-4">
+        <label for="apnp_cribado_resultado" class="form-label">Resultado e interpretación</label>
+        <input type="text" id="apnp_cribado_resultado" name="apnp_cribado_resultado" class="form-input bg-gray-200 font-bold" readonly>
+    </div>
+</div>
