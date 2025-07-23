@@ -52,13 +52,10 @@
         </form>
     </div>
 
-    <script>
+  <script>
         document.getElementById('login-form').addEventListener('submit', function(event) {
             event.preventDefault();
             
-            // Base de datos de usuarios y contraseñas.
-            // En una aplicación de producción, esto NUNCA debe estar en el frontend.
-            // Se debe llamar a un servicio de backend seguro para la autenticación.
             const users = {
                 'alejandra.mendez@sansce.com': { password: 'S4nSc3_medicina_interna', specialty: 'medicina' },
                 'gabriel.perez@sansce.com': { password: 'S4nSc3_psicologia', specialty: 'psicologia' },
@@ -79,16 +76,17 @@
             if (user && user.password === password) {
                 // Credenciales correctas
                 errorMessage.textContent = '';
-                // Guardamos la especialidad del usuario en el almacenamiento local para que la otra página la pueda leer
+
+                // --- AJUSTE REALIZADO AQUÍ ---
+                // Guardamos tanto la especialidad como el email del usuario.
                 localStorage.setItem('userSpecialty', user.specialty);
+                localStorage.setItem('loggedInUser', username);
+
                 // Redirigimos al expediente
                 window.location.href = 'index.html';
             } else {
                 // Credenciales incorrectas
                 errorMessage.textContent = 'Usuario o contraseña incorrectos.';
-                // Opcional: limpiar campos tras un intento fallido
-                // usernameInput.value = '';
-                // passwordInput.value = '';
             }
         });
     </script>

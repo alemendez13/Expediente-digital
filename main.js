@@ -1,7 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // --- ESTADO GLOBAL Y AUTENTICACIÓN ---
+    // --- ESTADO GLOBAL Y AUTENTICACIÓN (MODIFICADO) ---
     const userSpecialty = localStorage.getItem('userSpecialty');
-    if (!userSpecialty) {
+    const loggedInUser = localStorage.getItem('loggedInUser'); // Obtenemos el email del usuario
+
+    // Si falta alguno de los dos datos, redirigir al login
+    if (!userSpecialty || !loggedInUser) { 
         window.location.href = 'login.html';
         return;
     }
@@ -23,8 +26,13 @@ document.addEventListener('DOMContentLoaded', () => {
         logoutBtn.addEventListener('click', logout);
     }
 
+    // --- FUNCIÓN setupHeader (MODIFICADA) ---
     function setupHeader() {
-        const professional = clinicalRecordConfig.professionalInfo[userSpecialty];
+        // 1. Intentar obtener la información específica del usuario desde userOverrides.
+        const userOverride = clinicalRecordConfig.userOverrides?.[loggedInUser];
+        // 2. Si no existe, obtener la información general de la especialidad.
+        const professional = userOverride || clinicalRecordConfig.professionalInfo[userSpecialty];
+
         if (professional) {
             mainTitle.textContent = `Expediente Clínico - ${userSpecialty.charAt(0).toUpperCase() + userSpecialty.slice(1)}`;
             profNameEl.textContent = professional.nombre;
@@ -32,20 +40,21 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // --- FUNCIÓN logout (MODIFICADA) ---
     function logout() {
+        // Asegurarse de borrar ambos datos al cerrar sesión
         localStorage.removeItem('userSpecialty');
+        localStorage.removeItem('loggedInUser'); 
         window.location.href = 'login.html';
     }
 
-    // --- CONSTRUCCIÓN DINÁMICA DEL FORMULARIO ---
+    // --- CONSTRUCCIÓN DINÁMICA DEL FORMULARIO (SIN CAMBIOS) ---
     async function buildClinicalRecordForm() {
         try {
             const sections = clinicalRecordConfig.sections;
             const commonComponents = clinicalRecordConfig.components.common;
             const specialtyComponents = clinicalRecordConfig.components.specialty[userSpecialty] || {};
 
-            // --- AJUSTE REALIZADO AQUÍ ---
-            // 1. Resolvemos las promesas y unimos el HTML de las secciones en una variable separada.
             const sectionsHtml = (await Promise.all(sections.map(async (section) => {
                 const commonComponentPath = commonComponents[section.id];
                 const specialtyComponentPath = specialtyComponents[section.id];
@@ -78,10 +87,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 `;
             }))).join('');
 
-            // 2. Ahora insertamos la variable que ya contiene todo el HTML unido.
             let formHtml = `
                 <div class="flex flex-col lg:flex-row gap-8">
-                    <!-- Menú Lateral -->
                     <aside class="w-full lg:w-1/4">
                         <div class="bg-white p-4 rounded-lg shadow-md sticky top-24">
                             <h3 class="font-bold text-lg mb-4">Secciones</h3>
@@ -90,12 +97,9 @@ document.addEventListener('DOMContentLoaded', () => {
                             </ul>
                         </div>
                     </aside>
-
-                    <!-- Contenido Principal -->
                     <main class="w-full lg:w-3/4">
                         <form id="clinical-record-form" onsubmit="return false;">
                             ${sectionsHtml}
-                            
                             <div class="flex justify-end gap-4 mt-8">
                                 <button type="button" id="save-patient-btn" class="px-6 py-2 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 transition">Guardar Consulta</button>
                             </div>
@@ -106,7 +110,6 @@ document.addEventListener('DOMContentLoaded', () => {
             
             clinicalRecordContainer.innerHTML = formHtml;
             attachEventListeners();
-            // loadDropdowns(); // Se llamará después si es necesario
 
         } catch (error) {
             console.error("Error al construir el formulario:", error);
@@ -131,7 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- LÓGICA DE LA API ---
+    // --- LÓGICA DE LA API (PREVIAMENTE FUNCIONAL, RESTAURADA) ---
     async function findPatient(query, searchType) {
         const searchButton = document.getElementById(`search-by-${searchType}-btn`);
         const searchInput = document.getElementById(`patient-${searchType}-input`);
@@ -141,10 +144,8 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Por ahora, solo la búsqueda por ID está implementada en el backend.
         if (searchType === 'name') {
             showNotification('La búsqueda por nombre aún no está implementada.', 'error');
-            // Aquí podrías deshabilitar el botón o simplemente no hacer nada.
             return;
         }
 
@@ -154,7 +155,6 @@ document.addEventListener('DOMContentLoaded', () => {
         searchInput.disabled = true;
 
         try {
-            // El backend solo acepta búsqueda por ID por ahora
             const response = await fetch(`${baseUrl}/.netlify/functions/get-patient-data?id=${query}`);
             if (!response.ok) {
                 const errorData = await response.json();
@@ -176,15 +176,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function populateForm(data) {
         clearForm();
-
         if (!data || !data.demographics) {
             showNotification("Error: Respuesta inesperada del servidor.", "error");
             return;
         }
-        
         currentPatientId = data.demographics.id;
-
-        // Poblar campos de la ficha de identificación
         const demographics = data.demographics;
         for (const key in demographics) {
             const element = document.getElementById(key);
@@ -192,7 +188,6 @@ document.addEventListener('DOMContentLoaded', () => {
                  element.value = demographics[key];
             }
         }
-        // Colocar la fecha actual en el campo de consulta
         const fechaConsultaInput = document.getElementById('fecha_consulta');
         if (fechaConsultaInput) {
             fechaConsultaInput.value = new Date().toLocaleDateString('es-MX', { year: 'numeric', month: '2-digit', day: '2-digit' });
@@ -202,7 +197,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function clearForm() {
         const form = document.getElementById('clinical-record-form');
         if (form) {
-            // Limpiar todos los inputs y textareas excepto los de búsqueda y botones
             form.querySelectorAll('input:not([id*="-input"]), textarea').forEach(el => el.value = '');
             form.querySelectorAll('input[type="checkbox"]').forEach(el => el.checked = false);
             form.querySelectorAll('select').forEach(el => el.selectedIndex = 0);
@@ -211,11 +205,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     async function saveConsultation() {
-       // Tu lógica de guardado existente va aquí
        showNotification('Función de guardado pendiente de conectar.', 'success');
     }
 
-    // --- MANEJO DE EVENTOS ---
+    // --- MANEJO DE EVENTOS (PREVIAMENTE FUNCIONAL, RESTAURADO) ---
     function attachEventListeners() {
         document.querySelectorAll('aside a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
@@ -232,7 +225,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
         
-        // Listeners para los botones de búsqueda y guardado
         document.getElementById('search-by-id-btn')?.addEventListener('click', () => {
              const patientId = document.getElementById('patient-id-input').value;
              findPatient(patientId, 'id');
@@ -250,7 +242,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const toast = document.getElementById('notification-toast');
         if (!toast) return;
         toast.textContent = message;
-        toast.className = 'fixed bottom-5 right-5 p-4 rounded-lg shadow-lg text-white font-semibold z-50'; // Reinicia clases
+        toast.className = 'fixed bottom-5 right-5 p-4 rounded-lg shadow-lg text-white font-semibold z-50';
         toast.classList.add(type === 'success' ? 'bg-green-500' : 'bg-red-500');
         
         toast.style.opacity = '1';
