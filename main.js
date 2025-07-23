@@ -1,8 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     // --- ESTADO GLOBAL Y AUTENTICACIÓN ---
     const userSpecialty = localStorage.getItem('userSpecialty');
-
-    // Si no hay usuario logueado, redirigir a la página de login
     if (!userSpecialty) {
         window.location.href = 'login.html';
         return;
@@ -16,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const logoutBtn = document.getElementById('logout-btn');
 
     let currentPatientId = null;
-    const baseUrl = ''; // Para Netlify, la URL base es la raíz
+    const baseUrl = '';
 
     // --- INICIALIZACIÓN DE LA APLICACIÓN ---
     function init() {
@@ -72,7 +70,6 @@ document.addEventListener('DOMContentLoaded', () => {
                                 content += await fetchComponent(specialtyComponentPath);
                             }
                             
-                            // Si no hay componente, se puede renderizar un placeholder o nada.
                             if (!content && section.id !== 'vista-previa') {
                                 content = `<p class="text-sm text-gray-500">No hay campos definidos para esta sección.</p>`;
                             }
@@ -80,14 +77,13 @@ document.addEventListener('DOMContentLoaded', () => {
                                 content = `<div class="text-center"><button type="button" id="print-btn" class="px-6 py-2 bg-gray-600 text-white font-semibold rounded-lg shadow-md hover:bg-gray-700 transition">Generar e Imprimir Nota</button></div>`;
                             }
 
-
                             return `
                                 <section id="section-${section.id}" class="bg-white p-6 rounded-lg shadow-md mb-8">
                                     <div class="section-header">
                                         <h2 class="section-title">${section.title}</h2>
-                                        <svg class="w-6 h-6 transform transition-transform ${section.id === 'ficha-identificacion' ? 'rotate-180' : ''}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                        <svg class="w-6 h-6 transform transition-transform ${section.id === 'ficha-identificacion' ? '' : 'rotate-180'}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                     </div>
-                                    <div class="section-content ${section.id === 'ficha-identificacion' ? '' : 'hidden'}">
+                                    <div class="section-content ${section.id === 'ficha-identificacion' ? 'block' : 'hidden'}">
                                         ${content}
                                     </div>
                                 </section>
@@ -104,7 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         clinicalRecordContainer.innerHTML = formHtml;
         attachEventListeners();
-        loadDropdowns();
+        // loadDropdowns(); // Se llamará después si es necesario
     }
     
     async function fetchComponent(path) {
@@ -118,15 +114,92 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // --- LÓGICA DE LA API ---
+    async function findPatient(query, searchType) {
+        const searchButton = document.getElementById(`search-by-${searchType}-btn`);
+        const searchInput = document.getElementById(`patient-${searchType}-input`);
 
-    // --- LÓGICA DE LA API (EXISTENTE, SIN CAMBIOS MAYORES) ---
-    // (Aquí irían las funciones findPatient, loadDropdowns, saveConsultation, populateForm, clearForm, showNotification, que ya tienes y funcionan bien)
-    // ... (Copia y pega tus funciones existentes aquí, adaptando los IDs si es necesario) ...
-    // Por brevedad, se omiten aquí, pero debes incluirlas.
+        if (!query) {
+            showNotification('Por favor, ingrese un término de búsqueda.', 'error');
+            return;
+        }
+
+        // Por ahora, solo la búsqueda por ID está implementada en el backend.
+        if (searchType === 'name') {
+            showNotification('La búsqueda por nombre aún no está implementada.', 'error');
+            // Aquí podrías deshabilitar el botón o simplemente no hacer nada.
+            return;
+        }
+
+        const originalButtonText = searchButton.innerHTML;
+        searchButton.innerHTML = '<span class="animate-spin h-5 w-5 border-b-2 border-white rounded-full inline-block"></span>';
+        searchButton.disabled = true;
+        searchInput.disabled = true;
+
+        try {
+            // El backend solo acepta búsqueda por ID por ahora
+            const response = await fetch(`${baseUrl}/.netlify/functions/get-patient-data?id=${query}`);
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || `Error ${response.status}`);
+            }
+            const patientFullData = await response.json();
+            populateForm(patientFullData);
+            showNotification('Paciente cargado exitosamente.', 'success');
+        } catch (error) {
+            console.error('Error al buscar paciente:', error);
+            showNotification(`Error: ${error.message}`, 'error');
+            clearForm();
+        } finally {
+            searchButton.innerHTML = "Buscar";
+            searchButton.disabled = false;
+            searchInput.disabled = false;
+        }
+    }
+
+    function populateForm(data) {
+        clearForm();
+
+        if (!data || !data.demographics) {
+            showNotification("Error: Respuesta inesperada del servidor.", "error");
+            return;
+        }
+        
+        currentPatientId = data.demographics.id;
+
+        // Poblar campos de la ficha de identificación
+        const demographics = data.demographics;
+        for (const key in demographics) {
+            const element = document.getElementById(key);
+            if (element) {
+                 element.value = demographics[key];
+            }
+        }
+        // Colocar la fecha actual en el campo de consulta
+        const fechaConsultaInput = document.getElementById('fecha_consulta');
+        if (fechaConsultaInput) {
+            fechaConsultaInput.value = new Date().toLocaleDateString('es-MX', { year: 'numeric', month: '2-digit', day: '2-digit' });
+        }
+    }
+
+    function clearForm() {
+        const form = document.getElementById('clinical-record-form');
+        if (form) {
+            // Limpiar todos los inputs y textareas excepto los de búsqueda y botones
+            form.querySelectorAll('input:not([id*="-input"]), textarea').forEach(el => el.value = '');
+            form.querySelectorAll('input[type="checkbox"]').forEach(el => el.checked = false);
+            form.querySelectorAll('select').forEach(el => el.selectedIndex = 0);
+        }
+        currentPatientId = null;
+    }
     
+    async function saveConsultation() {
+       // Tu lógica de guardado existente va aquí
+       showNotification('Función de guardado pendiente de conectar.', 'success');
+    }
+
     // --- MANEJO DE EVENTOS ---
     function attachEventListeners() {
-        // Navegación del menú lateral
         document.querySelectorAll('aside a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
@@ -134,7 +207,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
-        // Acordeones de secciones
         document.querySelectorAll('.section-header').forEach(header => {
             header.addEventListener('click', () => {
                 const content = header.nextElementSibling;
@@ -143,17 +215,35 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
         
-        // Botones principales
-        // Es importante usar delegación de eventos o re-adjuntar listeners después de crear el DOM
-        document.getElementById('search-patient-btn')?.addEventListener('click', () => {
-             const patientId = document.getElementById('patient-search-input').value;
-             if (patientId) findPatient(patientId);
-             else showNotification('Por favor, ingrese un ID de paciente.', 'error');
+        // Listeners para los botones de búsqueda y guardado
+        document.getElementById('search-by-id-btn')?.addEventListener('click', () => {
+             const patientId = document.getElementById('patient-id-input').value;
+             findPatient(patientId, 'id');
         });
+        
+        document.getElementById('search-by-name-btn')?.addEventListener('click', () => {
+             const patientName = document.getElementById('patient-name-input').value;
+             findPatient(patientName, 'name');
+        });
+
         document.getElementById('save-patient-btn')?.addEventListener('click', saveConsultation);
     }
     
-    // ... (Aquí el resto de tus funciones auxiliares como showNotification, etc.)
+    function showNotification(message, type = 'success') {
+        const toast = document.getElementById('notification-toast');
+        if (!toast) return;
+        toast.textContent = message;
+        toast.className = 'fixed bottom-5 right-5 p-4 rounded-lg shadow-lg text-white font-semibold z-50'; // Reinicia clases
+        toast.classList.add(type === 'success' ? 'bg-green-500' : 'bg-red-500');
+        
+        toast.style.opacity = '1';
+        toast.style.transform = 'translateY(0)';
+
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateY(20px)';
+        }, 3000);
+    }
     
     // --- INICIAR LA APP ---
     init();
