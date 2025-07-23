@@ -1,9 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // --- ESTADO GLOBAL Y AUTENTICACIÓN (MODIFICADO) ---
+    // --- ESTADO GLOBAL Y AUTENTICACIÓN ---
     const userSpecialty = localStorage.getItem('userSpecialty');
-    const loggedInUser = localStorage.getItem('loggedInUser'); // Obtenemos el email del usuario
+    const loggedInUser = localStorage.getItem('loggedInUser');
 
-    // Si falta alguno de los dos datos, redirigir al login
     if (!userSpecialty || !loggedInUser) { 
         window.location.href = 'login.html';
         return;
@@ -26,11 +25,8 @@ document.addEventListener('DOMContentLoaded', () => {
         logoutBtn.addEventListener('click', logout);
     }
 
-    // --- FUNCIÓN setupHeader (MODIFICADA) ---
     function setupHeader() {
-        // 1. Intentar obtener la información específica del usuario desde userOverrides.
         const userOverride = clinicalRecordConfig.userOverrides?.[loggedInUser];
-        // 2. Si no existe, obtener la información general de la especialidad.
         const professional = userOverride || clinicalRecordConfig.professionalInfo[userSpecialty];
 
         if (professional) {
@@ -40,15 +36,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- FUNCIÓN logout (MODIFICADA) ---
     function logout() {
-        // Asegurarse de borrar ambos datos al cerrar sesión
         localStorage.removeItem('userSpecialty');
         localStorage.removeItem('loggedInUser'); 
         window.location.href = 'login.html';
     }
 
-    // --- CONSTRUCCIÓN DINÁMICA DEL FORMULARIO (SIN CAMBIOS) ---
+    // --- CONSTRUCCIÓN DINÁMICA DEL FORMULARIO ---
     async function buildClinicalRecordForm() {
         try {
             const sections = clinicalRecordConfig.sections;
@@ -60,12 +54,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const specialtyComponentPath = specialtyComponents[section.id];
                 let content = '';
 
-                if (commonComponentPath) {
-                    content += await fetchComponent(commonComponentPath);
-                }
-                if (specialtyComponentPath) {
-                    content += await fetchComponent(specialtyComponentPath);
-                }
+                if (commonComponentPath) content += await fetchComponent(commonComponentPath);
+                if (specialtyComponentPath) content += await fetchComponent(specialtyComponentPath);
                 
                 if (!content && section.id !== 'vista-previa') {
                     content = `<p class="text-sm text-gray-500">No hay campos definidos para esta sección.</p>`;
@@ -89,22 +79,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             let formHtml = `
                 <div class="flex flex-col lg:flex-row gap-8">
-                    <aside class="w-full lg:w-1/4">
-                        <div class="bg-white p-4 rounded-lg shadow-md sticky top-24">
-                            <h3 class="font-bold text-lg mb-4">Secciones</h3>
-                            <ul class="space-y-2 text-sm">
-                                ${sections.map(section => `<li><a href="#section-${section.id}" class="text-gray-700 hover:text-cyan-600 font-semibold">${section.title}</a></li>`).join('')}
-                            </ul>
-                        </div>
-                    </aside>
-                    <main class="w-full lg:w-3/4">
-                        <form id="clinical-record-form" onsubmit="return false;">
-                            ${sectionsHtml}
-                            <div class="flex justify-end gap-4 mt-8">
-                                <button type="button" id="save-patient-btn" class="px-6 py-2 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 transition">Guardar Consulta</button>
-                            </div>
-                        </form>
-                    </main>
+                    <aside class="w-full lg:w-1/4"><div class="bg-white p-4 rounded-lg shadow-md sticky top-24"><h3 class="font-bold text-lg mb-4">Secciones</h3><ul class="space-y-2 text-sm">${sections.map(section => `<li><a href="#section-${section.id}" class="text-gray-700 hover:text-cyan-600 font-semibold">${section.title}</a></li>`).join('')}</ul></div></aside>
+                    <main class="w-full lg:w-3/4"><form id="clinical-record-form" onsubmit="return false;">${sectionsHtml}<div class="flex justify-end gap-4 mt-8"><button type="button" id="save-patient-btn" class="px-6 py-2 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 transition">Guardar Consulta</button></div></form></main>
                 </div>
             `;
             
@@ -113,13 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch (error) {
             console.error("Error al construir el formulario:", error);
-            clinicalRecordContainer.innerHTML = `
-                <div class="text-center py-10 bg-red-50 text-red-700 p-4 rounded-lg">
-                    <h3 class="font-bold text-lg">¡Oops! Ocurrió un error</h3>
-                    <p>No se pudo cargar la estructura del expediente.</p>
-                    <p class="text-sm mt-2 font-mono">Detalle: ${error.message}</p>
-                </div>
-            `;
+            clinicalRecordContainer.innerHTML = `<div class="text-center py-10 bg-red-50 text-red-700 p-4 rounded-lg"><h3 class="font-bold text-lg">¡Oops! Ocurrió un error</h3><p>No se pudo cargar la estructura del expediente.</p><p class="text-sm mt-2 font-mono">Detalle: ${error.message}</p></div>`;
         }
     }
     
@@ -134,9 +104,31 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- LÓGICA DE LA API (PREVIAMENTE FUNCIONAL, RESTAURADA) ---
-    // --- LÓGICA DE LA API (PREVIAMENTE FUNCIONAL, RESTAURADA) ---
-       if (!response.ok) {
+    // --- LÓGICA DE LA API ---
+    async function findPatient(query, searchType) {
+        const searchButton = document.getElementById(`search-by-${searchType}-btn`);
+        const searchInput = document.getElementById(`patient-${searchType}-input`);
+
+        if (!query) {
+            showNotification('Por favor, ingrese un término de búsqueda.', 'error');
+            return;
+        }
+
+        let apiUrl = `${baseUrl}/.netlify/functions/get-patient-data?`;
+        if (searchType === 'id') {
+            apiUrl += `id=${encodeURIComponent(query)}`;
+        } else {
+            apiUrl += `name=${encodeURIComponent(query)}`;
+        }
+
+        const originalButtonText = searchButton.textContent;
+        searchButton.innerHTML = '<span class="animate-spin h-5 w-5 border-b-2 border-white rounded-full inline-block"></span>';
+        searchButton.disabled = true;
+        searchInput.disabled = true;
+
+        try {
+            const response = await fetch(apiUrl);
+            if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(errorData.message || `Error ${response.status}`);
             }
@@ -153,32 +145,6 @@ document.addEventListener('DOMContentLoaded', () => {
             searchInput.disabled = false;
         }
     }
-    async function findPatient(query, searchType) {
-        const searchButton = document.getElementById(`search-by-${searchType}-btn`);
-        const searchInput = document.getElementById(`patient-${searchType}-input`);
-
-        if (!query) {
-            showNotification('Por favor, ingrese un término de búsqueda.', 'error');
-            return;
-        }
-
-        // Construimos la URL de la API dinámicamente para buscar por ID o por nombre
-        let apiUrl = `${baseUrl}/.netlify/functions/get-patient-data?`;
-        if (searchType === 'id') {
-            apiUrl += `id=${encodeURIComponent(query)}`;
-        } else { // Asumimos que es 'name'
-            apiUrl += `name=${encodeURIComponent(query)}`;
-        }
-
-        const originalButtonText = searchButton.textContent; // Usar textContent para obtener solo el texto
-        searchButton.innerHTML = '<span class="animate-spin h-5 w-5 border-b-2 border-white rounded-full inline-block"></span>';
-        searchButton.disabled = true;
-        searchInput.disabled = true;
-
-        try {
-            // Usamos la URL construida dinámicamente
-            const response = await fetch(apiUrl);
-     
 
     function populateForm(data) {
         clearForm();
@@ -214,7 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
        showNotification('Función de guardado pendiente de conectar.', 'success');
     }
 
-    // --- MANEJO DE EVENTOS (PREVIAMENTE FUNCIONAL, RESTAURADO) ---
+    // --- MANEJO DE EVENTOS ---
     function attachEventListeners() {
         document.querySelectorAll('aside a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
