@@ -17,14 +17,14 @@
             <label class="form-label">Si falleció, ¿fue por enf. listada?</label>
             <select name="madre_fallecio_causa" class="form-select" data-list="opciones_binarias"></select>
         </div>
-        <!-- CAMBIO DE DISEÑO: Padecimientos en vertical -->
         <div class="form-group md:col-span-2">
             <label class="form-label">Padecimientos Registrados (Historial)</label>
             <textarea data-history-for="madre_padecimientos" class="history-area bg-gray-100" readonly></textarea>
         </div>
         <div class="form-group md:col-span-2">
-            <label class="form-label">Añadir Padecimiento (Consulta Actual)</label>
-            <select name="madre_padecimientos" class="form-select" data-list="padecimientos_medicina"></select>
+            <label class="form-label">Añadir Padecimiento(s) (Consulta Actual)</label>
+            <!-- CAMBIO: Añadido el atributo "multiple" -->
+            <select name="madre_padecimientos" class="form-select" data-list="padecimientos_medicina" multiple size="5"></select>
         </div>
         <div class="form-group md:col-span-2">
             <label class="form-label">Otra enfermedad</label>
@@ -51,14 +51,14 @@
             <label class="form-label">Si falleció, ¿fue por enf. listada?</label>
             <select name="padre_fallecio_causa" class="form-select" data-list="opciones_binarias"></select>
         </div>
-        <!-- CAMBIO DE DISEÑO: Padecimientos en vertical -->
         <div class="form-group md:col-span-2">
             <label class="form-label">Padecimientos Registrados (Historial)</label>
             <textarea data-history-for="padre_padecimientos" class="history-area bg-gray-100" readonly></textarea>
         </div>
         <div class="form-group md:col-span-2">
-            <label class="form-label">Añadir Padecimiento (Consulta Actual)</label>
-            <select name="padre_padecimientos" class="form-select" data-list="padecimientos_medicina"></select>
+            <label class="form-label">Añadir Padecimiento(s) (Consulta Actual)</label>
+            <!-- CAMBIO: Añadido el atributo "multiple" -->
+            <select name="padre_padecimientos" class="form-select" data-list="padecimientos_medicina" multiple size="5"></select>
         </div>
         <div class="form-group md:col-span-2">
             <label class="form-label">Otra enfermedad</label>
@@ -80,14 +80,14 @@
         <div class="form-group"><label class="form-label">Número total</label><input type="number" name="hermanos_total" class="form-input"></div>
         <div class="form-group"><label class="form-label">Hermanos vivos</label><input type="number" name="hermanos_vivos" class="form-input"></div>
         <div class="form-group"><label class="form-label">Hermanos fallecidos</label><input type="number" name="hermanos_fallecidos" class="form-input"></div>
-        <!-- CAMBIO DE DISEÑO: Padecimientos en vertical -->
         <div class="form-group md:col-span-3">
             <label class="form-label">Padecimientos Registrados (Historial)</label>
             <textarea data-history-for="hermanos_padecimientos" class="history-area bg-gray-100" readonly></textarea>
         </div>
         <div class="form-group md:col-span-3">
-            <label class="form-label">Añadir Padecimiento (Consulta Actual)</label>
-            <select name="hermanos_padecimientos" class="form-select" data-list="padecimientos_medicina"></select>
+            <label class="form-label">Añadir Padecimiento(s) (Consulta Actual)</label>
+            <!-- CAMBIO: Añadido el atributo "multiple" -->
+            <select name="hermanos_padecimientos" class="form-select" data-list="padecimientos_medicina" multiple size="5"></select>
         </div>
         <div class="form-group md:col-span-3">
             <label class="form-label">Otras enfermedades</label>
@@ -109,14 +109,14 @@
         <div class="form-group"><label class="form-label">Número total</label><input type="number" name="hijos_total" class="form-input"></div>
         <div class="form-group"><label class="form-label">Hijos vivos</label><input type="number" name="hijos_vivos" class="form-input"></div>
         <div class="form-group"><label class="form-label">Hijos fallecidos</label><input type="number" name="hijos_fallecidos" class="form-input"></div>
-        <!-- CAMBIO DE DISEÑO: Padecimientos en vertical -->
         <div class="form-group md:col-span-3">
             <label class="form-label">Padecimientos Registrados (Historial)</label>
             <textarea data-history-for="hijos_padecimientos" class="history-area bg-gray-100" readonly></textarea>
         </div>
         <div class="form-group md:col-span-3">
-            <label class="form-label">Añadir Padecimiento (Consulta Actual)</label>
-            <select name="hijos_padecimientos" class="form-select" data-list="padecimientos_medicina"></select>
+            <label class="form-label">Añadir Padecimiento(s) (Consulta Actual)</label>
+            <!-- CAMBIO: Añadido el atributo "multiple" -->
+            <select name="hijos_padecimientos" class="form-select" data-list="padecimientos_medicina" multiple size="5"></select>
         </div>
         <div class="form-group md:col-span-3">
             <label class="form-label">Otras enfermedades</label>
