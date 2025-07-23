@@ -15,23 +15,28 @@ const clinicalRecordConfig = {
         'medicina.general@sansce.com': { nombre: 'Dra. Teresa Vázquez Álvarez', cedula: 'CEDULA_TVA' }
     },
 
+    // --- SECCIÓN MODIFICADA ---
+    // Se actualiza la lista de secciones a los 11 nuevos puntos.
     sections: [
         { id: 'ficha-identificacion', title: '1. Ficha de Identificación' },
-        { id: 'antecedentes-clinicos', title: '2. Antecedentes Clínicos' },
-        { id: 'padecimiento-actual', title: '3. Padecimiento Actual' },
-        { id: 'exploracion-fisica', title: '4. Exploración Física' },
-        { id: 'estudios-gabinete', title: '5. Estudios de Laboratorio y Gabinete' },
-        { id: 'analisis-pronostico', title: '6. Análisis / Pronóstico' },
-        { id: 'diagnostico', title: '7. Diagnóstico' },
-        { id: 'plan-terapeutico', title: '8. Plan Terapéutico' },
-        { id: 'vista-previa', title: '9. Vista Previa para Imprimir' },
+        { id: 'antecedentes-heredo-familiares', title: '2. Antecedentes Heredo Familiares' },
+        { id: 'antecedentes-patologicos', title: '3. Antecedentes Personales Patológicos' },
+        { id: 'antecedentes-no-patologicos', title: '4. Antecedentes Personales No Patológicos' },
+        { id: 'padecimiento-actual', title: '5. Padecimiento Actual' },
+        { id: 'exploracion-fisica', title: '6. Exploración Física' },
+        { id: 'estudios-gabinete', title: '7. Estudios de Laboratorio y Gabinete' },
+        { id: 'diagnostico', title: '8. Diagnóstico' },
+        { id: 'analisis-pronostico', title: '9. Análisis / Pronóstico' },
+        { id: 'plan-terapeutico', title: '10. Plan Terapéutico' },
+        { id: 'vista-previa', title: '11. Vista Previa para Imprimir' },
     ],
 
+    // --- SECCIÓN MODIFICADA ---
+    // Se ajusta la asignación del componente al nuevo ID de sección.
     components: {
         common: {
             'ficha-identificacion': 'components/common-ficha-identificacion.html',
-            // --- AJUSTE AÑADIDO AQUÍ ---
-            'antecedentes-clinicos': 'components/common-antecedentes.html',
+            'antecedentes-heredo-familiares': 'components/common-antecedentes.html', // Antes era 'antecedentes-clinicos'
         },
         specialty: {
             fisioterapia: {
