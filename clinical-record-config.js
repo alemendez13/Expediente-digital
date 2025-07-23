@@ -15,8 +15,6 @@ const clinicalRecordConfig = {
         'medicina.general@sansce.com': { nombre: 'Dra. Teresa Vázquez Álvarez', cedula: 'CEDULA_TVA' }
     },
 
-    // --- SECCIÓN MODIFICADA ---
-    // Se actualiza la lista de secciones a los 11 nuevos puntos.
     sections: [
         { id: 'ficha-identificacion', title: '1. Ficha de Identificación' },
         { id: 'antecedentes-heredo-familiares', title: '2. Antecedentes Heredo Familiares' },
@@ -31,12 +29,12 @@ const clinicalRecordConfig = {
         { id: 'vista-previa', title: '11. Vista Previa para Imprimir' },
     ],
 
-    // --- SECCIÓN MODIFICADA ---
-    // Se ajusta la asignación del componente al nuevo ID de sección.
     components: {
         common: {
             'ficha-identificacion': 'components/common-ficha-identificacion.html',
-            'antecedentes-heredo-familiares': 'components/common-antecedentes.html', // Antes era 'antecedentes-clinicos'
+            'antecedentes-heredo-familiares': 'components/common-antecedentes.html',
+            // --- AJUSTE AÑADIDO AQUÍ ---
+            'antecedentes-no-patologicos': 'components/common-antecedentes-no-patologicos.html',
         },
         specialty: {
             fisioterapia: {
