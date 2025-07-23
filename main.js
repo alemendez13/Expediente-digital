@@ -82,7 +82,6 @@ document.addEventListener('DOMContentLoaded', () => {
                                     <section id="section-${section.id}" class="bg-white p-6 rounded-lg shadow-md mb-8">
                                         <div class="section-header">
                                             <h2 class="section-title">${section.title}</h2>
-                                            {/* AJUSTE CORREGIDO: La flecha de la primera sección debe apuntar hacia arriba (abierta) */}
                                             <svg class="w-6 h-6 transform transition-transform ${section.id === 'ficha-identificacion' ? 'rotate-180' : ''}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                         </div>
                                         <div class="section-content ${section.id === 'ficha-identificacion' ? 'block' : 'hidden'}">
@@ -105,8 +104,6 @@ document.addEventListener('DOMContentLoaded', () => {
             // loadDropdowns(); // Se llamará después si es necesario
 
         } catch (error) {
-            // --- AJUSTE AÑADIDO: MANEJO DE ERRORES ---
-            // Si algo falla en el bloque 'try', se ejecutará este código.
             console.error("Error al construir el formulario:", error);
             clinicalRecordContainer.innerHTML = `
                 <div class="text-center py-10 bg-red-50 text-red-700 p-4 rounded-lg">
@@ -116,12 +113,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `;
         }
-    }
-
-        
-        clinicalRecordContainer.innerHTML = formHtml;
-        attachEventListeners();
-        // loadDropdowns(); // Se llamará después si es necesario
     }
     
     async function fetchComponent(path) {
