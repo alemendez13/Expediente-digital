@@ -6,9 +6,12 @@ exports.handler = async (event) => {
   }
 
   try {
+    // Aceptamos tanto 'id' como 'name' como parámetros de búsqueda.
     const patientId = event.queryStringParameters.id;
-    if (!patientId) {
-      return { statusCode: 400, body: JSON.stringify({ message: 'Falta el ID del paciente' }) };
+    const patientName = event.queryStringParameters.name;
+
+    if (!patientId && !patientName) {
+      return { statusCode: 400, body: JSON.stringify({ message: 'Falta el ID o el nombre del paciente para la búsqueda.' }) };
     }
 
     const auth = new google.auth.GoogleAuth({
@@ -22,16 +25,25 @@ exports.handler = async (event) => {
     const sheets = google.sheets({ version: 'v4', auth });
     const spreadsheetId = process.env.GOOGLE_SHEET_ID_PATIENTS;
 
-    // --- PASO 1: OBTENER DATOS DEMOGRÁFICOS (YA FUNCIONA) ---
     const patientResponse = await sheets.spreadsheets.values.get({ spreadsheetId, range: 'Pacientes!A:P' });
     const patientRows = patientResponse.data.values || [];
-    const patientHeaders = ["id", "nombre", "fecha", "convenio", "edad", "origen", "residencia", "nacimiento", "religion", "genero", "escolaridad", "estadoCivil", "ocupacion", "email", "movil", "fijo"];
-    const patientRow = patientRows.find(row => row[0] && row[0].toUpperCase() === patientId.toUpperCase());
+    
+    // Buscamos la fila del paciente ya sea por ID o por nombre.
+    let patientRow;
+    if (patientId) {
+      // Búsqueda por ID (columna A, índice 0)
+      patientRow = patientRows.find(row => row[0] && row[0].toUpperCase() === patientId.toUpperCase());
+    } else if (patientName) {
+      // Búsqueda por Nombre (columna B, índice 1)
+      patientRow = patientRows.find(row => row[1] && row[1].toUpperCase() === patientName.toUpperCase());
+    }
 
     if (!patientRow) {
       return { statusCode: 404, body: JSON.stringify({ message: 'Paciente no encontrado' }) };
     }
-
+    
+    // El resto de la lógica usa los datos de la fila encontrada.
+    const patientHeaders = ["id", "nombre", "fecha", "convenio", "edad", "origen", "residencia", "nacimiento", "religion", "genero", "escolaridad", "estadoCivil", "ocupacion", "email", "movil", "fijo"];
     const patientDemographics = {};
     patientHeaders.forEach((header, index) => {
       let value = patientRow[index] || '';
@@ -42,26 +54,23 @@ exports.handler = async (event) => {
       patientDemographics[header] = value;
     });
 
-    // --- PASO 2: OBTENER TODO EL HISTORIAL DE CONSULTAS (LÓGICA NUEVA) ---
-    // Leer todas las consultas y todos los datos clínicos de una vez
+    // Usamos el ID de la fila encontrada para buscar el historial.
+    const foundPatientId = patientDemographics.id;
+
     const [consultationsResponse, clinicalDataResponse] = await Promise.all([
       sheets.spreadsheets.values.get({ spreadsheetId, range: 'Consultas!A:E' }),
       sheets.spreadsheets.values.get({ spreadsheetId, range: 'Datos_Clinicos!A:D' })
     ]);
 
-    // Encontrar las IDs de consulta que pertenecen a este paciente
     const allConsultations = consultationsResponse.data.values || [];
     const patientConsultationIds = allConsultations
-      .filter(row => row[1] === patientId) // Filtra por ID_Paciente
-      .map(row => ({ id: row[0], date: row[2] })); // Obtiene [ID_Consulta, Fecha]
+      .filter(row => row[1] === foundPatientId) // Filtra por el ID encontrado
+      .map(row => ({ id: row[0], date: row[2] }));
 
     const consultationIdSet = new Set(patientConsultationIds.map(c => c.id));
-
-    // Filtrar los datos clínicos que pertenecen a esas consultas
     const allClinicalData = clinicalDataResponse.data.values || [];
-    const patientClinicalData = allClinicalData.filter(row => consultationIdSet.has(row[1])); // Filtra por ID_Consulta
+    const patientClinicalData = allClinicalData.filter(row => consultationIdSet.has(row[1]));
 
-    // Agrupar los datos por consulta
     const historyMap = new Map();
     patientConsultationIds.forEach(consult => {
       historyMap.set(consult.id, { date: consult.date, data: {} });
@@ -78,10 +87,9 @@ exports.handler = async (event) => {
 
     const history = Array.from(historyMap.values());
 
-    // --- PASO 3: DEVOLVER EL PAYLOAD COMPLETO ---
     const responsePayload = {
       demographics: patientDemographics,
-      history: history // Ahora el historial contiene datos reales
+      history: history
     };
 
     return {
