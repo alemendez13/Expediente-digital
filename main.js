@@ -135,28 +135,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- LÓGICA DE LA API (PREVIAMENTE FUNCIONAL, RESTAURADA) ---
-    async function findPatient(query, searchType) {
-        const searchButton = document.getElementById(`search-by-${searchType}-btn`);
-        const searchInput = document.getElementById(`patient-${searchType}-input`);
-
-        if (!query) {
-            showNotification('Por favor, ingrese un término de búsqueda.', 'error');
-            return;
-        }
-
-        if (searchType === 'name') {
-            showNotification('La búsqueda por nombre aún no está implementada.', 'error');
-            return;
-        }
-
-        const originalButtonText = searchButton.innerHTML;
-        searchButton.innerHTML = '<span class="animate-spin h-5 w-5 border-b-2 border-white rounded-full inline-block"></span>';
-        searchButton.disabled = true;
-        searchInput.disabled = true;
-
-        try {
-            const response = await fetch(`${baseUrl}/.netlify/functions/get-patient-data?id=${query}`);
-            if (!response.ok) {
+    // --- LÓGICA DE LA API (PREVIAMENTE FUNCIONAL, RESTAURADA) ---
+       if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(errorData.message || `Error ${response.status}`);
             }
@@ -168,11 +148,37 @@ document.addEventListener('DOMContentLoaded', () => {
             showNotification(`Error: ${error.message}`, 'error');
             clearForm();
         } finally {
-            searchButton.innerHTML = "Buscar";
+            searchButton.innerHTML = originalButtonText;
             searchButton.disabled = false;
             searchInput.disabled = false;
         }
     }
+    async function findPatient(query, searchType) {
+        const searchButton = document.getElementById(`search-by-${searchType}-btn`);
+        const searchInput = document.getElementById(`patient-${searchType}-input`);
+
+        if (!query) {
+            showNotification('Por favor, ingrese un término de búsqueda.', 'error');
+            return;
+        }
+
+        // Construimos la URL de la API dinámicamente para buscar por ID o por nombre
+        let apiUrl = `${baseUrl}/.netlify/functions/get-patient-data?`;
+        if (searchType === 'id') {
+            apiUrl += `id=${encodeURIComponent(query)}`;
+        } else { // Asumimos que es 'name'
+            apiUrl += `name=${encodeURIComponent(query)}`;
+        }
+
+        const originalButtonText = searchButton.textContent; // Usar textContent para obtener solo el texto
+        searchButton.innerHTML = '<span class="animate-spin h-5 w-5 border-b-2 border-white rounded-full inline-block"></span>';
+        searchButton.disabled = true;
+        searchInput.disabled = true;
+
+        try {
+            // Usamos la URL construida dinámicamente
+            const response = await fetch(apiUrl);
+     
 
     function populateForm(data) {
         clearForm();
