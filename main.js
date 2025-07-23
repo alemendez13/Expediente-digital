@@ -152,7 +152,10 @@ document.addEventListener('DOMContentLoaded', () => {
             showNotification("Error: Respuesta inesperada del servidor.", "error");
             return;
         }
+        
         currentPatientId = data.demographics.id;
+
+        // 1. Poblar campos de la ficha de identificación (demográficos)
         const demographics = data.demographics;
         for (const key in demographics) {
             const element = document.getElementById(key);
@@ -160,9 +163,47 @@ document.addEventListener('DOMContentLoaded', () => {
                  element.value = demographics[key];
             }
         }
+        
         const fechaConsultaInput = document.getElementById('fecha_consulta');
         if (fechaConsultaInput) {
             fechaConsultaInput.value = new Date().toLocaleDateString('es-MX', { year: 'numeric', month: '2-digit', day: '2-digit' });
+        }
+
+        // 2. Procesar y mostrar el historial clínico
+        const history = data.history || [];
+        
+        // Poblar las áreas de historial (textareas)
+        const historyAreas = document.querySelectorAll('[data-history-for]');
+        historyAreas.forEach(area => {
+            const fieldName = area.dataset.historyFor;
+            let historyContent = '';
+            history.forEach(consult => {
+                if (consult.data[fieldName]) {
+                    // Formatear la fecha para que sea legible
+                    const consultDate = new Date(consult.date).toLocaleDateString('es-MX', {day: '2-digit', month: '2-digit', year: 'numeric'});
+                    historyContent += `${consultDate}: ${consult.data[fieldName]}\n`;
+                }
+            });
+            area.value = historyContent || 'Sin historial registrado para este campo.';
+        });
+
+        // 3. Poblar los campos de registro con el valor más reciente del historial
+        const latestValues = {};
+        history.forEach(consult => {
+            // Se sobreescriben los valores con los de la consulta más reciente
+            Object.assign(latestValues, consult.data);
+        });
+        
+        for(const field in latestValues){
+            const inputElement = document.querySelector(`[name="${field}"]`);
+            if(inputElement){
+                if(inputElement.type === 'checkbox'){
+                    inputElement.checked = latestValues[field] === 'Sí';
+                } else if (inputElement.tagName.toLowerCase() !== 'select') {
+                    // No establecer el valor para selects, ya que son para añadir nuevos padecimientos
+                    inputElement.value = latestValues[field];
+                }
+            }
         }
     }
 
@@ -208,8 +249,35 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         document.getElementById('save-patient-btn')?.addEventListener('click', saveConsultation);
+
+        // --- AJUSTE AÑADIDO AQUÍ ---
+        // Llamar a la función para cargar las listas desplegables
+        loadDropdowns();
     }
-    
+
+    async function loadDropdowns() {
+        try {
+            const response = await fetch(`${baseUrl}/.netlify/functions/get-dropdown-lists`);
+            if (!response.ok) throw new Error('No se pudieron cargar las listas desplegables.');
+            
+            const lists = await response.json();
+            
+            for (const listName in lists) {
+                const selectElements = document.querySelectorAll(`select[data-list="${listName}"]`);
+                selectElements.forEach(select => {
+                    const options = lists[listName];
+                    select.innerHTML = '<option value="">Seleccione para añadir...</option>'; // Texto más claro
+                    options.forEach(option => {
+                        select.innerHTML += `<option value="${option}">${option}</option>`;
+                    });
+                });
+            }
+        } catch (error) {
+            console.error('Error al cargar listas desplegables:', error);
+            showNotification(error.message, 'error');
+        }
+    }
+        
     function showNotification(message, type = 'success') {
         const toast = document.getElementById('notification-toast');
         if (!toast) return;

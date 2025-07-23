@@ -10,7 +10,6 @@ const clinicalRecordConfig = {
         fisioterapia: { nombre: 'Lic. en Fisioterapia', cedula: 'CEDULA_FISIO' },
     },
 
-    // --- AJUSTE AÑADIDO AQUÍ ---
     // Anulaciones específicas por correo de usuario.
     userOverrides: {
         'medicina.general@sansce.com': { nombre: 'Dra. Teresa Vázquez Álvarez', cedula: 'CEDULA_TVA' }
@@ -31,6 +30,8 @@ const clinicalRecordConfig = {
     components: {
         common: {
             'ficha-identificacion': 'components/common-ficha-identificacion.html',
+            // --- AJUSTE AÑADIDO AQUÍ ---
+            'antecedentes-clinicos': 'components/common-antecedentes.html',
         },
         specialty: {
             fisioterapia: {
