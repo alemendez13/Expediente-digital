@@ -218,7 +218,79 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     async function saveConsultation() {
-       showNotification('Función de guardado pendiente de conectar.', 'success');
+        if (!currentPatientId) {
+            showNotification('Primero debe cargar un paciente.', 'error');
+            return;
+        }
+
+        const saveButton = document.getElementById('save-patient-btn');
+        const originalButtonText = saveButton.textContent;
+        saveButton.innerHTML = '<span class="animate-spin h-5 w-5 border-b-2 border-white rounded-full inline-block"></span> Guardando...';
+        saveButton.disabled = true;
+
+        try {
+            const form = document.getElementById('clinical-record-form');
+            const formData = new FormData(form);
+            const dataToSave = {};
+
+            // Recolectar todos los datos del formulario
+            formData.forEach((value, key) => {
+                if (dataToSave[key]) {
+                    if (!Array.isArray(dataToSave[key])) {
+                        dataToSave[key] = [dataToSave[key]];
+                    }
+                    dataToSave[key].push(value);
+                } else {
+                    dataToSave[key] = value;
+                }
+            });
+            
+            // Unir valores de selects múltiples en un solo string
+             for (const key in dataToSave) {
+                if (Array.isArray(dataToSave[key])) {
+                    dataToSave[key] = dataToSave[key].join(', ');
+                }
+            }
+
+
+            // --- AJUSTE CLAVE AÑADIDO AQUÍ ---
+            // Crear el campo histórico para el IPAQ combinando el score y la interpretación
+            const ipaqScore = document.getElementById('apnp_ipaq_score')?.value || 'N/A';
+            const ipaqInterpretation = document.getElementById('apnp_ipaq_interpretacion')?.value || 'N/A';
+            dataToSave['apnp_ipaq_historial'] = `Puntuación: ${ipaqScore} - ${ipaqInterpretation}`;
+            // --- FIN DEL AJUSTE ---
+
+            const payload = {
+                patientId: currentPatientId,
+                specialty: localStorage.getItem('userSpecialty'),
+                professionalId: localStorage.getItem('loggedInUser'),
+                formData: dataToSave,
+            };
+
+            const response = await fetch(`${baseUrl}/.netlify/functions/save-patient-data`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Error del servidor');
+            }
+
+            const result = await response.json();
+            showNotification(result.message, 'success');
+            
+            // Opcional: Recargar los datos del paciente para ver el historial actualizado
+            findPatient(currentPatientId, 'id');
+
+        } catch (error) {
+            console.error('Error al guardar la consulta:', error);
+            showNotification(`Error: ${error.message}`, 'error');
+        } finally {
+            saveButton.innerHTML = originalButtonText;
+            saveButton.disabled = false;
+        }
     }
 
     // --- MANEJO DE EVENTOS ---
