@@ -257,52 +257,73 @@ document.addEventListener('DOMContentLoaded', () => {
         // Cargar listas desplegables
         loadDropdowns();
 
-        // --- AJUSTE AÑADIDO AQUÍ: Lógica para cálculos automáticos en las 5 filas ---
+        // --- Lógica para cálculos automáticos en la sección de Actividad Física ---
         
-        // Mapa de intensidad de actividades (basado en tu documento)
         const intensityMap = {
-            'Cargar peso liviano': 'Leve',
-            'Tai chi': 'Moderada',
-            'Tenis': 'Moderada',
-            'Bicicleta a ritmo leve': 'Moderada',
-            'Baile': 'Moderada',
-            'Basketball': 'Vigorosa',
-            'Bicicleta a ritmo moderado o rápido': 'Vigorosa',
-            'Correr': 'Vigorosa',
-            'Ejercicio aeróbico': 'Vigorosa',
-            'Fronton/Padel': 'Vigorosa',
-            'Fútbol': 'Vigorosa',
-            'Natación': 'Vigorosa',
-            'Peso pesado': 'Vigorosa',
-            'Trotar': 'Vigorosa',
-            'Caminata': 'Leve',
-            'Ninguna': 'Ninguna'
+            'Cargar peso liviano': 'Leve', 'Tai chi': 'Moderada', 'Tenis': 'Moderada',
+            'Bicicleta a ritmo leve': 'Moderada', 'Baile': 'Moderada', 'Basketball': 'Vigorosa',
+            'Bicicleta a ritmo moderado o rápido': 'Vigorosa', 'Correr': 'Vigorosa',
+            'Ejercicio aeróbico': 'Vigorosa', 'Fronton/Padel': 'Vigorosa', 'Fútbol': 'Vigorosa',
+            'Natación': 'Vigorosa', 'Peso pesado': 'Vigorosa', 'Trotar': 'Vigorosa',
+            'Caminata': 'Leve', 'Ninguna': 'Ninguna'
         };
 
-        // Itera sobre las 5 filas de actividad física
+        // --- AJUSTE AÑADIDO AQUÍ: Mapa para los multiplicadores de IPAQ ---
+        const ipaqMultiplier = {
+            'Vigorosa': 8,
+            'Moderada': 4,
+            'Leve': 0, // O el valor que corresponda
+            'Ninguna': 0
+        };
+
+        // --- AJUSTE AÑADIDO AQUÍ: Función para calcular el puntaje total ---
+        function updateIpaqScore() {
+            let totalScore = 0;
+            for (let i = 1; i <= 5; i++) {
+                const intensidad = document.getElementById(`apnp_actividad_intensidad_${i}`)?.value;
+                const dias = parseFloat(document.querySelector(`[name="apnp_actividad_dias_${i}"]`)?.value) || 0;
+                const minutos = parseFloat(document.getElementById(`apnp_actividad_minutos_${i}`)?.value) || 0;
+                
+                const multiplier = ipaqMultiplier[intensidad] || 0;
+                totalScore += (dias * minutos) * multiplier;
+            }
+            const scoreInput = document.getElementById('apnp_ipaq_score');
+            if(scoreInput) scoreInput.value = totalScore;
+        }
+
+        // Itera sobre las 5 filas para asignar los event listeners
         for (let i = 1; i <= 5; i++) {
             const horasInput = document.getElementById(`apnp_actividad_horas_${i}`);
             const minutosInput = document.getElementById(`apnp_actividad_minutos_${i}`);
             const actividadSelect = document.querySelector(`[name="apnp_actividad_nombre_${i}"]`);
             const intensidadInput = document.getElementById(`apnp_actividad_intensidad_${i}`);
+            const diasInput = document.querySelector(`[name="apnp_actividad_dias_${i}"]`);
 
             // 1. Lógica para el cálculo de minutos
             if (horasInput && minutosInput) {
-                horasInput.addEventListener('input', (e) => {
-                    const horas = parseFloat(e.target.value);
+                horasInput.addEventListener('input', () => {
+                    const horas = parseFloat(horasInput.value);
                     minutosInput.value = !isNaN(horas) ? horas * 60 : '';
+                    updateIpaqScore(); // Recalcular el total cuando los minutos cambian
                 });
             }
 
             // 2. Lógica para autocompletar la intensidad
             if (actividadSelect && intensidadInput) {
-                actividadSelect.addEventListener('change', (e) => {
-                    const selectedActivity = e.target.value;
+                actividadSelect.addEventListener('change', () => {
+                    const selectedActivity = actividadSelect.value;
                     intensidadInput.value = intensityMap[selectedActivity] || '';
+                    updateIpaqScore(); // Recalcular el total cuando la intensidad cambia
                 });
+            }
+
+            // 3. Lógica para recalcular al cambiar los días
+            if(diasInput) {
+                diasInput.addEventListener('input', updateIpaqScore);
             }
         }
     }
+
 
     async function loadDropdowns() {
         try {
