@@ -10,7 +10,7 @@
     
     <!-- Contenedor de la tabla de actividades -->
     <div class="mt-4 text-sm space-y-4">
-        <!-- Encabezados de la tabla -->
+        <!-- Encabezados -->
         <div class="grid grid-cols-12 gap-2 font-semibold text-gray-600 px-2">
             <div class="col-span-4">¿Qué realiza?</div>
             <div class="col-span-2">Intensidad</div>
@@ -24,7 +24,8 @@
             <div class="col-span-4"><select name="apnp_actividad_nombre_1" class="form-select" data-list="actividad_fisica"><option value="">Seleccione...</option></select></div>
             <div class="col-span-2"><input type="text" name="apnp_actividad_intensidad_1" id="apnp_actividad_intensidad_1" class="form-input bg-gray-200" readonly></div>
             <div class="col-span-2"><input type="number" name="apnp_actividad_dias_1" class="form-input"></div>
-            <div class="col-span-2"><input type="number" name="apnp_actividad_horas_1" class="form-input activity-hours"></div>
+            <!-- AJUSTE: Se añadió el ID -->
+            <div class="col-span-2"><input type="number" name="apnp_actividad_horas_1" id="apnp_actividad_horas_1" class="form-input activity-hours"></div>
             <div class="col-span-2"><input type="number" name="apnp_actividad_minutos_1" id="apnp_actividad_minutos_1" class="form-input bg-gray-200" readonly></div>
         </div>
         <!-- Fila de Actividad 2 -->
@@ -32,7 +33,8 @@
              <div class="col-span-4"><select name="apnp_actividad_nombre_2" class="form-select" data-list="actividad_fisica"><option value="">Seleccione...</option></select></div>
             <div class="col-span-2"><input type="text" name="apnp_actividad_intensidad_2" id="apnp_actividad_intensidad_2" class="form-input bg-gray-200" readonly></div>
             <div class="col-span-2"><input type="number" name="apnp_actividad_dias_2" class="form-input"></div>
-            <div class="col-span-2"><input type="number" name="apnp_actividad_horas_2" class="form-input activity-hours"></div>
+            <!-- AJUSTE: Se añadió el ID -->
+            <div class="col-span-2"><input type="number" name="apnp_actividad_horas_2" id="apnp_actividad_horas_2" class="form-input activity-hours"></div>
             <div class="col-span-2"><input type="number" name="apnp_actividad_minutos_2" id="apnp_actividad_minutos_2" class="form-input bg-gray-200" readonly></div>
         </div>
         <!-- Fila de Actividad 3 -->
@@ -40,7 +42,8 @@
              <div class="col-span-4"><select name="apnp_actividad_nombre_3" class="form-select" data-list="actividad_fisica"><option value="">Seleccione...</option></select></div>
             <div class="col-span-2"><input type="text" name="apnp_actividad_intensidad_3" id="apnp_actividad_intensidad_3" class="form-input bg-gray-200" readonly></div>
             <div class="col-span-2"><input type="number" name="apnp_actividad_dias_3" class="form-input"></div>
-            <div class="col-span-2"><input type="number" name="apnp_actividad_horas_3" class="form-input activity-hours"></div>
+            <!-- AJUSTE: Se añadió el ID -->
+            <div class="col-span-2"><input type="number" name="apnp_actividad_horas_3" id="apnp_actividad_horas_3" class="form-input activity-hours"></div>
             <div class="col-span-2"><input type="number" name="apnp_actividad_minutos_3" id="apnp_actividad_minutos_3" class="form-input bg-gray-200" readonly></div>
         </div>
         <!-- Fila de Actividad 4 -->
@@ -48,7 +51,8 @@
              <div class="col-span-4"><select name="apnp_actividad_nombre_4" class="form-select" data-list="actividad_fisica"><option value="">Seleccione...</option></select></div>
             <div class="col-span-2"><input type="text" name="apnp_actividad_intensidad_4" id="apnp_actividad_intensidad_4" class="form-input bg-gray-200" readonly></div>
             <div class="col-span-2"><input type="number" name="apnp_actividad_dias_4" class="form-input"></div>
-            <div class="col-span-2"><input type="number" name="apnp_actividad_horas_4" class="form-input activity-hours"></div>
+            <!-- AJUSTE: Se añadió el ID -->
+            <div class="col-span-2"><input type="number" name="apnp_actividad_horas_4" id="apnp_actividad_horas_4" class="form-input activity-hours"></div>
             <div class="col-span-2"><input type="number" name="apnp_actividad_minutos_4" id="apnp_actividad_minutos_4" class="form-input bg-gray-200" readonly></div>
         </div>
         <!-- Fila de Actividad 5 -->
@@ -56,19 +60,19 @@
              <div class="col-span-4"><select name="apnp_actividad_nombre_5" class="form-select" data-list="actividad_fisica"><option value="">Seleccione...</option></select></div>
             <div class="col-span-2"><input type="text" name="apnp_actividad_intensidad_5" id="apnp_actividad_intensidad_5" class="form-input bg-gray-200" readonly></div>
             <div class="col-span-2"><input type="number" name="apnp_actividad_dias_5" class="form-input"></div>
-            <div class="col-span-2"><input type="number" name="apnp_actividad_horas_5" class="form-input activity-hours"></div>
+            <!-- AJUSTE: Se añadió el ID -->
+            <div class="col-span-2"><input type="number" name="apnp_actividad_horas_5" id="apnp_actividad_horas_5" class="form-input activity-hours"></div>
             <div class="col-span-2"><input type="number" name="apnp_actividad_minutos_5" id="apnp_actividad_minutos_5" class="form-input bg-gray-200" readonly></div>
         </div>
     </div>
     
-    <!-- Puntuación Total e Interpretación -->
+    <!-- Puntuación e Interpretación -->
     <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
         <div>
             <label for="apnp_ipaq_score" class="form-label">Puntuación IPAQ Total (MET min/sem)</label>
             <input type="text" id="apnp_ipaq_score" name="apnp_ipaq_score" class="form-input bg-gray-200 font-bold" readonly>
         </div>
         <div>
-            <!-- AJUSTE: Nuevo campo de Interpretación -->
             <label for="apnp_ipaq_interpretacion" class="form-label">Interpretación</label>
             <textarea id="apnp_ipaq_interpretacion" name="apnp_ipaq_interpretacion" class="form-input bg-gray-200 font-semibold" readonly rows="3"></textarea>
         </div>
