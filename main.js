@@ -257,19 +257,50 @@ document.addEventListener('DOMContentLoaded', () => {
         // Cargar listas desplegables
         loadDropdowns();
 
-        // --- AJUSTE AÑADIDO AQUÍ: Lógica para cálculos automáticos ---
-        const horasInput = document.getElementById('apnp_actividad_horas');
-        const minutosInput = document.getElementById('apnp_actividad_minutos');
+        // --- AJUSTE AÑADIDO AQUÍ: Lógica para cálculos automáticos en las 5 filas ---
+        
+        // Mapa de intensidad de actividades (basado en tu documento)
+        const intensityMap = {
+            'Cargar peso liviano': 'Leve',
+            'Tai chi': 'Moderada',
+            'Tenis': 'Moderada',
+            'Bicicleta a ritmo leve': 'Moderada',
+            'Baile': 'Moderada',
+            'Basketball': 'Vigorosa',
+            'Bicicleta a ritmo moderado o rápido': 'Vigorosa',
+            'Correr': 'Vigorosa',
+            'Ejercicio aeróbico': 'Vigorosa',
+            'Fronton/Padel': 'Vigorosa',
+            'Fútbol': 'Vigorosa',
+            'Natación': 'Vigorosa',
+            'Peso pesado': 'Vigorosa',
+            'Trotar': 'Vigorosa',
+            'Caminata': 'Leve',
+            'Ninguna': 'Ninguna'
+        };
 
-        if (horasInput && minutosInput) {
-            horasInput.addEventListener('input', (e) => {
-                const horas = parseFloat(e.target.value);
-                if (!isNaN(horas)) {
-                    minutosInput.value = horas * 60;
-                } else {
-                    minutosInput.value = '';
-                }
-            });
+        // Itera sobre las 5 filas de actividad física
+        for (let i = 1; i <= 5; i++) {
+            const horasInput = document.getElementById(`apnp_actividad_horas_${i}`);
+            const minutosInput = document.getElementById(`apnp_actividad_minutos_${i}`);
+            const actividadSelect = document.querySelector(`[name="apnp_actividad_nombre_${i}"]`);
+            const intensidadInput = document.getElementById(`apnp_actividad_intensidad_${i}`);
+
+            // 1. Lógica para el cálculo de minutos
+            if (horasInput && minutosInput) {
+                horasInput.addEventListener('input', (e) => {
+                    const horas = parseFloat(e.target.value);
+                    minutosInput.value = !isNaN(horas) ? horas * 60 : '';
+                });
+            }
+
+            // 2. Lógica para autocompletar la intensidad
+            if (actividadSelect && intensidadInput) {
+                actividadSelect.addEventListener('change', (e) => {
+                    const selectedActivity = e.target.value;
+                    intensidadInput.value = intensityMap[selectedActivity] || '';
+                });
+            }
         }
     }
 
