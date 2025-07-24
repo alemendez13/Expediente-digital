@@ -94,16 +94,17 @@
 <!-- 2. Sedentarismo -->
 <div class="p-4 border rounded-lg mb-4 bg-white">
     <h3 class="subsection-title">Sedentarismo</h3>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4 text-sm">
-        <div>
+    <!-- AJUSTE: Reestructurado con grid para alinear los campos -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 mt-4 text-sm">
+        <div class="form-group">
             <label for="apnp_sedentarismo_horas" class="form-label">Horas al día</label>
             <input type="number" id="apnp_sedentarismo_horas" name="apnp_sedentarismo_horas" class="form-input">
         </div>
-        <div>
+        <div class="form-group">
             <label for="apnp_sedentarismo_dias" class="form-label">Días por semana</label>
             <input type="number" id="apnp_sedentarismo_dias" name="apnp_sedentarismo_dias" class="form-input">
         </div>
-        <div class="md:col-span-3">
+        <div class="md:col-span-2">
             <label for="apnp_sedentarismo_desc" class="form-label">Descripción</label>
             <textarea data-history-for="apnp_sedentarismo_desc" class="history-area bg-gray-100" readonly></textarea>
             <textarea id="apnp_sedentarismo_desc" name="apnp_sedentarismo_desc" class="form-textarea mt-1" rows="2" placeholder="Describa actividades sedentarias..."></textarea>
@@ -212,23 +213,47 @@
     </div>
 </div>
 
-<!-- 7. Contexto Socio-demográfico y Socio-económico -->
+<!-- 7. Contexto Social -->
 <div class="p-4 border rounded-lg mb-4 bg-white">
     <h3 class="subsection-title">Contexto Social</h3>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 text-sm">
-        <!-- Contexto Socio-demográfico -->
-        <div>
-            <label for="apnp_contexto_demografico" class="form-label">Contexto Socio-demográfico</label>
-            <select id="apnp_contexto_demografico" name="apnp_contexto_demografico" class="form-select" data-list="Tipo"></select>
-            <textarea data-history-for="apnp_contexto_demo_desc" class="history-area bg-gray-100 mt-2" readonly></textarea>
-            <textarea id="apnp_contexto_demo_desc" name="apnp_contexto_demo_desc" class="form-textarea mt-1" rows="2" placeholder="Descripción del contexto..."></textarea>
+    
+    <!-- Contenedor principal con dos columnas -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 mt-4 text-sm">
+        
+        <!-- Columna Izquierda: Contexto Socio-demográfico -->
+        <div class="space-y-4">
+            <div>
+                <label for="apnp_contexto_demografico" class="form-label font-semibold text-gray-600">Contexto Socio-demográfico</label>
+                <select id="apnp_contexto_demografico" name="apnp_contexto_demografico" class="form-select" data-list="Tipo">
+                    <option value="">Seleccione tipo...</option>
+                </select>
+            </div>
+            <div>
+                 <label class="form-label">Histórico Descripción</label>
+                <textarea data-history-for="apnp_contexto_demo_desc" class="history-area bg-gray-100" readonly></textarea>
+            </div>
+            <div>
+                <label for="apnp_contexto_demo_desc" class="form-label">Descripción (Consulta Actual)</label>
+                <textarea id="apnp_contexto_demo_desc" name="apnp_contexto_demo_desc" class="form-textarea mt-1" rows="2" placeholder="Describa detalles..."></textarea>
+            </div>
         </div>
-        <!-- Contexto Socio-económico -->
-        <div>
-            <label for="apnp_contexto_economico" class="form-label">Contexto Socio-económico</label>
-            <select id="apnp_contexto_economico" name="apnp_contexto_economico" class="form-select" data-list="Nivel económico"></select>
-            <textarea data-history-for="apnp_contexto_econ_desc" class="history-area bg-gray-100 mt-2" readonly></textarea>
-            <textarea id="apnp_contexto_econ_desc" name="apnp_contexto_econ_desc" class="form-textarea mt-1" rows="2" placeholder="Descripción del contexto..."></textarea>
+
+        <!-- Columna Derecha: Contexto Socio-económico -->
+        <div class="space-y-4">
+            <div>
+                <label for="apnp_contexto_economico" class="form-label font-semibold text-gray-600">Contexto Socio-económico</label>
+                <select id="apnp_contexto_economico" name="apnp_contexto_economico" class="form-select" data-list="Nivel económico">
+                     <option value="">Seleccione nivel...</option>
+                </select>
+            </div>
+            <div>
+                <label class="form-label">Histórico Descripción</label>
+                <textarea data-history-for="apnp_contexto_econ_desc" class="history-area bg-gray-100" readonly></textarea>
+            </div>
+             <div>
+                <label for="apnp_contexto_econ_desc" class="form-label">Descripción (Consulta Actual)</label>
+                <textarea id="apnp_contexto_econ_desc" name="apnp_contexto_econ_desc" class="form-textarea mt-1" rows="2" placeholder="Describa detalles..."></textarea>
+            </div>
         </div>
     </div>
 </div>
