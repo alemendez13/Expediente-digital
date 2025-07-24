@@ -66,18 +66,30 @@
         </div>
     </div>
     
-    <!-- Puntuación e Interpretación -->
-    <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+    <!-- Puntuación, Historial e Interpretación -->
+    <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+        <!-- AJUSTE: Nuevo campo para el historial -->
         <div>
-            <label for="apnp_ipaq_score" class="form-label">Puntuación IPAQ Total (MET min/sem)</label>
+            <label for="apnp_ipaq_historial" class="form-label">Historial de Puntuación</label>
+            <textarea 
+                data-history-for="apnp_ipaq_historial" 
+                id="apnp_ipaq_historial" 
+                class="history-area bg-gray-100" 
+                readonly 
+                rows="4">
+            </textarea>
+        </div>
+        
+        <div>
+            <label for="apnp_ipaq_score" class="form-label">Puntuación IPAQ (Consulta Actual)</label>
             <input type="text" id="apnp_ipaq_score" name="apnp_ipaq_score" class="form-input bg-gray-200 font-bold" readonly>
         </div>
+        
         <div>
-            <label for="apnp_ipaq_interpretacion" class="form-label">Interpretación</label>
-            <textarea id="apnp_ipaq_interpretacion" name="apnp_ipaq_interpretacion" class="form-input bg-gray-200 font-semibold" readonly rows="3"></textarea>
+            <label for="apnp_ipaq_interpretacion" class="form-label">Interpretación (Consulta Actual)</label>
+            <textarea id="apnp_ipaq_interpretacion" name="apnp_ipaq_interpretacion" class="form-input bg-gray-200 font-semibold" readonly rows="4"></textarea>
         </div>
     </div>
-</div>
 
 <!-- 2. Sedentarismo -->
 <div class="p-4 border rounded-lg mb-4 bg-white">
