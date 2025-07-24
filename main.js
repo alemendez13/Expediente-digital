@@ -294,98 +294,148 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- MANEJO DE EVENTOS ---
-    function attachEventListeners() {
-        // ... (código existente de navegación, acordeones, búsqueda, etc. se mantiene igual) ...
-        document.querySelectorAll('aside a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                document.querySelector(this.getAttribute('href'))?.scrollIntoView({ behavior: 'smooth' });
-            });
+function attachEventListeners() {
+    // ... (se mantiene todo el código existente de navegación, acordeones, búsqueda, guardado y carga de listas) ...
+    document.querySelectorAll('aside a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            document.querySelector(this.getAttribute('href'))?.scrollIntoView({ behavior: 'smooth' });
         });
-        document.querySelectorAll('.section-header').forEach(header => {
-            header.addEventListener('click', () => {
-                const content = header.nextElementSibling;
-                content.classList.toggle('hidden');
-                header.querySelector('svg')?.classList.toggle('rotate-180');
-            });
+    });
+    document.querySelectorAll('.section-header').forEach(header => {
+        header.addEventListener('click', () => {
+            const content = header.nextElementSibling;
+            content.classList.toggle('hidden');
+            header.querySelector('svg')?.classList.toggle('rotate-180');
         });
-        document.getElementById('search-by-id-btn')?.addEventListener('click', () => {
-             const patientId = document.getElementById('patient-id-input').value;
-             findPatient(patientId, 'id');
-        });
-        document.getElementById('search-by-name-btn')?.addEventListener('click', () => {
-             const patientName = document.getElementById('patient-name-input').value;
-             findPatient(patientName, 'name');
-        });
-        document.getElementById('save-patient-btn')?.addEventListener('click', saveConsultation);
-        loadDropdowns();
+    });
+    document.getElementById('search-by-id-btn')?.addEventListener('click', () => {
+         const patientId = document.getElementById('patient-id-input').value;
+         findPatient(patientId, 'id');
+    });
+    document.getElementById('search-by-name-btn')?.addEventListener('click', () => {
+         const patientName = document.getElementById('patient-name-input').value;
+         findPatient(patientName, 'name');
+    });
+    document.getElementById('save-patient-btn')?.addEventListener('click', saveConsultation);
+    loadDropdowns();
 
-        // --- Lógica para cálculos automáticos en la sección de Actividad Física ---
-        const intensityMap = {
-            'Cargar peso liviano': 'Leve', 'Tai chi': 'Moderada', 'Tenis': 'Moderada',
-            'Bicicleta a ritmo leve': 'Moderada', 'Baile': 'Moderada', 'Basketball': 'Vigorosa',
-            'Bicicleta a ritmo moderado o rápido': 'Vigorosa', 'Correr': 'Vigorosa',
-            'Ejercicio aeróbico': 'Vigorosa', 'Fronton/Padel': 'Vigorosa', 'Fútbol': 'Vigorosa',
-            'Natación': 'Vigorosa', 'Peso pesado': 'Vigorosa', 'Trotar': 'Vigorosa',
-            'Caminata': 'Leve', 'Ninguna': 'Ninguna'
-        };
-        const ipaqMultiplier = { 'Vigorosa': 8, 'Moderada': 4, 'Leve': 0, 'Ninguna': 0 };
+    // --- Lógica para cálculos de Actividad Física (sin cambios) ---
+    const intensityMap = {
+        'Cargar peso liviano': 'Leve', 'Tai chi': 'Moderada', 'Tenis': 'Moderada',
+        'Bicicleta a ritmo leve': 'Moderada', 'Baile': 'Moderada', 'Basketball': 'Vigorosa',
+        'Bicicleta a ritmo moderado o rápido': 'Vigorosa', 'Correr': 'Vigorosa',
+        'Ejercicio aeróbico': 'Vigorosa', 'Fronton/Padel': 'Vigorosa', 'Fútbol': 'Vigorosa',
+        'Natación': 'Vigorosa', 'Peso pesado': 'Vigorosa', 'Trotar': 'Vigorosa',
+        'Caminata': 'Leve', 'Ninguna': 'Ninguna'
+    };
+    const ipaqMultiplier = { 'Vigorosa': 8, 'Moderada': 4, 'Leve': 0, 'Ninguna': 0 };
 
-        function updateIpaqScore() {
-            let totalScore = 0;
-            for (let i = 1; i <= 5; i++) {
-                const intensidad = document.getElementById(`apnp_actividad_intensidad_${i}`)?.value;
-                const dias = parseFloat(document.querySelector(`[name="apnp_actividad_dias_${i}"]`)?.value) || 0;
-                const minutos = parseFloat(document.getElementById(`apnp_actividad_minutos_${i}`)?.value) || 0;
-                const multiplier = ipaqMultiplier[intensidad] || 0;
-                totalScore += (dias * minutos) * multiplier;
-            }
-            
-            const scoreInput = document.getElementById('apnp_ipaq_score');
-            const interpretationInput = document.getElementById('apnp_ipaq_interpretacion');
-
-            if (scoreInput) scoreInput.value = totalScore;
-            
-            // --- AJUSTE AÑADIDO AQUÍ: Lógica de Interpretación ---
-            if (interpretationInput) {
-                if (totalScore < 163) {
-                    interpretationInput.value = "Nivel Bajo o Inactivo: El paciente tiene un nivel de actividad física insuficiente, lo que puede considerarse un estilo de vida sedentario. Es el grupo que probablemente más se beneficie de una intervención de fisioterapia para aumentar su actividad.";
-                } else if (totalScore >= 163 && totalScore < 1500) {
-                    interpretationInput.value = "Nivel Moderado: El paciente cumple con las recomendaciones mínimas de actividad física para obtener beneficios para la salud.";
-                } else { // totalScore >= 1500
-                    interpretationInput.value = "Nivel Alto: El paciente realiza un nivel de actividad física que supera considerablemente las recomendaciones de salud.";
-                }
-            }
-        }
-
+    function updateIpaqScore() {
+        let totalScore = 0;
         for (let i = 1; i <= 5; i++) {
-            const horasInput = document.getElementById(`apnp_actividad_horas_${i}`);
-            const minutosInput = document.getElementById(`apnp_actividad_minutos_${i}`);
-            const actividadSelect = document.querySelector(`[name="apnp_actividad_nombre_${i}"]`);
-            const intensidadInput = document.getElementById(`apnp_actividad_intensidad_${i}`);
-            const diasInput = document.querySelector(`[name="apnp_actividad_dias_${i}"]`);
-
-            if (horasInput && minutosInput) {
-                horasInput.addEventListener('input', () => {
-                    const horas = parseFloat(horasInput.value);
-                    minutosInput.value = !isNaN(horas) ? horas * 60 : '';
-                    updateIpaqScore();
-                });
-            }
-            if (actividadSelect && intensidadInput) {
-                actividadSelect.addEventListener('change', () => {
-                    const selectedActivity = actividadSelect.value;
-                    intensidadInput.value = intensityMap[selectedActivity] || '';
-                    updateIpaqScore();
-                });
-            }
-            if(diasInput) {
-                diasInput.addEventListener('input', updateIpaqScore);
+            const intensidad = document.getElementById(`apnp_actividad_intensidad_${i}`)?.value;
+            const dias = parseFloat(document.querySelector(`[name="apnp_actividad_dias_${i}"]`)?.value) || 0;
+            const minutos = parseFloat(document.getElementById(`apnp_actividad_minutos_${i}`)?.value) || 0;
+            const multiplier = ipaqMultiplier[intensidad] || 0;
+            totalScore += (dias * minutos) * multiplier;
+        }
+        const scoreInput = document.getElementById('apnp_ipaq_score');
+        const interpretationInput = document.getElementById('apnp_ipaq_interpretacion');
+        if (scoreInput) scoreInput.value = totalScore;
+        if (interpretationInput) {
+            if (totalScore < 163) {
+                interpretationInput.value = "Nivel Bajo o Inactivo: El paciente tiene un nivel de actividad física insuficiente, lo que puede considerarse un estilo de vida sedentario. Es el grupo que probablemente más se beneficie de una intervención de fisioterapia para aumentar su actividad.";
+            } else if (totalScore >= 163 && totalScore < 1500) {
+                interpretationInput.value = "Nivel Moderado: El paciente cumple con las recomendaciones mínimas de actividad física para obtener beneficios para la salud.";
+            } else {
+                interpretationInput.value = "Nivel Alto: El paciente realiza un nivel de actividad física que supera considerablemente las recomendaciones de salud.";
             }
         }
-         // Llamada inicial para establecer el valor al cargar
-        updateIpaqScore();
     }
+
+    for (let i = 1; i <= 5; i++) {
+        const horasInput = document.getElementById(`apnp_actividad_horas_${i}`);
+        const minutosInput = document.getElementById(`apnp_actividad_minutos_${i}`);
+        const actividadSelect = document.querySelector(`[name="apnp_actividad_nombre_${i}"]`);
+        const intensidadInput = document.getElementById(`apnp_actividad_intensidad_${i}`);
+        const diasInput = document.querySelector(`[name="apnp_actividad_dias_${i}"]`);
+        if (horasInput && minutosInput) {
+            horasInput.addEventListener('input', () => {
+                const horas = parseFloat(horasInput.value);
+                minutosInput.value = !isNaN(horas) ? horas * 60 : '';
+                updateIpaqScore();
+            });
+        }
+        if (actividadSelect && intensidadInput) {
+            actividadSelect.addEventListener('change', () => {
+                const selectedActivity = actividadSelect.value;
+                intensidadInput.value = intensityMap[selectedActivity] || '';
+                updateIpaqScore();
+            });
+        }
+        if(diasInput) {
+            diasInput.addEventListener('input', updateIpaqScore);
+        }
+    }
+    updateIpaqScore();
+
+
+    // --- AJUSTE AÑADIDO: Lógica para cálculos automáticos en Cribado de Alimentación ---
+    const scoreMapAlimentacion = {
+        '≤3 veces/semana': 0,
+        '3-6 veces/semana': 1,
+        '≥4 veces/semana': 2
+    };
+
+    const cribadoFields = [
+        'frutasyverduras',
+        'pescadopollo',
+        'granos',
+        'procesados'
+    ];
+
+    function updateAlimentacionScore() {
+        let totalScore = 0;
+        
+        cribadoFields.forEach(field => {
+            const select = document.querySelector(`[name="apnp_cribado_${field}_freq"]`);
+            const scoreInput = document.querySelector(`[name="apnp_cribado_${field}_puntuacion"]`);
+            
+            if (select && scoreInput) {
+                const selectedValue = select.value;
+                const score = scoreMapAlimentacion[selectedValue] ?? 0; // Asigna 0 si no hay selección
+                scoreInput.value = score;
+                totalScore += score;
+            }
+        });
+
+        const resultadoInput = document.getElementById('apnp_cribado_resultado');
+        if (resultadoInput) {
+            let interpretation = '';
+            if (totalScore <= 2) {
+                interpretation = 'Bajo consumo saludable';
+            } else if (totalScore >= 3 && totalScore <= 5) {
+                interpretation = 'Moderado consumo saludable';
+            } else { // totalScore >= 6
+                interpretation = 'Alto consumo saludable';
+            }
+            resultadoInput.value = `Puntuación Total: ${totalScore} - ${interpretation}`;
+        }
+    }
+
+    // Añadir listeners a todos los selects del cribado
+    cribadoFields.forEach(field => {
+        const select = document.querySelector(`[name="apnp_cribado_${field}_freq"]`);
+        if (select) {
+            select.addEventListener('change', updateAlimentacionScore);
+        }
+    });
+
+    // Llamada inicial para establecer los valores al cargar
+    updateAlimentacionScore();
+}
+
 
     async function loadDropdowns() {
         try {
