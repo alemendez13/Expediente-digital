@@ -33,8 +33,13 @@ const clinicalRecordConfig = {
         common: {
             'ficha-identificacion': 'components/common-ficha-identificacion.html',
             'antecedentes-heredo-familiares': 'components/common-antecedentes.html',
-            // --- AJUSTE AÑADIDO AQUÍ ---
             'antecedentes-no-patologicos': 'components/common-antecedentes-no-patologicos.html',
+            
+            // --- AÑADIR ESTAS DOS LÍNEAS ---
+            'estudios-gabinete': 'components/common-estudios-gabinete.html',
+            'analisis-pronostico': 'components/common-analisis-pronostico.html',
+            // --- FIN DE LA MODIFICACIÓN ---
+
         },
         specialty: {
             fisioterapia: {
@@ -42,4 +47,4 @@ const clinicalRecordConfig = {
             }
         }
     }
-};
+// ...
