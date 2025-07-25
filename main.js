@@ -146,6 +146,104 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function renderHistoryTables(history) {
+    // --- 1. PROCESAMIENTO PARA ESTUDIOS DE LABORATORIO ---
+    const labData = {}; // Objeto para agrupar resultados por estudio
+    
+    // Agrupa todos los resultados de laboratorio por nombre del estudio
+    history.forEach(consult => {
+        const consultDate = new Date(consult.date).toLocaleDateString('es-MX');
+        for (const key in consult.data) {
+            if (key.startsWith('lab_') && key.endsWith('_resultado')) {
+                const studyNameKey = key.replace('_resultado', '');
+                const studyDate = consult.data[studyNameKey + '_fecha'] || consultDate;
+                const studyResult = consult.data[key];
+                const cleanStudyName = studyNameKey.replace('lab_', '').replace(/_/g, ' ');
+
+                if (!labData[cleanStudyName]) {
+                    labData[cleanStudyName] = [];
+                }
+                labData[cleanStudyName].push({ date: studyDate, result: studyResult });
+            }
+        }
+    });
+
+    // Construye la tabla HTML para Laboratorio
+    let labTableHtml = '<p class="p-4 text-sm text-gray-500">Sin historial de laboratorio.</p>';
+    if (Object.keys(labData).length > 0) {
+        labTableHtml = `
+            <table class="w-full text-sm text-left text-gray-600 history-table">
+                <thead class="text-xs text-gray-700 uppercase">
+                    <tr>
+                        <th scope="col" class="px-6 py-3">Estudio</th>
+                        <th scope="col" class="px-6 py-3">Fecha</th>
+                        <th scope="col" class="px-6 py-3">Resultado</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+        for (const studyName in labData) {
+            labData[studyName].forEach((entry, index) => {
+                labTableHtml += `
+                    <tr class="bg-white border-b hover:bg-gray-50">
+                        ${index === 0 ? `<th scope="row" class="px-6 py-4 font-bold text-gray-900 capitalize" rowspan="${labData[studyName].length}">${studyName}</th>` : ''}
+                        <td class="px-6 py-4">${entry.date}</td>
+                        <td class="px-6 py-4">${entry.result}</td>
+                    </tr>
+                `;
+            });
+        }
+        labTableHtml += '</tbody></table>';
+    }
+    
+    // Inyecta la tabla en su contenedor
+    const labContainer = document.getElementById('lab-history-table-container');
+    if (labContainer) labContainer.innerHTML = labTableHtml;
+
+    // --- 2. PROCESAMIENTO PARA ESTUDIOS DE GABINETE (análogo al de laboratorio) ---
+    const gabineteData = {};
+    history.forEach(consult => {
+        for (let i = 1; i <= 10; i++) {
+            const studyName = consult.data[`gabinete_estudio_${i}`];
+            if (studyName) {
+                const studyDate = consult.data[`gabinete_fecha_${i}`] || new Date(consult.date).toLocaleDateString('es-MX');
+                const studyResult = consult.data[`gabinete_resultado_${i}`];
+                if (!gabineteData[studyName]) {
+                    gabineteData[studyName] = [];
+                }
+                gabineteData[studyName].push({ date: studyDate, result: studyResult });
+            }
+        }
+    });
+    
+    let gabineteTableHtml = '<p class="p-4 text-sm text-gray-500">Sin historial de gabinete.</p>';
+    if (Object.keys(gabineteData).length > 0) {
+        // (La lógica para construir la tabla de gabinete es idéntica a la de laboratorio)
+        gabineteTableHtml = `
+            <table class="w-full text-sm text-left text-gray-600 history-table">
+                <thead class="text-xs text-gray-700 uppercase">
+                    <tr><th scope="col" class="px-6 py-3">Estudio</th><th scope="col" class="px-6 py-3">Fecha</th><th scope="col" class="px-6 py-3">Resultado</th></tr>
+                </thead>
+                <tbody>
+        `;
+        for (const studyName in gabineteData) {
+            gabineteData[studyName].forEach((entry, index) => {
+                gabineteTableHtml += `
+                    <tr class="bg-white border-b hover:bg-gray-50">
+                        ${index === 0 ? `<th scope="row" class="px-6 py-4 font-bold text-gray-900 capitalize" rowspan="${gabineteData[studyName].length}">${studyName}</th>` : ''}
+                        <td class="px-6 py-4">${entry.date}</td>
+                        <td class="px-6 py-4">${entry.result}</td>
+                    </tr>
+                `;
+            });
+        }
+        gabineteTableHtml += '</tbody></table>';
+    }
+    
+    const gabineteContainer = document.getElementById('gabinete-history-table-container');
+    if (gabineteContainer) gabineteContainer.innerHTML = gabineteTableHtml;
+}
+
     function populateForm(data) {
         clearForm();
         if (!data || !data.demographics) {
@@ -172,20 +270,47 @@ document.addEventListener('DOMContentLoaded', () => {
         // 2. Procesar y mostrar el historial clínico
         const history = data.history || [];
         
-        // Poblar las áreas de historial (textareas)
-        const historyAreas = document.querySelectorAll('[data-history-for]');
-        historyAreas.forEach(area => {
-            const fieldName = area.dataset.historyFor;
-            let historyContent = '';
-            history.forEach(consult => {
-                if (consult.data[fieldName]) {
-                    // Formatear la fecha para que sea legible
-                    const consultDate = new Date(consult.date).toLocaleDateString('es-MX', {day: '2-digit', month: '2-digit', year: 'numeric'});
-                    historyContent += `${consultDate}: ${consult.data[fieldName]}\n`;
-                }
-            });
-            area.value = historyContent || 'Sin historial registrado para este campo.';
+    // --- INICIO DE LA MODIFICACIÓN ---
+
+    // LLAMADA A LA NUEVA FUNCIÓN PARA CREAR TABLAS
+    renderHistoryTables(history);
+
+    // ELIMINA O COMENTA ESTE BLOQUE ANTIGUO:
+    /*
+    const historyAreas = document.querySelectorAll('[data-history-for]');
+    historyAreas.forEach(area => {
+        const fieldName = area.dataset.historyFor;
+        let historyContent = '';
+        history.forEach(consult => {
+            if (consult.data[fieldName]) {
+                const consultDate = new Date(consult.date).toLocaleDateString('es-MX', {day: '2-digit', month: '2-digit', year: 'numeric'});
+                historyContent += `${consultDate}: ${consult.data[fieldName]}\n`;
+            }
         });
+        // EXCEPCIÓN: No sobreescribir los historiales de tablas que ahora manejamos por separado
+        if (fieldName !== 'laboratorio_historial' && fieldName !== 'gabinete_historial') {
+            area.value = historyContent || 'Sin historial registrado para este campo.';
+        }
+    });
+    */
+
+    // Modifica el bloque que llenaba las textareas para que ahora las ignore
+    const historyAreas = document.querySelectorAll('[data-history-for]');
+    historyAreas.forEach(area => {
+        const fieldName = area.dataset.historyFor;
+        // Ignoramos los campos que ahora son tablas
+        if (fieldName === 'laboratorio_historial' || fieldName === 'gabinete_historial') {
+            return; 
+        }
+        let historyContent = '';
+        history.forEach(consult => {
+            if (consult.data[fieldName]) {
+                const consultDate = new Date(consult.date).toLocaleDateString('es-MX', {day: '2-digit', month: '2-digit', year: 'numeric'});
+                historyContent += `${consultDate}: ${consult.data[fieldName]}\n`;
+            }
+        });
+        area.value = historyContent || 'Sin historial registrado para este campo.';
+    });
 
         // 3. Poblar los campos de registro con el valor más reciente del historial
         const latestValues = {};
