@@ -3,9 +3,11 @@
     <div class="mb-8">
         <h3 class="subsection-title">Estudios de laboratorio</h3>
         <div class="mt-4">
-            <label for="laboratorio_historial" class="form-label">Histórico de estudios de laboratorio:</label>
-            <textarea data-history-for="laboratorio_historial" class="history-area bg-gray-100 w-full" readonly rows="4"></textarea>
-        </div>
+             <label class="form-label">Histórico de estudios de laboratorio:</label>
+             <div id="lab-history-table-container" class="border rounded-lg overflow-auto max-h-96">
+                <!-- La tabla de historial de laboratorio se generará aquí -->
+            </div>
+         </div>
 
         <div class="mt-4 grid grid-cols-3 gap-x-4 gap-y-2 items-center">
             <label class="form-label font-bold text-gray-600">Estudio</label>
