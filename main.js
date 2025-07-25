@@ -312,7 +312,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="p-3 hidden text-xs">
                 <div class="space-y-2">
                     <label class="form-label block">¿Sufre frecuentemente dolor abdominal?</label> <select name="app_ibss_q1" class="form-select text-xs" data-list="frecuencia_ibss"></select>
-                    <label class="form-label block">¿Cuántos días tuvo dolor la última semana?</label> <input type="number" name="app_ibss_q2" class="form-input text-xs">
+                    
+                    <!-- INICIA LA MODIFICACIÓN AQUÍ -->
+                    <label class="form-label block">¿Cuántos días tuvo dolor la última semana?</label>
+                    <select name="app_ibss_q2" class="form-select text-xs" data-list="frecuencia_ibss">
+                        <!-- Esta lista se poblará dinámicamente -->
+                    </select>
+                    <!-- TERMINA LA MODIFICACIÓN AQUÍ -->
+
                     <label class="form-label block">¿Impacto en actividades cotidianas?</label> <select name="app_ibss_q3" class="form-select text-xs" data-list="impacto_ibss"></select>
                     <label class="form-label block">¿Satisfecho con su hábito intestinal?</label> <select name="app_ibss_q4" class="form-select text-xs" data-list="satisfaccion_ibss"></select>
                     <label class="form-label block mt-2">Puntaje total:</label> <input type="text" name="app_ibss_score" class="form-input bg-gray-200" readonly>
