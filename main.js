@@ -724,6 +724,37 @@ document.addEventListener('DOMContentLoaded', () => {
         updateAlimentacionScore();
     }
 
+        // 3. Lógica para Cuestionario IBSS (NUEVO)
+        const scoreMapIbss = {
+            'Nunca': 0, 'Raramente': 1, 'A veces': 2, 'Frecuentemente': 3, 'Siempre': 4,
+            'Nada de impacto': 0, 'Leve impacto': 1, 'Moderado impacto': 2, 'Severo impacto': 3, 'Incapacitante': 4,
+            'Nada satisfecho': 0, 'Poco satisfecho': 1, 'Moderadamente satisfecho': 2, 'Bastante satisfecho': 3, 'Completamente satisfecho': 4
+        };
+        const ibssQuestionFields = ['app_ibss_q1', 'app_ibss_q2', 'app_ibss_q3', 'app_ibss_q4'];
+
+        function updateIbssScore() {
+            let totalScore = 0;
+            ibssQuestionFields.forEach(fieldName => {
+                const select = document.querySelector(`[name="${fieldName}"]`);
+                if (select && select.value) {
+                    totalScore += scoreMapIbss[select.value] || 0;
+                }
+            });
+
+            const scoreInput = document.querySelector('[name="app_ibss_score"]');
+            if (scoreInput) {
+                scoreInput.value = totalScore;
+            }
+        }
+
+        ibssQuestionFields.forEach(fieldName => {
+            const select = document.querySelector(`[name="${fieldName}"]`);
+            if (select) {
+                select.addEventListener('change', updateIbssScore);
+            }
+        });
+        updateIbssScore(); // Llama a la función una vez para inicializar
+
 
     async function loadDropdowns() {
         try {
