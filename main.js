@@ -725,36 +725,44 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
         // 3. Lógica para Cuestionario IBSS (NUEVO)
-        const scoreMapIbss = {
-            'Nunca': 0, 'Raramente': 1, 'A veces': 2, 'Frecuentemente': 3, 'Siempre': 4,
-            'Nada de impacto': 0, 'Leve impacto': 1, 'Moderado impacto': 2, 'Severo impacto': 3, 'Incapacitante': 4,
-            'Nada satisfecho': 0, 'Poco satisfecho': 1, 'Moderadamente satisfecho': 2, 'Bastante satisfecho': 3, 'Completamente satisfecho': 4
-        };
         const ibssQuestionFields = ['app_ibss_q1', 'app_ibss_q2', 'app_ibss_q3', 'app_ibss_q4'];
 
         function updateIbssScore() {
             let totalScore = 0;
-            ibssQuestionFields.forEach(fieldName => {
-                const select = document.querySelector(`[name="${fieldName}"]`);
-                if (select && select.value) {
-                    totalScore += scoreMapIbss[select.value] || 0;
-                }
-            });
+            
+            // Selecciona cada pregunta por su nombre
+            const q1 = document.querySelector('[name="app_ibss_q1"]')?.value;
+            const q2 = document.querySelector('[name="app_ibss_q2"]')?.value;
+            const q3 = document.querySelector('[name="app_ibss_q3"]')?.value;
+            const q4 = document.querySelector('[name="app_ibss_q4"]')?.value;
 
+            // Aplica la lógica de puntuación de 0 o 25
+            // Preguntas 1, 2, 3: Valen 25 a menos que la respuesta sea "Nunca"
+            if (q1 && q1 !== 'Nunca') totalScore += 25;
+            if (q2 && q2 !== 'Nunca') totalScore += 25;
+            if (q3 && q3 !== 'Nunca') totalScore += 25;
+
+            // Pregunta 4: Siempre vale 25 si se ha seleccionado una opción
+            if (q4) totalScore += 25;
+
+            // Actualiza el campo del puntaje total
             const scoreInput = document.querySelector('[name="app_ibss_score"]');
             if (scoreInput) {
                 scoreInput.value = totalScore;
             }
         }
 
+        // Añade el 'event listener' a cada pregunta para que recalcule al cambiar
         ibssQuestionFields.forEach(fieldName => {
             const select = document.querySelector(`[name="${fieldName}"]`);
+            // Asegúrate de que el 'select' exista antes de añadir el listener
             if (select) {
                 select.addEventListener('change', updateIbssScore);
             }
         });
-        updateIbssScore(); // Llama a la función una vez para inicializar
-
+        
+        // Llama a la función una vez para inicializar el puntaje en 0
+        updateIbssScore();
 
     async function loadDropdowns() {
         try {
