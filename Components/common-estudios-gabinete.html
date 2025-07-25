@@ -1,0 +1,194 @@
+<div class="p-4 border rounded-lg mb-4 bg-white text-sm">
+
+    <div class="mb-8">
+        <h3 class="subsection-title">Estudios de laboratorio</h3>
+        <div class="mt-4">
+            <label for="laboratorio_historial" class="form-label">Histórico de estudios de laboratorio:</label>
+            <textarea data-history-for="laboratorio_historial" class="history-area bg-gray-100 w-full" readonly rows="4"></textarea>
+        </div>
+
+        <div class="mt-4 grid grid-cols-3 gap-x-4 gap-y-2 items-center">
+            <label class="form-label font-bold text-gray-600">Estudio</label>
+            <label class="form-label font-bold text-gray-600">Fecha</label>
+            <label class="form-label font-bold text-gray-600">Resultado</label>
+
+            <label class="form-label self-center">Glucosa</label>
+            <input type="text" name="lab_glucosa_fecha" class="form-input" placeholder="dd/mm/aaaa">
+            <input type="text" name="lab_glucosa_resultado" class="form-input" placeholder="Resultado...">
+            
+            <label class="form-label self-center">Creatinina</label>
+            <input type="text" name="lab_creatinina_fecha" class="form-input" placeholder="dd/mm/aaaa">
+            <input type="text" name="lab_creatinina_resultado" class="form-input" placeholder="Resultado...">
+
+            <label class="form-label self-center">Urea</label>
+            <input type="text" name="lab_urea_fecha" class="form-input" placeholder="dd/mm/aaaa">
+            <input type="text" name="lab_urea_resultado" class="form-input" placeholder="Resultado...">
+
+            <label class="form-label self-center">BUN</label>
+            <input type="text" name="lab_bun_fecha" class="form-input" placeholder="dd/mm/aaaa">
+            <input type="text" name="lab_bun_resultado" class="form-input" placeholder="Resultado...">
+
+            <label class="form-label self-center">Triglicéridos</label>
+            <input type="text" name="lab_trigliceridos_fecha" class="form-input" placeholder="dd/mm/aaaa">
+            <input type="text" name="lab_trigliceridos_resultado" class="form-input" placeholder="Resultado...">
+
+            <label class="form-label self-center">Colesterol total</label>
+            <input type="text" name="lab_colesterol_total_fecha" class="form-input" placeholder="dd/mm/aaaa">
+            <input type="text" name="lab_colesterol_total_resultado" class="form-input" placeholder="Resultado...">
+
+            <label class="form-label self-center">HDL</label>
+            <input type="text" name="lab_hdl_fecha" class="form-input" placeholder="dd/mm/aaaa">
+            <input type="text" name="lab_hdl_resultado" class="form-input" placeholder="Resultado...">
+
+            <label class="form-label self-center">LDL</label>
+            <input type="text" name="lab_ldl_fecha" class="form-input" placeholder="dd/mm/aaaa">
+            <input type="text" name="lab_ldl_resultado" class="form-input" placeholder="Resultado...">
+
+            <label class="form-label self-center">VLDL</label>
+            <input type="text" name="lab_vldl_fecha" class="form-input" placeholder="dd/mm/aaaa">
+            <input type="text" name="lab_vldl_resultado" class="form-input" placeholder="Resultado...">
+
+            <label class="form-label self-center">Ácido úrico</label>
+            <input type="text" name="lab_acido_urico_fecha" class="form-input" placeholder="dd/mm/aaaa">
+            <input type="text" name="lab_acido_urico_resultado" class="form-input" placeholder="Resultado...">
+            
+            <label class="form-label self-center">Sodio</label>
+            <input type="text" name="lab_sodio_fecha" class="form-input" placeholder="dd/mm/aaaa">
+            <input type="text" name="lab_sodio_resultado" class="form-input" placeholder="Resultado...">
+
+            <label class="form-label self-center">Potasio</label>
+            <input type="text" name="lab_potasio_fecha" class="form-input" placeholder="dd/mm/aaaa">
+            <input type="text" name="lab_potasio_resultado" class="form-input" placeholder="Resultado...">
+
+            <label class="form-label self-center">Cloro</label>
+            <input type="text" name="lab_cloro_fecha" class="form-input" placeholder="dd/mm/aaaa">
+            <input type="text" name="lab_cloro_resultado" class="form-input" placeholder="Resultado...">
+
+            <label class="form-label self-center">Fósforo</label>
+            <input type="text" name="lab_fosforo_fecha" class="form-input" placeholder="dd/mm/aaaa">
+            <input type="text" name="lab_fosforo_resultado" class="form-input" placeholder="Resultado...">
+
+            <label class="form-label self-center">Magnesio</label>
+            <input type="text" name="lab_magnesio_fecha" class="form-input" placeholder="dd/mm/aaaa">
+            <input type="text" name="lab_magnesio_resultado" class="form-input" placeholder="Resultado...">
+
+            <label class="form-label self-center">Calcio</label>
+            <input type="text" name="lab_calcio_fecha" class="form-input" placeholder="dd/mm/aaaa">
+            <input type="text" name="lab_calcio_resultado" class="form-input" placeholder="Resultado...">
+
+            <label class="form-label self-center">Bilirrubina total</label>
+            <input type="text" name="lab_bilirrubina_total_fecha" class="form-input" placeholder="dd/mm/aaaa">
+            <input type="text" name="lab_bilirrubina_total_resultado" class="form-input" placeholder="Resultado...">
+
+            <label class="form-label self-center">Bilirrubina indirecta</label>
+            <input type="text" name="lab_bilirrubina_indirecta_fecha" class="form-input" placeholder="dd/mm/aaaa">
+            <input type="text" name="lab_bilirrubina_indirecta_resultado" class="form-input" placeholder="Resultado...">
+
+            <label class="form-label self-center">Bilirrubina directa</label>
+            <input type="text" name="lab_bilirrubina_directa_fecha" class="form-input" placeholder="dd/mm/aaaa">
+            <input type="text" name="lab_bilirrubina_directa_resultado" class="form-input" placeholder="Resultado...">
+
+            <label class="form-label self-center">ALT</label>
+            <input type="text" name="lab_alt_fecha" class="form-input" placeholder="dd/mm/aaaa">
+            <input type="text" name="lab_alt_resultado" class="form-input" placeholder="Resultado...">
+
+            <label class="form-label self-center">AST</label>
+            <input type="text" name="lab_ast_fecha" class="form-input" placeholder="dd/mm/aaaa">
+            <input type="text" name="lab_ast_resultado" class="form-input" placeholder="Resultado...">
+
+            <label class="form-label self-center">GGT</label>
+            <input type="text" name="lab_ggt_fecha" class="form-input" placeholder="dd/mm/aaaa">
+            <input type="text" name="lab_ggt_resultado" class="form-input" placeholder="Resultado...">
+
+            <label class="form-label self-center">DHL</label>
+            <input type="text" name="lab_dhl_fecha" class="form-input" placeholder="dd/mm/aaaa">
+            <input type="text" name="lab_dhl_resultado" class="form-input" placeholder="Resultado...">
+
+            <label class="form-label self-center">FA</label>
+            <input type="text" name="lab_fa_fecha" class="form-input" placeholder="dd/mm/aaaa">
+            <input type="text" name="lab_fa_resultado" class="form-input" placeholder="Resultado...">
+
+            <label class="form-label self-center">Albúmina</label>
+            <input type="text" name="lab_albumina_fecha" class="form-input" placeholder="dd/mm/aaaa">
+            <input type="text" name="lab_albumina_resultado" class="form-input" placeholder="Resultado...">
+
+            <label class="form-label self-center">A1C</label>
+            <input type="text" name="lab_a1c_fecha" class="form-input" placeholder="dd/mm/aaaa">
+            <input type="text" name="lab_a1c_resultado" class="form-input" placeholder="Resultado...">
+            
+            <label class="form-label self-center">Índice albúmina/creatinina</label>
+            <input type="text" name="lab_indice_albumina_creatinina_fecha" class="form-input" placeholder="dd/mm/aaaa">
+            <input type="text" name="lab_indice_albumina_creatinina_resultado" class="form-input" placeholder="Resultado...">
+            
+            <label class="form-label self-center">Examen General de orina</label>
+            <input type="text" name="lab_ego_fecha" class="form-input" placeholder="dd/mm/aaaa">
+            <input type="text" name="lab_ego_resultado" class="form-input" placeholder="Resultado...">
+            
+            <label class="form-label self-center">TSH</label>
+            <input type="text" name="lab_tsh_fecha" class="form-input" placeholder="dd/mm/aaaa">
+            <input type="text" name="lab_tsh_resultado" class="form-input" placeholder="Resultado...">
+            
+            <label class="form-label self-center">T4L</label>
+            <input type="text" name="lab_t4l_fecha" class="form-input" placeholder="dd/mm/aaaa">
+            <input type="text" name="lab_t4l_resultado" class="form-input" placeholder="Resultado...">
+            
+            <label class="form-label self-center">Hemoglobina</label>
+            <input type="text" name="lab_hemoglobina_fecha" class="form-input" placeholder="dd/mm/aaaa">
+            <input type="text" name="lab_hemoglobina_resultado" class="form-input" placeholder="Resultado...">
+        </div>
+    </div>
+
+    <div>
+        <h3 class="subsection-title">Registro de estudios de gabinete</h3>
+        <div class="mt-4">
+            <label for="gabinete_historial" class="form-label">Histórico de estudios de gabinete:</label>
+            <textarea data-history-for="gabinete_historial" class="history-area bg-gray-100 w-full" readonly rows="4"></textarea>
+        </div>
+        
+        <div class="mt-4 grid grid-cols-3 gap-x-4 gap-y-2 items-center">
+             <label class="form-label font-bold text-gray-600">Estudio</label>
+             <label class="form-label font-bold text-gray-600">Fecha</label>
+             <label class="form-label font-bold text-gray-600">Resultado / Interpretación</label>
+
+            <input type="text" name="gabinete_estudio_1" class="form-input" placeholder="Nombre del estudio...">
+            <input type="text" name="gabinete_fecha_1" class="form-input" placeholder="dd/mm/aaaa">
+            <input type="text" name="gabinete_resultado_1" class="form-input" placeholder="Hallazgos o resultado...">
+            
+            <input type="text" name="gabinete_estudio_2" class="form-input" placeholder="Nombre del estudio...">
+            <input type="text" name="gabinete_fecha_2" class="form-input" placeholder="dd/mm/aaaa">
+            <input type="text" name="gabinete_resultado_2" class="form-input" placeholder="Hallazgos o resultado...">
+            
+            <input type="text" name="gabinete_estudio_3" class="form-input" placeholder="Nombre del estudio...">
+            <input type="text" name="gabinete_fecha_3" class="form-input" placeholder="dd/mm/aaaa">
+            <input type="text" name="gabinete_resultado_3" class="form-input" placeholder="Hallazgos o resultado...">
+            
+            <input type="text" name="gabinete_estudio_4" class="form-input" placeholder="Nombre del estudio...">
+            <input type="text" name="gabinete_fecha_4" class="form-input" placeholder="dd/mm/aaaa">
+            <input type="text" name="gabinete_resultado_4" class="form-input" placeholder="Hallazgos o resultado...">
+            
+            <input type="text" name="gabinete_estudio_5" class="form-input" placeholder="Nombre del estudio...">
+            <input type="text" name="gabinete_fecha_5" class="form-input" placeholder="dd/mm/aaaa">
+            <input type="text" name="gabinete_resultado_5" class="form-input" placeholder="Hallazgos o resultado...">
+            
+            <input type="text" name="gabinete_estudio_6" class="form-input" placeholder="Nombre del estudio...">
+            <input type="text" name="gabinete_fecha_6" class="form-input" placeholder="dd/mm/aaaa">
+            <input type="text" name="gabinete_resultado_6" class="form-input" placeholder="Hallazgos o resultado...">
+            
+            <input type="text" name="gabinete_estudio_7" class="form-input" placeholder="Nombre del estudio...">
+            <input type="text" name="gabinete_fecha_7" class="form-input" placeholder="dd/mm/aaaa">
+            <input type="text" name="gabinete_resultado_7" class="form-input" placeholder="Hallazgos o resultado...">
+            
+            <input type="text" name="gabinete_estudio_8" class="form-input" placeholder="Nombre del estudio...">
+            <input type="text" name="gabinete_fecha_8" class="form-input" placeholder="dd/mm/aaaa">
+            <input type="text" name="gabinete_resultado_8" class="form-input" placeholder="Hallazgos o resultado...">
+            
+            <input type="text" name="gabinete_estudio_9" class="form-input" placeholder="Nombre del estudio...">
+            <input type="text" name="gabinete_fecha_9" class="form-input" placeholder="dd/mm/aaaa">
+            <input type="text" name="gabinete_resultado_9" class="form-input" placeholder="Hallazgos o resultado...">
+            
+            <input type="text" name="gabinete_estudio_10" class="form-input" placeholder="Nombre del estudio...">
+            <input type="text" name="gabinete_fecha_10" class="form-input" placeholder="dd/mm/aaaa">
+            <input type="text" name="gabinete_resultado_10" class="form-input" placeholder="Hallazgos o resultado...">
+        </div>
+    </div>
+</div>

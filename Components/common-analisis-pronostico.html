@@ -1,0 +1,33 @@
+<!--
+  Componente: Análisis y Pronóstico
+  Descripción: Un área de texto para que el profesional de la salud registre su análisis 
+  de la consulta, el pronóstico del paciente y notas relevantes.
+-->
+<div class="p-4 border rounded-lg mb-4 bg-white">
+    <!-- Historial de Análisis y Pronóstico -->
+    <div>
+        <label for="analisis_pronostico" class="form-label font-semibold">
+            Historial de Análisis / Pronóstico:
+        </label>
+        <textarea 
+            data-history-for="analisis_pronostico" 
+            class="history-area bg-gray-100" 
+            readonly 
+            rows="5"
+        ></textarea>
+    </div>
+
+    <!-- Entrada para la Consulta Actual -->
+    <div class="mt-4">
+        <label for="analisis_pronostico_actual" class="form-label font-semibold">
+            Registro de la Consulta Actual:
+        </label>
+        <textarea 
+            id="analisis_pronostico" 
+            name="analisis_pronostico" 
+            class="form-textarea w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-cyan-400 focus:border-transparent transition" 
+            rows="8" 
+            placeholder="Ingrese el análisis detallado, diagnóstico diferencial, y el pronóstico del paciente aquí..."
+        ></textarea>
+    </div>
+</div>
