@@ -1,21 +1,31 @@
 <!--
   Componente: Antecedentes Personales Patológicos
-  Descripción: Contiene el historial de enfermedades, cirugías, alergias, toxicomanías y otros
-  antecedentes patológicos del paciente, utilizando acordeones para una navegación eficiente.
+  Descripción: Muestra la Subsección 1: Enfermedades Crónico Degenerativas.
+  Utiliza un script para generar dinámicamente una estructura compleja de acordeones anidados,
+  permitiendo un registro detallado de padecimientos por sistema y cuestionarios específicos.
 -->
+
+<!-- Funciones de Javascript para la interactividad de los acordeones -->
 <script>
-  // Función para manejar la lógica de los acordeones.
+  // Función genérica para abrir/cerrar un acordeón.
   function toggleAccordion(headerElement) {
     const content = headerElement.nextElementSibling;
     const icon = headerElement.querySelector('svg');
-    content.classList.toggle('hidden');
-    icon.classList.toggle('rotate-180');
+    if (content) {
+      content.classList.toggle('hidden');
+    }
+    if (icon) {
+      icon.classList.toggle('rotate-180');
+    }
   }
 
-  // Función específica para los checkboxes que revelan contenido.
+  // Función para mostrar/ocultar los detalles de una enfermedad al marcar/desmarcar el checkbox.
   function toggleContent(checkboxElement) {
-    const content = checkboxElement.closest('.disease-row').querySelector('.disease-details');
-    content.classList.toggle('hidden', !checkboxElement.checked);
+    // Busca el contenedor de detalles más cercano dentro de la fila de la enfermedad.
+    const detailsContainer = checkboxElement.closest('.disease-row').querySelector('.disease-details');
+    if (detailsContainer) {
+      detailsContainer.classList.toggle('hidden', !checkboxElement.checked);
+    }
   }
 </script>
 
@@ -23,515 +33,253 @@
 <div class="p-4 border rounded-lg mb-4 bg-white text-sm">
   <h3 class="subsection-title">Enfermedades Crónico Degenerativas</h3>
   <p class="text-xs text-gray-500 mb-4">Seleccione los sistemas y enfermedades correspondientes para registrar los detalles.</p>
-  <div class="space-y-2">
-    <!-- Acordeón para cada sistema -->
-    <script>
-      const systems = [
-        {
-          name: 'Metabólicas', id: 'metabolicas', diseases: [
-            { name: 'Diabetes', id: 'diabetes', hasQuestionnaire: 'paid' },
-            { name: 'Dislipidemia', id: 'dislipidemia' },
-            { name: 'Hipertrigliceridemia', id: 'hipertrigliceridemia' },
-            { name: 'Hipercolesterolemia', id: 'hipercolesterolemia' },
-            { name: 'Problemas de peso', id: 'problemas_peso' },
-            { name: 'Otras', id: 'metabolicas_otras', isOther: true },
-          ]
-        },
-        {
-          name: 'Sistema Cardiovascular', id: 'cardiovascular', diseases: [
-            { name: 'Hipertensión arterial', id: 'hta' },
-            { name: 'Insuficiencia cardiaca', id: 'insuf_cardiaca' },
-            { name: 'Insuficiencia venosa periférica', id: 'ivp' },
-            { name: 'Valvulopatías', id: 'valvulopatias' },
-            { name: 'Otras', id: 'cardio_otras', isOther: true },
-          ]
-        },
-        {
-          name: 'Sistema Digestivo', id: 'digestivo', diseases: [
-            { name: 'Enfermedad por Reflujo', id: 'erge' },
-            { name: 'Enfermedad ácido-péptica', id: 'eap' },
-            { name: 'Síndrome de intestino irritable', id: 'sii', hasQuestionnaire: 'ibss' },
-            { name: 'Otras', id: 'digestivo_otras', isOther: true },
-          ]
-        },
-        {
-          name: 'Sistema Respiratorio', id: 'respiratorio', diseases: [
-            { name: 'Asma', id: 'asma' },
-            { name: 'EPOC', id: 'epoc' },
-            { name: 'Otras', id: 'resp_otras', isOther: true },
-          ]
-        },
-        {
-          name: 'Sistema Musculoesquelético', id: 'musculoesqueletico', diseases: [
-            { name: 'Osteoartritis', id: 'osteoartritis' },
-            { name: 'Osteoporosis', id: 'osteoporosis' },
-            { name: 'Dolor crónico', id: 'dolor_cronico' },
-            { name: 'Otras', id: 'musc_otras', isOther: true },
-          ]
-        },
-        {
-          name: 'Sistema Genitourinario', id: 'genitourinario', diseases: [
-            { name: 'Especificar', id: 'genito_otras', isOther: true },
-          ]
-        },
-        {
-          name: 'Sistema Neurológico', id: 'neurologico', diseases: [
-            { name: 'Psiquiátricas', id: 'psiquiatricas', hasQuestionnaire: 'psq' },
-            { name: 'Otras', id: 'neuro_otras', isOther: true },
-          ]
-        },
-         {
-          name: 'Otras Enfermedades Relevantes', id: 'otras_enfermedades', diseases: [
-            { name: 'Tumores o cáncer', id: 'cancer' },
-            { name: 'Dermatológicas', id: 'dermatologicas' },
-            { name: 'Problemas dentales', id: 'dentales', isOther: true },
-            { name: 'Problemas ópticos', id: 'opticos', isOther: true },
-            { name: 'Problemas auditivos', id: 'auditivos', isOther: true },
-            { name: 'Atopias (alergias)', id: 'atopias', isOther: true },
-            { name: 'Hiperuricemia', id: 'hiperuricemia' },
-          ]
-        }
-      ];
-
-      systems.forEach(system => {
-        document.write(`
-          <div class="border rounded-md">
-            <div class="section-header p-2 bg-gray-50 hover:bg-gray-100" onclick="toggleAccordion(this)">
-              <h4 class="font-semibold text-gray-700">${system.name}</h4>
-              <svg class="w-5 h-5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-            </div>
-            <div class="p-4 hidden">
-              <div class="space-y-4">
-        `);
-        system.diseases.forEach(disease => {
-          document.write(`
-                <div class="disease-row border-t pt-3">
-                  <label class="flex items-center space-x-3 cursor-pointer">
-                    <input type="checkbox" name="app_${disease.id}_presente" class="form-checkbox h-5 w-5 text-cyan-600 rounded" onclick="toggleContent(this)">
-                    <span class="font-medium text-gray-800">${disease.name}</span>
-                  </label>
-                  <div class="disease-details hidden pl-8 pt-2">
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-3">
-                      ${disease.isOther ? `
-                        <div class="md:col-span-3">
-                           <label class="form-label">Especificar</label>
-                           <textarea name="app_${disease.id}_especificar" class="form-textarea" rows="1"></textarea>
-                        </div>
-                      ` : ''}
-                      <div>
-                        <label class="form-label">Edad/Año de diagnóstico</label>
-                        <input type="text" name="app_${disease.id}_dx_edad" class="form-input">
-                      </div>
-                      <div>
-                        <label class="form-label">Tratamientos previos</label>
-                        <input type="text" name="app_${disease.id}_tx_previo" class="form-input">
-                      </div>
-                      <div>
-                        <label class="form-label">Tratamiento actual</label>
-                        <input type="text" name="app_${disease.id}_tx_actual" class="form-input">
-                      </div>
-                      <div class="md:col-span-2">
-                        <label class="form-label">Evolución</label>
-                        <input type="text" name="app_${disease.id}_evolucion" class="form-input">
-                      </div>
-                      <div>
-                        <label class="form-label">Complicaciones</label>
-                        <input type="text" name="app_${disease.id}_complicaciones" class="form-input">
-                      </div>
-                    </div>
-          `);
-          // Cuestionarios anidados
-          if (disease.hasQuestionnaire === 'paid') {
-            document.write(`
-                <div class="border rounded-md mt-4">
-                   <div class="section-header p-2 bg-blue-50 hover:bg-blue-100" onclick="toggleAccordion(this)">
-                      <h5 class="font-semibold text-sm text-blue-800">Cuestionario: Problem Areas in Diabetes (PAID)</h5>
-                      <svg class="w-5 h-5 transform transition-transform text-blue-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                   </div>
-                   <div class="p-3 hidden text-xs">
-                     <div class="space-y-2">
-                        <label class="form-label block">¿Sigue el plan de alimentación recomendado?</label> <select name="app_paid_q1" class="form-select text-xs" data-list="frecuencia_paid"></select>
-                        <label class="form-label block">¿Controla el tamaño de las porciones de carbohidratos?</label> <select name="app_paid_q2" class="form-select text-xs" data-list="frecuencia_paid"></select>
-                        <label class="form-label block">¿Registra su consumo y niveles de glucosa?</label> <select name="app_paid_q3" class="form-select text-xs" data-list="frecuencia_paid"></select>
-                        <label class="form-label block">¿Realiza actividad física acordada?</label> <select name="app_paid_q4" class="form-select text-xs" data-list="frecuencia_paid"></select>
-                        <label class="form-label block">¿Revisa sus pies diariamente?</label> <select name="app_paid_q5" class="form-select text-xs" data-list="frecuencia_paid"></select>
-                        <label class="form-label block">¿Toma sus medicamentos/insulina según indicaciones?</label> <select name="app_paid_q6" class="form-select text-xs" data-list="frecuencia_paid"></select>
-                        <label class="form-label block">¿Su familia/amigos le apoyan?</label> <select name="app_paid_q7" class="form-select text-xs" data-list="frecuencia_paid"></select>
-                        <label class="form-label block">¿Asiste a grupos de educación o seguimiento?</label> <select name="app_paid_q8" class="form-select text-xs" data-list="frecuencia_paid"></select>
-                        <label class="form-label block mt-2">Interpretación:</label>
-                        <textarea name="app_paid_interpretacion" class="form-textarea" rows="2"></textarea>
-                     </div>
-                   </div>
-                </div>
-            `);
-          }
-          if (disease.hasQuestionnaire === 'ibss') {
-             document.write(`
-                <div class="border rounded-md mt-4">
-                   <div class="section-header p-2 bg-blue-50 hover:bg-blue-100" onclick="toggleAccordion(this)">
-                      <h5 class="font-semibold text-sm text-blue-800">Cuestionario: Síndrome de Intestino Irritable (IBSS)</h5>
-                      <svg class="w-5 h-5 transform transition-transform text-blue-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                   </div>
-                   <div class="p-3 hidden text-xs">
-                     <div class="space-y-2">
-                        <label class="form-label block">¿Sufre frecuentemente dolor abdominal?</label> <select name="app_ibss_q1" class="form-select text-xs" data-list="frecuencia_ibss"></select>
-                        <label class="form-label block">¿Cuántos días tuvo dolor en la última semana?</label> <input type="number" name="app_ibss_q2" class="form-input text-xs">
-                        <label class="form-label block">¿Impacto en actividades cotidianas?</label> <select name="app_ibss_q3" class="form-select text-xs" data-list="impacto_ibss"></select>
-                        <label class="form-label block">¿Qué tan satisfecho está con su hábito intestinal?</label> <select name="app_ibss_q4" class="form-select text-xs" data-list="satisfaccion_ibss"></select>
-                        <label class="form-label block mt-2">Puntaje total:</label> <input type="text" name="app_ibss_score" class="form-input bg-gray-200" readonly>
-                        <label class="form-label block mt-2">Interpretación:</label> <textarea name="app_ibss_interpretacion" class="form-textarea" rows="2"></textarea>
-                     </div>
-                   </div>
-                </div>
-            `);
-          }
-           if (disease.hasQuestionnaire === 'psq') {
-            document.write(`
-                <!-- GAD-7 -->
-                <div class="border rounded-md mt-4">
-                   <div class="section-header p-2 bg-yellow-50 hover:bg-yellow-100" onclick="toggleAccordion(this)">
-                      <h5 class="font-semibold text-sm text-yellow-800">Cuestionario de Ansiedad (GAD-7)</h5>
-                      <svg class="w-5 h-5 transform transition-transform text-yellow-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                   </div>
-                   <div class="p-3 hidden text-xs"> <div class="space-y-2">
-                        <label class="form-label block">Sentirse nervioso, ansioso o muy tenso</label> <select name="app_gad7_q1" class="form-select text-xs" data-list="frecuencia_gad7_phq9"></select>
-                        <label class="form-label block">No poder dejar de preocuparse</label> <select name="app_gad7_q2" class="form-select text-xs" data-list="frecuencia_gad7_phq9"></select>
-                        <label class="form-label block">Preocuparse demasiado</label> <select name="app_gad7_q3" class="form-select text-xs" data-list="frecuencia_gad7_phq9"></select>
-                        <label class="form-label block">Problemas para relajarse</label> <select name="app_gad7_q4" class="form-select text-xs" data-list="frecuencia_gad7_phq9"></select>
-                        <label class="form-label block">Estar tan inquieto que es difícil quedarse sentado</label> <select name="app_gad7_q5" class="form-select text-xs" data-list="frecuencia_gad7_phq9"></select>
-                        <label class="form-label block">Enfadarse o irritarse con facilidad</label> <select name="app_gad7_q6" class="form-select text-xs" data-list="frecuencia_gad7_phq9"></select>
-                        <label class="form-label block">Sentir miedo de que algo terrible pueda ocurrir</label> <select name="app_gad7_q7" class="form-select text-xs" data-list="frecuencia_gad7_phq9"></select>
-                        <label class="form-label block mt-2">Puntuación:</label> <input type="text" name="app_gad7_score" class="form-input bg-gray-200" readonly>
-                        <label class="form-label block mt-2">Interpretación:</label> <textarea name="app_gad7_interpretacion" class="form-textarea" rows="2"></textarea>
-                   </div></div>
-                </div>
-                <!-- PHQ-9 -->
-                <div class="border rounded-md mt-4">
-                   <div class="section-header p-2 bg-yellow-50 hover:bg-yellow-100" onclick="toggleAccordion(this)">
-                      <h5 class="font-semibold text-sm text-yellow-800">Cuestionario de Depresión (PHQ-9)</h5>
-                      <svg class="w-5 h-5 transform transition-transform text-yellow-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                   </div>
-                   <div class="p-3 hidden text-xs"> <div class="space-y-2">
-                        <label class="form-label block">Poco interés o alegría por hacer las cosas</label> <select name="app_phq9_q1" class="form-select text-xs" data-list="frecuencia_gad7_phq9"></select>
-                        <label class="form-label block">Sensación de estar decaído, deprimido o desesperanzado</label> <select name="app_phq9_q2" class="form-select text-xs" data-list="frecuencia_gad7_phq9"></select>
-                        <label class="form-label block">Problemas para dormir o dormir demasiado</label> <select name="app_phq9_q3" class="form-select text-xs" data-list="frecuencia_gad7_phq9"></select>
-                        <label class="form-label block">Cansancio o poca energía</label> <select name="app_phq9_q4" class="form-select text-xs" data-list="frecuencia_gad7_phq9"></select>
-                        <label class="form-label block">Poco apetito o comer demasiado</label> <select name="app_phq9_q5" class="form-select text-xs" data-list="frecuencia_gad7_phq9"></select>
-                        <label class="form-label block">Sentirse mal consigo mismo, un fracaso o decepción</label> <select name="app_phq9_q6" class="form-select text-xs" data-list="frecuencia_gad7_phq9"></select>
-                        <label class="form-label block">Problemas para concentrarse</label> <select name="app_phq9_q7" class="form-select text-xs" data-list="frecuencia_gad7_phq9"></select>
-                        <label class="form-label block">Moverse o hablar lento, o estar muy inquieto</label> <select name="app_phq9_q8" class="form-select text-xs" data-list="frecuencia_gad7_phq9"></select>
-                        <label class="form-label block">Pensamientos de querer hacerse daño</label> <select name="app_phq9_q9" class="form-select text-xs" data-list="frecuencia_gad7_phq9"></select>
-                        <label class="form-label block mt-2">Puntuación:</label> <input type="text" name="app_phq9_score" class="form-input bg-gray-200" readonly>
-                        <label class="form-label block mt-2">Interpretación:</label> <textarea name="app_phq9_interpretacion" class="form-textarea" rows="2"></textarea>
-                   </div></div>
-                </div>
-                 <!-- Yesavage -->
-                <div class="border rounded-md mt-4">
-                   <div class="section-header p-2 bg-yellow-50 hover:bg-yellow-100" onclick="toggleAccordion(this)">
-                      <h5 class="font-semibold text-sm text-yellow-800">Escala de Depresión Geriátrica (GDS-15)</h5>
-                      <svg class="w-5 h-5 transform transition-transform text-yellow-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                   </div>
-                   <div class="p-3 hidden text-xs"> <div class="space-y-2">
-                        <label class="form-label block">¿Está satisfecho con su vida?</label> <select name="app_gds15_q1" class="form-select text-xs" data-list="opciones_binarias"></select>
-                        <label class="form-label block">¿Ha abandonado actividades?</label> <select name="app_gds15_q2" class="form-select text-xs" data-list="opciones_binarias"></select>
-                        <label class="form-label block">¿Siente que su vida está vacía?</label> <select name="app_gds15_q3" class="form-select text-xs" data-list="opciones_binarias"></select>
-                        <label class="form-label block">¿Se encuentra con frecuencia aburrido?</label> <select name="app_gds15_q4" class="form-select text-xs" data-list="opciones_binarias"></select>
-                        <label class="form-label block">¿Está alegre la mayor parte del tiempo?</label> <select name="app_gds15_q5" class="form-select text-xs" data-list="opciones_binarias"></select>
-                        <label class="form-label block">¿Teme que le vaya a suceder algo malo?</label> <select name="app_gds15_q6" class="form-select text-xs" data-list="opciones_binarias"></select>
-                        <label class="form-label block">¿Se siente feliz la mayor parte del tiempo?</label> <select name="app_gds15_q7" class="form-select text-xs" data-list="opciones_binarias"></select>
-                        <label class="form-label block">¿Se siente con frecuencia desamparado?</label> <select name="app_gds15_q8" class="form-select text-xs" data-list="opciones_binarias"></select>
-                        <label class="form-label block">¿Prefiere quedarse en casa?</label> <select name="app_gds15_q9" class="form-select text-xs" data-list="opciones_binarias"></select>
-                        <label class="form-label block">¿Siente que tiene más problemas de memoria?</label> <select name="app_gds15_q10" class="form-select text-xs" data-list="opciones_binarias"></select>
-                        <label class="form-label block">¿Piensa usted que es maravilloso estar vivo?</label> <select name="app_gds15_q11" class="form-select text-xs" data-list="opciones_binarias"></select>
-                        <label class="form-label block">¿Se siente inútil o despreciable?</label> <select name="app_gds15_q12" class="form-select text-xs" data-list="opciones_binarias"></select>
-                        <label class="form-label block">¿Se siente lleno de energía?</label> <select name="app_gds15_q13" class="form-select text-xs" data-list="opciones_binarias"></select>
-                        <label class="form-label block">¿Se encuentra sin esperanza?</label> <select name="app_gds15_q14" class="form-select text-xs" data-list="opciones_binarias"></select>
-                        <label class="form-label block">¿Piensa que la mayoría está mejor que usted?</label> <select name="app_gds15_q15" class="form-select text-xs" data-list="opciones_binarias"></select>
-                        <label class="form-label block mt-2">Puntuación:</label> <input type="text" name="app_gds15_score" class="form-input bg-gray-200" readonly>
-                        <label class="form-label block mt-2">Interpretación:</label> <textarea name="app_gds15_interpretacion" class="form-textarea" rows="2"></textarea>
-                   </div></div>
-                </div>
-            `);
-          }
-          document.write(`</div></div>`);
-        });
-        document.write(`</div></div></div>`);
-      });
-    </script>
-  </div>
+  
+  <!-- Contenedor para los acordeones generados por script -->
+  <div id="chronic-diseases-container" class="space-y-2"></div>
 </div>
 
-<!-- Subsección 2: Insomnio / Trastorno del Sueño -->
-<div class="p-4 border rounded-lg mb-4 bg-white text-sm">
-  <h3 class="subsection-title">Insomnio/Trastorno del sueño/Calidad de sueño</h3>
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-2">
-    <div><label class="form-label">¿Confirma trastorno?</label><select name="app_sueno_confirma" class="form-select" data-list="opciones_binarias"></select></div>
-    <div><label class="form-label">Hora de acostarse</label><input type="time" name="app_sueno_hora_acostar" class="form-input"></div>
-    <div><label class="form-label">Hora de levantarse</label><input type="time" name="app_sueno_hora_levantar" class="form-input"></div>
-    <div><label class="form-label">Duración (horas)</label><input type="text" name="app_sueno_duracion" class="form-input bg-gray-200" readonly></div>
-    <div><label class="form-label">Tiempo en conciliar (min)</label><input type="number" name="app_sueno_tiempo_conciliar" class="form-input"></div>
-    <div><label class="form-label">Impacto en calidad de vida</label><select name="app_sueno_impacto" class="form-select" data-list="impacto_sueno"></select></div>
-  </div>
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4 border-t pt-4">
-    <div><label class="form-label">Insomnio</label><select name="app_sueno_insomnio" class="form-select" data-list="opciones_binarias"></select></div>
-    <div><label class="form-label">Veces por semana</label><input type="number" name="app_sueno_insomnio_frec" class="form-input"></div>
-    <div class="lg:col-span-2"><label class="form-label">Motivo</label><input type="text" name="app_sueno_insomnio_motivo" class="form-input"></div>
-  </div>
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4 border-t pt-4">
-    <div><label class="form-label">Despertares nocturnos</label><select name="app_sueno_despertares" class="form-select" data-list="opciones_binarias"></select></div>
-    <div><label class="form-label">Veces por semana</label><input type="number" name="app_sueno_despertares_frec_sem" class="form-input"></div>
-    <div><label class="form-label">Veces por noche</label><input type="number" name="app_sueno_despertares_frec_noc" class="form-input"></div>
-    <div><label class="form-label">Motivo</label><input type="text" name="app_sueno_despertares_motivo" class="form-input"></div>
-  </div>
-   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4 border-t pt-4">
-    <div><label class="form-label">Ronquidos</label><select name="app_sueno_ronquidos" class="form-select" data-list="opciones_binarias"></select></div>
-    <div><label class="form-label">Apneas</label><select name="app_sueno_apneas" class="form-select" data-list="opciones_binarias"></select></div>
-    <div class="lg:col-span-2"><label class="form-label">Medicamentos para dormir</label><input type="text" name="app_sueno_medicamentos" class="form-input"></div>
-  </div>
-</div>
-
-<!-- Subsección 3: Medicamentos Herbolarios / Suplementos -->
-<div class="p-4 border rounded-lg mb-4 bg-white text-sm">
-    <h3 class="subsection-title">Medicamentos herbolarios / Suplementos</h3>
-    <div class="grid grid-cols-3 gap-4 mt-2 font-bold text-gray-600">
-        <div>Nombre/Sustancia</div>
-        <div>Indicación</div>
-        <div>Dosis</div>
-    </div>
-    <script>
-        for(let i = 1; i <= 3; i++) {
-            document.write(`
-                <div class="grid grid-cols-3 gap-4 mt-2">
-                    <input type="text" name="app_suplemento_nombre_${i}" class="form-input">
-                    <input type="text" name="app_suplemento_indicacion_${i}" class="form-input">
-                    <input type="text" name="app_suplemento_dosis_${i}" class="form-input">
-                </div>
-            `);
-        }
-    </script>
-</div>
-
-
-<!-- Subsección 4: Alergias -->
-<div class="p-4 border rounded-lg mb-4 bg-white text-sm">
-  <h3 class="subsection-title">Alergias y efectos adversos a medicamentos</h3>
-  <div class="grid grid-cols-3 gap-4 mt-2 font-bold text-gray-600">
-        <div>Elemento</div>
-        <div>Medicamento</div>
-        <div>Manifestación</div>
-  </div>
-  <script>
-        for(let i = 1; i <= 3; i++) {
-            document.write(`
-                <div class="grid grid-cols-3 gap-4 mt-2">
-                    <input type="text" name="app_alergia_elemento_${i}" class="form-input" placeholder="Alimento, sustancia...">
-                    <input type="text" name="app_alergia_medicamento_${i}" class="form-input" placeholder="Nombre del medicamento">
-                    <input type="text" name="app_alergia_manifestacion_${i}" class="form-input" placeholder="Rash, anafilaxia...">
-                </div>
-            `);
-        }
-    </script>
-</div>
-
-<!-- Subsección 5, 6, 7: Quirúrgicos, Transfusionales, Hospitalizaciones -->
+<!-- Script que construye la estructura HTML de la subsección -->
 <script>
-  const histories = [
-    { title: 'Antecedentes quirúrgicos', id: 'qx' },
-    { title: 'Antecedentes transfusionales', id: 'transfusiones' },
-    { title: 'Hospitalizaciones previas', id: 'hosp' },
-  ];
-  histories.forEach(h => {
-    document.write(`
-      <div class="p-4 border rounded-lg mb-4 bg-white text-sm">
-        <h3 class="subsection-title">${h.title}</h3>
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-2">
-    `);
-    for(let i = 1; i <= 3; i++) {
-        document.write(`
-          <div class="md:col-span-4 grid grid-cols-4 gap-4 items-center border-b pb-2 mb-2">
-             <input type="text" name="app_${h.id}_procedimiento_${i}" class="form-input" placeholder="Procedimiento o Motivo">
-             <input type="text" name="app_${h.id}_fecha_${i}" class="form-input" placeholder="Fecha (dd/mm/aaaa)">
-             <input type="text" name="app_${h.id}_motivo_${i}" class="form-input" placeholder="Detalle del motivo">
-             <input type="text" name="app_${h.id}_complicaciones_${i}" class="form-input" placeholder="Complicaciones">
-          </div>
-        `);
+  // Objeto de configuración que define la estructura de sistemas, enfermedades y cuestionarios.
+  // Fiel al documento "Datos para construir componentes.pdf".
+  const chronicDiseasesConfig = [
+    {
+      name: 'Metabólicas', id: 'metabolicas', diseases: [
+        { name: 'Diabetes', id: 'diabetes', questionnaire: 'paid' },
+        { name: 'Dislipidemia', id: 'dislipidemia', subDiseases: ['Hipertrigliceridemia', 'Hipercolesterolemia'] },
+        { name: 'Problemas de peso', id: 'problemas_peso' },
+        { name: 'Otras', id: 'metabolicas_otras', isOther: true },
+      ]
+    },
+    {
+      name: 'Sistema Cardiovascular', id: 'cardiovascular', diseases: [
+        { name: 'Hipertensión arterial', id: 'hta' },
+        { name: 'Insuficiencia cardiaca', id: 'insuf_cardiaca' },
+        { name: 'Insuficiencia venosa periférica', id: 'ivp' },
+        { name: 'Valvulopatías', id: 'valvulopatias' },
+        { name: 'Otras', id: 'cardio_otras', isOther: true },
+      ]
+    },
+    {
+      name: 'Sistema Digestivo', id: 'digestivo', diseases: [
+        { name: 'Enfermedad por Reflujo', id: 'erge' },
+        { name: 'Enfermedad ácido-péptica', id: 'eap' },
+        { name: 'Síndrome de intestino irritable', id: 'sii', questionnaire: 'ibss' },
+        { name: 'Otras', id: 'digestivo_otras', isOther: true },
+      ]
+    },
+    {
+      name: 'Sistema Respiratorio', id: 'respiratorio', diseases: [
+        { name: 'Asma', id: 'asma' },
+        { name: 'EPOC', id: 'epoc' },
+        { name: 'Otras', id: 'resp_otras', isOther: true },
+      ]
+    },
+    {
+      name: 'Sistema Musculoesquelético', id: 'musculoesqueletico', diseases: [
+        { name: 'Osteoartritis', id: 'osteoartritis' },
+        { name: 'Osteoporosis', id: 'osteoporosis' },
+        { name: 'Dolor crónico', id: 'dolor_cronico' },
+        { name: 'Otras', id: 'musc_otras', isOther: true },
+      ]
+    },
+    {
+      name: 'Sistema Genitourinario', id: 'genitourinario', diseases: [
+        { name: 'Especificar', id: 'genito_otras', isOther: true },
+      ]
+    },
+    {
+      name: 'Sistema Neurológico', id: 'neurologico', diseases: [
+        { name: 'Psiquiátricas', id: 'psiquiatricas', questionnaire: 'psq' },
+        { name: 'Otras', id: 'neuro_otras', isOther: true },
+      ]
+    },
+    {
+      name: 'Otras Enfermedades Relevantes', id: 'otras_enfermedades', diseases: [
+        { name: 'Tumores o cáncer', id: 'cancer' },
+        { name: 'Dermatológicas', id: 'dermatologicas' },
+        { name: 'Problemas dentales', id: 'dentales', isOther: true },
+        { name: 'Problemas ópticos', id: 'opticos', isOther: true },
+        { name: 'Problemas auditivos', id: 'auditivos', isOther: true },
+        { name: 'Atopias (alergias)', id: 'atopias', isOther: true },
+        { name: 'Hiperuricemia', id: 'hiperuricemia' },
+      ]
     }
-    document.write(`</div></div>`);
-  });
-</script>
+  ];
 
-<!-- Subsección 8: Toxicomanías -->
-<div class="p-4 border rounded-lg mb-4 bg-white text-sm">
-    <h3 class="subsection-title">Toxicomanías</h3>
-    <!-- Tabaco -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 p-2 border-b">
-        <label class="font-bold self-center">Tabaco:</label>
-        <div><label class="form-label">Cigarrillos/día</label><input type="number" name="app_tox_tabaco_cigarrillos_dia" class="form-input"></div>
-        <div><label class="form-label">Índice tabáquico</label><input type="text" name="app_tox_tabaco_indice" class="form-input bg-gray-200" readonly></div>
-    </div>
-    <!-- Alcohol -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 p-2 border-b">
-        <label class="font-bold self-center">Alcohol:</label>
-        <div><label class="form-label">Tipo de alcohol</label><select name="app_tox_alcohol_tipo" class="form-select" data-list="tipo_alcohol"></select></div>
-        <div><label class="form-label">Cantidad/Frecuencia</label><input type="text" name="app_tox_alcohol_cantidad" class="form-input" placeholder="Ej: 3 cervezas/fin de semana"></div>
-    </div>
-    <!-- Drogas -->
-    <div class="grid grid-cols-1 md:grid-cols-6 gap-4 p-2 border-b">
-        <label class="font-bold self-center">Drogas:</label>
-        <div><label class="form-label">¿Consume?</label><select name="app_tox_drogas_confirma" class="form-select" data-list="opciones_binarias"></select></div>
-        <div><label class="form-label">Edad inicio</label><input type="number" name="app_tox_drogas_edad_inicio" class="form-input"></div>
-        <div><label class="form-label">Frecuencia</label><input type="text" name="app_tox_drogas_frecuencia" class="form-input"></div>
-        <div><label class="form-label">Años consumo</label><input type="number" name="app_tox_drogas_anios" class="form-input"></div>
-        <div><label class="form-label">Último consumo</label><input type="text" name="app_tox_drogas_ultimo_consumo" class="form-input" placeholder="dd/mm/aaaa"></div>
-    </div>
-     <!-- Exposición a Biomasas -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 p-2">
-        <label class="font-bold self-center">Exposición a biomasas:</label>
-        <div><label class="form-label">Fumador pasivo</label><select name="app_tox_fumador_pasivo" class="form-select" data-list="opciones_binarias"></select></div>
-        <div><label class="form-label">Fuente de exposición</label><select name="app_tox_biomasa_fuente" class="form-select" data-list="fuente_exposicion"></select></div>
-        <div><label class="form-label">Tiempo (h día / años)</label><input type="text" name="app_tox_biomasa_tiempo" class="form-input" placeholder="Ej: 2 h/día por 10 años"></div>
-    </div>
-</div>
+  const container = document.getElementById('chronic-diseases-container');
+  let html = '';
 
-<!-- Subsección 9: Antecedentes Gineco-obstétricos -->
-<div class="p-4 border rounded-lg mb-4 bg-white text-sm">
-  <h3 class="subsection-title">Antecedentes Gineco-obstétricos</h3>
-  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-2">
-    <div><label class="form-label">Menarca (edad)</label><input type="number" name="app_gineco_menarca" class="form-input"></div>
-    <div><label class="form-label">Fecha Última Menstruación</label><input type="text" name="app_gineco_fum" class="form-input" placeholder="dd/mm/aaaa"></div>
-    <div class="col-span-2"><label class="form-label">Sintomatología asociada al ciclo</label><input type="text" name="app_gineco_sintomas" class="form-input"></div>
-  </div>
-  <div class="mt-4 pt-4 border-t">
-    <h4 class="font-semibold text-gray-600 mb-2">Ciclo Menstrual</h4>
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-      <div><label class="form-label">Regularidad</label><select name="app_gineco_regularidad" class="form-select"><option value="Regular">Regular</option><option value="Irregular">Irregular</option></select></div>
-      <div><label class="form-label">Frecuencia del ciclo (días)</label><input type="number" name="app_gineco_frecuencia" class="form-input"></div>
-      <div><label class="form-label">Días de sangrado</label><input type="number" name="app_gineco_dias_sangrado" class="form-input"></div>
-    </div>
-  </div>
-   <div class="mt-4 pt-4 border-t">
-    <h4 class="font-semibold text-gray-600 mb-2">Antecedentes Obstétricos</h4>
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div><label class="form-label">Gestas</label><input type="number" name="app_gineco_gestas" class="form-input"></div>
-        <div><label class="form-label">Partos</label><input type="number" name="app_gineco_partos" class="form-input"></div>
-        <div><label class="form-label">Cesáreas</label><input type="number" name="app_gineco_cesareas" class="form-input"></div>
-        <div><label class="form-label">Abortos</label><input type="number" name="app_gineco_abortos" class="form-input"></div>
-        <div class="col-span-full"><label class="form-label">Problemas durante el embarazo</label><input type="text" name="app_gineco_problemas_embarazo" class="form-input"></div>
-    </div>
-  </div>
-   <div class="mt-4 pt-4 border-t">
-    <h4 class="font-semibold text-gray-600 mb-2">Planificación y Terapia</h4>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div><label class="form-label">Método de Planificación Familiar (MPF)</label><input type="text" name="app_gineco_mpf" class="form-input"></div>
-      <div><label class="form-label">Terapia de Sustitución Hormonal (TSH)</label><input type="text" name="app_gineco_tsh" class="form-input"></div>
-    </div>
-  </div>
-</div>
+  // --- HTML para los Cuestionarios (se definen aquí para mayor claridad) ---
 
-<!-- Subsección 10: Antecedentes Andrológicos (IPSS) -->
-<div class="p-4 border rounded-lg mb-4 bg-white text-sm">
-  <h3 class="subsection-title">Antecedentes Andrológicos (Puntuación IPSS)</h3>
-  <p class="text-xs text-gray-500 mb-4">Durante el último mes, ¿cuántas veces ha tenido los siguientes síntomas?</p>
-  <div class="space-y-3">
-    <script>
-        const ipssQuestions = [
-            { question: '¿La sensación de no vaciar completamente la vejiga?', name: 'app_ipss_q1' },
-            { question: '¿Volver a orinar antes de dos horas?', name: 'app_ipss_q2' },
-            { question: '¿Al orinar, paraba y comenzaba de nuevo varias veces?', name: 'app_ipss_q3' },
-            { question: '¿Dificultad para aguantar las ganas de orinar?', name: 'app_ipss_q4' },
-            { question: '¿Ha observado que el chorro de orina es débil?', name: 'app_ipss_q5' },
-            { question: '¿Ha tenido que apretar o hacer fuerza para comenzar a orinar?', name: 'app_ipss_q6' }
-        ];
-        ipssQuestions.forEach(q => {
-            document.write(`
-                <div class="grid grid-cols-2 gap-4 items-center">
-                    <label class="form-label">${q.question}</label>
-                    <select name="${q.name}" class="form-select" data-list="frecuencia_ipss"></select>
-                </div>
-            `);
-        });
-    </script>
-    <div class="grid grid-cols-2 gap-4 items-center border-t pt-3">
-        <label class="form-label">¿Se levanta por las noches a orinar?</label>
-        <div class="flex items-center gap-4">
-             <select name="app_ipss_q7_confirma" class="form-select w-1/2" data-list="opciones_binarias"></select>
-             <input type="number" name="app_ipss_q7_veces" class="form-input w-1/2" placeholder="¿Cuántas veces?">
+  const questionnairesHTML = {
+    paid: `
+      <div class="border rounded-md mt-4">
+        <div class="section-header p-2 bg-blue-50 hover:bg-blue-100" onclick="toggleAccordion(this)">
+          <h5 class="font-semibold text-sm text-blue-800">Cuestionario: Problem Areas in Diabetes (PAID)</h5>
+          <svg class="w-5 h-5 transform transition-transform text-blue-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
         </div>
-    </div>
-    <div class="grid grid-cols-2 gap-4 mt-4 pt-4 border-t">
-        <div>
-            <label class="form-label">Puntuación Total IPSS:</label>
-            <input type="text" id="ipss_score" name="app_ipss_score" class="form-input bg-gray-200" readonly>
+        <div class="p-3 hidden text-xs">
+          <div class="space-y-2">
+            <label class="form-label block">¿Sigue el plan de alimentación?</label> <select name="app_paid_q1" class="form-select text-xs" data-list="frecuencia_paid"></select>
+            <label class="form-label block">¿Controla porciones de carbohidratos?</label> <select name="app_paid_q2" class="form-select text-xs" data-list="frecuencia_paid"></select>
+            <label class="form-label block">¿Registra consumo y glucosa?</label> <select name="app_paid_q3" class="form-select text-xs" data-list="frecuencia_paid"></select>
+            <label class="form-label block">¿Realiza actividad física acordada?</label> <select name="app_paid_q4" class="form-select text-xs" data-list="frecuencia_paid"></select>
+            <label class="form-label block">¿Revisa sus pies diariamente?</label> <select name="app_paid_q5" class="form-select text-xs" data-list="frecuencia_paid"></select>
+            <label class="form-label block">¿Toma medicamentos/insulina según indicaciones?</label> <select name="app_paid_q6" class="form-select text-xs" data-list="frecuencia_paid"></select>
+            <label class="form-label block">¿Su familia/amigos le apoyan?</label> <select name="app_paid_q7" class="form-select text-xs" data-list="frecuencia_paid"></select>
+            <label class="form-label block">¿Asiste a grupos de educación o seguimiento?</label> <select name="app_paid_q8" class="form-select text-xs" data-list="frecuencia_paid"></select>
+            <label class="form-label block mt-2">Interpretación:</label>
+            <textarea name="app_paid_interpretacion" class="form-textarea" rows="2"></textarea>
+          </div>
         </div>
-        <div>
-            <label class="form-label">Interpretación:</label>
-            <input type="text" id="ipss_interpretation" name="app_ipss_interpretation" class="form-input bg-gray-200" readonly>
+      </div>`,
+    ibss: `
+      <div class="border rounded-md mt-4">
+        <div class="section-header p-2 bg-blue-50 hover:bg-blue-100" onclick="toggleAccordion(this)">
+          <h5 class="font-semibold text-sm text-blue-800">Cuestionario: Síndrome de Intestino Irritable (IBSS)</h5>
+          <svg class="w-5 h-5 transform transition-transform text-blue-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
         </div>
-    </div>
-  </div>
-</div>
-
-
-<!-- Subsección 11: Vacunación -->
-<div class="p-4 border rounded-lg mb-4 bg-white text-sm">
-    <h3 class="subsection-title">Vacunación</h3>
-    <div class="grid grid-cols-3 gap-4 font-bold text-gray-600">
-        <div>Vacuna</div>
-        <div>Aplicada</div>
-        <div>Fecha de última aplicación</div>
-    </div>
-    <script>
-        const vaccines = ['COVID-19', 'Influenza', 'VRS', 'Tétanos', 'Sarampión/Rubeola', 'Herpes zoster', 'VPH', 'Hepatitis B', 'Hepatitis A'];
-        vaccines.forEach(v => {
-            const v_id = v.toLowerCase().replace(/[\s\/]/g, '_');
-            document.write(`
-                <div class="grid grid-cols-3 gap-4 items-center mt-2">
-                    <label class="font-medium">${v}</label>
-                    <div class="flex justify-center"><input type="checkbox" name="app_vacuna_${v_id}_aplicada" class="form-checkbox h-5 w-5 text-cyan-600 rounded"></div>
-                    <input type="text" name="app_vacuna_${v_id}_fecha" class="form-input" placeholder="dd/mm/aaaa">
-                </div>
-            `);
-        });
-    </script>
-</div>
-
-<!-- Subsección 12: Historia de Peso y Dietas Previas -->
-<div class="p-4 border rounded-lg mb-4 bg-white text-sm">
-    <h3 class="subsection-title">Historia de peso y dietas previas</h3>
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-2">
-      <div><label class="form-label">Peso máximo</label><input type="number" name="app_peso_maximo" class="form-input" placeholder="kg"></div>
-      <div><label class="form-label">Peso mínimo (3 años)</label><input type="number" name="app_peso_minimo" class="form-input" placeholder="kg"></div>
-      <div><label class="form-label">Peso habitual</label><input type="number" name="app_peso_habitual" class="form-input" placeholder="kg"></div>
-      <div><label class="form-label">¿Ha perdido peso en el último mes?</label><select name="app_peso_perdida" class="form-select" data-list="perdida_peso"></select></div>
-    </div>
-    <div class="mt-4 pt-4 border-t">
-        <div class="disease-row">
-            <label class="flex items-center space-x-3 cursor-pointer">
-                <input type="checkbox" name="app_peso_preocupa_engordar" class="form-checkbox h-5 w-5 text-cyan-600 rounded" onclick="toggleContent(this)">
-                <span class="font-medium text-gray-800">¿Le preocupa engordar?</span>
-            </label>
-            <div class="disease-details hidden pl-8 pt-2 mt-2 space-y-2">
-                <script>
-                    const dietQuestions = [
-                        { q: '¿Ha hecho ayunos de 12 horas para tratar de bajar de peso?', name: 'app_dieta_ayunos'},
-                        { q: '¿Ha comido demasiado (atracón)?', name: 'app_dieta_atracon'},
-                        { q: '¿Ha perdido el control sobre lo que come?', name: 'app_dieta_sin_control'},
-                        { q: '¿Ha hecho dietas para bajar de peso?', name: 'app_dieta_dietas'},
-                        { q: '¿Ha hecho ejercicio para bajar de peso?', name: 'app_dieta_ejercicio'},
-                        { q: '¿Ha usado pastillas para bajar de peso?', name: 'app_dieta_pastillas'},
-                        { q: '¿Ha usado diuréticos para bajar de peso?', name: 'app_dieta_diureticos'},
-                        { q: '¿Ha tomado laxantes para bajar de peso?', name: 'app_dieta_laxantes'},
-                    ];
-                    dietQuestions.forEach(item => {
-                        document.write(`
-                            <div class="grid grid-cols-2 gap-4 items-center">
-                                <label class="form-label">${item.q}</label>
-                                <select name="${item.name}" class="form-select" data-list="frecuencia_dieta"></select>
-                            </div>
-                        `);
-                    });
-                </script>
+        <div class="p-3 hidden text-xs">
+          <div class="space-y-2">
+            <label class="form-label block">¿Sufre frecuentemente dolor abdominal?</label> <select name="app_ibss_q1" class="form-select text-xs" data-list="frecuencia_ibss"></select>
+            <label class="form-label block">¿Cuántos días tuvo dolor la última semana?</label> <input type="number" name="app_ibss_q2" class="form-input text-xs">
+            <label class="form-label block">¿Impacto en actividades cotidianas?</label> <select name="app_ibss_q3" class="form-select text-xs" data-list="impacto_ibss"></select>
+            <label class="form-label block">¿Satisfecho con su hábito intestinal?</label> <select name="app_ibss_q4" class="form-select text-xs" data-list="satisfaccion_ibss"></select>
+            <label class="form-label block mt-2">Puntaje total:</label> <input type="text" name="app_ibss_score" class="form-input bg-gray-200" readonly>
+            <label class="form-label block mt-2">Interpretación:</label> <textarea name="app_ibss_interpretacion" class="form-textarea" rows="2"></textarea>
+          </div>
+        </div>
+      </div>`,
+    psq: `
+      <!-- GAD-7 -->
+      <div class="border rounded-md mt-4">
+        <div class="section-header p-2 bg-yellow-50 hover:bg-yellow-100" onclick="toggleAccordion(this)">
+          <h5 class="font-semibold text-sm text-yellow-800">Cuestionario de Ansiedad (GAD-7)</h5>
+          <svg class="w-5 h-5 transform transition-transform text-yellow-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+        </div>
+        <div class="p-3 hidden text-xs">
+          <div class="space-y-2">
+            <label class="form-label block">Sentirse nervioso, ansioso o tenso</label> <select name="app_gad7_q1" class="form-select text-xs" data-list="frecuencia_gad7_phq9"></select>
+            <label class="form-label block">No poder dejar de preocuparse</label> <select name="app_gad7_q2" class="form-select text-xs" data-list="frecuencia_gad7_phq9"></select>
+            <label class="form-label block">Preocuparse demasiado</label> <select name="app_gad7_q3" class="form-select text-xs" data-list="frecuencia_gad7_phq9"></select>
+            <label class="form-label block">Problemas para relajarse</label> <select name="app_gad7_q4" class="form-select text-xs" data-list="frecuencia_gad7_phq9"></select>
+            <label class="form-label block">Estar tan inquieto que es difícil quedarse sentado</label> <select name="app_gad7_q5" class="form-select text-xs" data-list="frecuencia_gad7_phq9"></select>
+            <label class="form-label block">Enfadarse o irritarse con facilidad</label> <select name="app_gad7_q6" class="form-select text-xs" data-list="frecuencia_gad7_phq9"></select>
+            <label class="form-label block">Sentir miedo de que algo terrible pueda ocurrir</label> <select name="app_gad7_q7" class="form-select text-xs" data-list="frecuencia_gad7_phq9"></select>
+            <label class="form-label block mt-2">Puntuación:</label> <input type="text" name="app_gad7_score" class="form-input bg-gray-200" readonly>
+            <label class="form-label block mt-2">Interpretación:</label> <textarea name="app_gad7_interpretacion" class="form-textarea" rows="2"></textarea>
+          </div>
+        </div>
+      </div>
+      <!-- PHQ-9 -->
+      <div class="border rounded-md mt-4">
+        <div class="section-header p-2 bg-yellow-50 hover:bg-yellow-100" onclick="toggleAccordion(this)">
+          <h5 class="font-semibold text-sm text-yellow-800">Cuestionario de Depresión (PHQ-9)</h5>
+          <svg class="w-5 h-5 transform transition-transform text-yellow-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+        </div>
+        <div class="p-3 hidden text-xs">
+          <div class="space-y-2">
+            <label class="form-label block">Poco interés o alegría</label> <select name="app_phq9_q1" class="form-select text-xs" data-list="frecuencia_gad7_phq9"></select>
+            <label class="form-label block">Decaído, deprimido o desesperanzado</label> <select name="app_phq9_q2" class="form-select text-xs" data-list="frecuencia_gad7_phq9"></select>
+            <label class="form-label block">Problemas para dormir</label> <select name="app_phq9_q3" class="form-select text-xs" data-list="frecuencia_gad7_phq9"></select>
+            <label class="form-label block">Cansancio o poca energía</label> <select name="app_phq9_q4" class="form-select text-xs" data-list="frecuencia_gad7_phq9"></select>
+            <label class="form-label block">Poco apetito o comer demasiado</label> <select name="app_phq9_q5" class="form-select text-xs" data-list="frecuencia_gad7_phq9"></select>
+            <label class="form-label block">Sentirse mal consigo mismo</label> <select name="app_phq9_q6" class="form-select text-xs" data-list="frecuencia_gad7_phq9"></select>
+            <label class="form-label block">Problemas para concentrarse</label> <select name="app_phq9_q7" class="form-select text-xs" data-list="frecuencia_gad7_phq9"></select>
+            <label class="form-label block">Moverse o hablar lento, o estar inquieto</label> <select name="app_phq9_q8" class="form-select text-xs" data-list="frecuencia_gad7_phq9"></select>
+            <label class="form-label block">Pensamientos de querer hacerse daño</label> <select name="app_phq9_q9" class="form-select text-xs" data-list="frecuencia_gad7_phq9"></select>
+            <label class="form-label block mt-2">Puntuación:</label> <input type="text" name="app_phq9_score" class="form-input bg-gray-200" readonly>
+            <label class="form-label block mt-2">Interpretación:</label> <textarea name="app_phq9_interpretacion" class="form-textarea" rows="2"></textarea>
+          </div>
+        </div>
+      </div>
+      <!-- Yesavage -->
+      <div class="border rounded-md mt-4">
+         <div class="section-header p-2 bg-yellow-50 hover:bg-yellow-100" onclick="toggleAccordion(this)">
+            <h5 class="font-semibold text-sm text-yellow-800">Escala de Depresión Geriátrica (GDS-15)</h5>
+            <svg class="w-5 h-5 transform transition-transform text-yellow-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+         </div>
+         <div class="p-3 hidden text-xs"> <div class="space-y-2">
+            <label class="form-label block">¿Está satisfecho con su vida?</label> <select name="app_gds15_q1" class="form-select text-xs" data-list="opciones_binarias"></select>
+            <label class="form-label block">¿Ha abandonado actividades?</label> <select name="app_gds15_q2" class="form-select text-xs" data-list="opciones_binarias"></select>
+            <label class="form-label block">¿Siente que su vida está vacía?</label> <select name="app_gds15_q3" class="form-select text-xs" data-list="opciones_binarias"></select>
+            <label class="form-label block">¿Se encuentra aburrido?</label> <select name="app_gds15_q4" class="form-select text-xs" data-list="opciones_binarias"></select>
+            <label class="form-label block">¿Está alegre la mayor parte del tiempo?</label> <select name="app_gds15_q5" class="form-select text-xs" data-list="opciones_binarias"></select>
+            <label class="form-label block">¿Teme que le suceda algo malo?</label> <select name="app_gds15_q6" class="form-select text-xs" data-list="opciones_binarias"></select>
+            <label class="form-label block">¿Se siente feliz la mayor parte del tiempo?</label> <select name="app_gds15_q7" class="form-select text-xs" data-list="opciones_binarias"></select>
+            <label class="form-label block">¿Se siente desamparado?</label> <select name="app_gds15_q8" class="form-select text-xs" data-list="opciones_binarias"></select>
+            <label class="form-label block">¿Prefiere quedarse en casa?</label> <select name="app_gds15_q9" class="form-select text-xs" data-list="opciones_binarias"></select>
+            <label class="form-label block">¿Siente que tiene más problemas de memoria?</label> <select name="app_gds15_q10" class="form-select text-xs" data-list="opciones_binarias"></select>
+            <label class="form-label block">¿Piensa que es maravilloso estar vivo?</label> <select name="app_gds15_q11" class="form-select text-xs" data-list="opciones_binarias"></select>
+            <label class="form-label block">¿Se siente inútil o despreciable?</label> <select name="app_gds15_q12" class="form-select text-xs" data-list="opciones_binarias"></select>
+            <label class="form-label block">¿Se siente lleno de energía?</label> <select name="app_gds15_q13" class="form-select text-xs" data-list="opciones_binarias"></select>
+            <label class="form-label block">¿Se encuentra sin esperanza?</label> <select name="app_gds15_q14" class="form-select text-xs" data-list="opciones_binarias"></select>
+            <label class="form-label block">¿Piensa que la mayoría está mejor?</label> <select name="app_gds15_q15" class="form-select text-xs" data-list="opciones_binarias"></select>
+            <label class="form-label block mt-2">Puntuación:</label> <input type="text" name="app_gds15_score" class="form-input bg-gray-200" readonly>
+            <label class="form-label block mt-2">Interpretación:</label> <textarea name="app_gds15_interpretacion" class="form-textarea" rows="2"></textarea>
+         </div></div>
+      </div>`
+  };
+  
+  // --- Generador de HTML ---
+  chronicDiseasesConfig.forEach(system => {
+    let diseasesHtml = '';
+    system.diseases.forEach(disease => {
+      // Campos de detalle de la enfermedad
+      let detailFields = `
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-3">
+          ${disease.isOther ? `<div class="md:col-span-3"><label class="form-label">Especificar</label><textarea name="app_${disease.id}_especificar" class="form-textarea" rows="1"></textarea></div>` : ''}
+          <div><label class="form-label">Edad/Año de diagnóstico</label><input type="text" name="app_${disease.id}_dx_edad" class="form-input"></div>
+          <div><label class="form-label">Tratamientos previos</label><input type="text" name="app_${disease.id}_tx_previo" class="form-input"></div>
+          <div><label class="form-label">Tratamiento actual</label><input type="text" name="app_${disease.id}_tx_actual" class="form-input"></div>
+          <div class="md:col-span-2"><label class="form-label">Evolución</label><input type="text" name="app_${disease.id}_evolucion" class="form-input"></div>
+          <div><label class="form-label">Complicaciones</label><input type="text" name="app_${disease.id}_complicaciones" class="form-input"></div>
+        </div>
+        ${disease.questionnaire ? questionnairesHTML[disease.questionnaire] || '' : ''}
+      `;
+      
+      let subDiseasesHtml = '';
+      if(disease.subDiseases) {
+          subDiseasesHtml = disease.subDiseases.map(sub => `
+             <div class="pl-4">
+                <label class="flex items-center space-x-3 cursor-pointer">
+                    <input type="checkbox" name="app_${sub.toLowerCase()}_presente" class="form-checkbox h-4 w-4 text-cyan-500 rounded">
+                    <span class="font-normal text-gray-600">${sub}</span>
+                </label>
             </div>
+          `).join('');
+      }
+
+      diseasesHtml += `
+        <div class="disease-row border-t pt-3">
+          <label class="flex items-center space-x-3 cursor-pointer">
+            <input type="checkbox" name="app_${disease.id}_presente" class="form-checkbox h-5 w-5 text-cyan-600 rounded" onclick="toggleContent(this)">
+            <span class="font-medium text-gray-800">${disease.name}</span>
+          </label>
+          ${subDiseasesHtml}
+          <div class="disease-details hidden pl-8 pt-2">
+            ${detailFields}
+          </div>
+        </div>`;
+    });
+
+    html += `
+      <div class="border rounded-md">
+        <div class="section-header p-2 bg-gray-50 hover:bg-gray-100" onclick="toggleAccordion(this)">
+          <h4 class="font-semibold text-gray-700">${system.name}</h4>
+          <svg class="w-5 h-5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
         </div>
-    </div>
-</div>
+        <div class="p-4 hidden">
+          <div class="space-y-4">
+            ${diseasesHtml}
+          </div>
+        </div>
+      </div>`;
+  });
+
+  // Inyectar el HTML generado en el contenedor.
+  if(container) {
+    container.innerHTML = html;
+  }
+</script>
