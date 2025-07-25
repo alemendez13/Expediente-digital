@@ -372,17 +372,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         document.getElementById('save-patient-btn')?.addEventListener('click', saveConsultation);
         
-        // --- INICIO DE MODIFICACIÓN ---
-        // Se mueven las llamadas a inicializadores de componentes aquí
-        initializePatologicosComponent(); // <-- LLAMADA A LA NUEVA FUNCIÓN
+        initializePatologicosComponent();
         initializeCalculations();
         loadDropdowns();
-        // --- FIN DE MODIFICACIÓN ---
     }
     
     // --- NUEVA SECCIÓN: Inicializadores de Componentes ---
 
     function initializeCalculations() {
+        // Lógica de cálculo para IPAQ
         const intensityMap = {
             'Cargar peso liviano': 'Leve', 'Tai chi': 'Moderada', 'Tenis': 'Moderada',
             'Bicicleta a ritmo leve': 'Moderada', 'Baile': 'Moderada', 'Basketball': 'Vigorosa',
@@ -435,6 +433,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         updateIpaqScore();
 
+        // Lógica de cálculo para Cribado de Alimentación
         const scoreMapAlimentacion = { '≤3 veces/semana': 0, '3-6 veces/semana': 1, '≥4 veces/semana': 2 };
         const cribadoFields = ['frutasyverduras', 'pescadopollo', 'granos', 'procesados'];
         function updateAlimentacionScore() {
@@ -461,14 +460,44 @@ document.addEventListener('DOMContentLoaded', () => {
             if (select) select.addEventListener('change', updateAlimentacionScore);
         });
         updateAlimentacionScore();
+
+        // --- INICIA MODIFICACIÓN ---
+        // Lógica de cálculo para Cuestionario IBSS
+        const ibssScoreMap = {
+            'Nunca': 0, 'Raramente': 25, 'A veces': 25, 'Frecuentemente': 25, 'Siempre': 25,
+            'Muy satisfecho': 25, 'Satisfecho': 25, 'Insatisfecho': 25, 'Nada satisfecho': 25
+        };
+
+        function updateIbssScore() {
+            let totalScore = 0;
+            const q1 = document.querySelector('[name="app_ibss_q1"]')?.value;
+            const q2 = document.querySelector('[name="app_ibss_q2"]')?.value;
+            const q3 = document.querySelector('[name="app_ibss_q3"]')?.value;
+            const q4 = document.querySelector('[name="app_ibss_q4"]')?.value;
+
+            totalScore += ibssScoreMap[q1] || 0;
+            totalScore += ibssScoreMap[q2] || 0;
+            totalScore += ibssScoreMap[q3] || 0;
+            totalScore += ibssScoreMap[q4] || 0;
+
+            const scoreInput = document.querySelector('[name="app_ibss_score"]');
+            if (scoreInput) {
+                scoreInput.value = totalScore;
+            }
+        }
+
+        const ibssSelects = document.querySelectorAll('[name^="app_ibss_q"]');
+        ibssSelects.forEach(select => {
+            select.addEventListener('change', updateIbssScore);
+        });
+        updateIbssScore(); // Llamada inicial
+        // --- TERMINA MODIFICACIÓN ---
     }
 
-    // --- NUEVA FUNCIÓN: Lógica del componente Antecedentes Patológicos ---
     function initializePatologicosComponent() {
         const container = document.getElementById('chronic-diseases-container');
-        if (!container) return; // Si el contenedor no existe, no hace nada.
+        if (!container) return;
 
-        // Las funciones de interactividad ahora son locales a esta función o globales de main.js
         window.toggleAccordion = function(headerElement) {
             const content = headerElement.nextElementSibling;
             const icon = headerElement.querySelector('svg');
@@ -494,11 +523,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const questionnairesHTML = {
             paid: `<div class="border rounded-md mt-4"><div class="section-header p-2 bg-blue-50 hover:bg-blue-100" onclick="toggleAccordion(this)"><h5 class="font-semibold text-sm text-blue-800">Cuestionario: Problem Areas in Diabetes (PAID)</h5><svg class="w-5 h-5 transform transition-transform text-blue-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></div><div class="p-3 hidden text-xs"><div class="space-y-2"><label class="form-label block">¿Sigue el plan de alimentación?</label> <select name="app_paid_q1" class="form-select text-xs" data-list="frecuencia_paid"></select><label class="form-label block">¿Controla porciones de carbohidratos?</label> <select name="app_paid_q2" class="form-select text-xs" data-list="frecuencia_paid"></select><label class="form-label block">¿Registra consumo y glucosa?</label> <select name="app_paid_q3" class="form-select text-xs" data-list="frecuencia_paid"></select><label class="form-label block">¿Realiza actividad física acordada?</label> <select name="app_paid_q4" class="form-select text-xs" data-list="frecuencia_paid"></select><label class="form-label block">¿Revisa sus pies diariamente?</label> <select name="app_paid_q5" class="form-select text-xs" data-list="frecuencia_paid"></select><label class="form-label block">¿Toma medicamentos/insulina según indicaciones?</label> <select name="app_paid_q6" class="form-select text-xs" data-list="frecuencia_paid"></select><label class="form-label block">¿Su familia/amigos le apoyan?</label> <select name="app_paid_q7" class="form-select text-xs" data-list="frecuencia_paid"></select><label class="form-label block">¿Asiste a grupos de educación o seguimiento?</label> <select name="app_paid_q8" class="form-select text-xs" data-list="frecuencia_paid"></select><label class="form-label block mt-2">Interpretación:</label><textarea name="app_paid_interpretacion" class="form-textarea" rows="2"></textarea></div></div></div>`,
-            
-            // --- INICIA MODIFICACIÓN ---
             ibss: `<div class="border rounded-md mt-4"><div class="section-header p-2 bg-blue-50 hover:bg-blue-100" onclick="toggleAccordion(this)"><h5 class="font-semibold text-sm text-blue-800">Cuestionario: Síndrome de Intestino Irritable (IBSS)</h5><svg class="w-5 h-5 transform transition-transform text-blue-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></div><div class="p-3 hidden text-xs"><div class="space-y-2"><label class="form-label block">¿Sufre frecuentemente dolor abdominal?</label> <select name="app_ibss_q1" class="form-select text-xs" data-list="frecuencia_ibss"></select><label class="form-label block">¿Cuántos días tuvo dolor la última semana?</label> <select name="app_ibss_q2" class="form-select text-xs" data-list="frecuencia_ibss"></select><label class="form-label block">¿Impacto en actividades cotidianas?</label> <select name="app_ibss_q3" class="form-select text-xs" data-list="impacto_ibss"></select><label class="form-label block">¿Satisfecho con su hábito intestinal?</label> <select name="app_ibss_q4" class="form-select text-xs" data-list="satisfaccion_ibss"></select><label class="form-label block mt-2">Puntaje total:</label> <input type="text" name="app_ibss_score" class="form-input bg-gray-200" readonly><label class="form-label block mt-2">Interpretación:</label> <textarea name="app_ibss_interpretacion" class="form-textarea" rows="2"></textarea></div></div></div>`,
-            // --- TERMINA MODIFICACIÓN ---
-
             psq: `<div class="border rounded-md mt-4"><div class="section-header p-2 bg-yellow-50 hover:bg-yellow-100" onclick="toggleAccordion(this)"><h5 class="font-semibold text-sm text-yellow-800">Cuestionario de Ansiedad (GAD-7)</h5><svg class="w-5 h-5 transform transition-transform text-yellow-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></div><div class="p-3 hidden text-xs"><div class="space-y-2"><label class="form-label block">Sentirse nervioso, ansioso o tenso</label> <select name="app_gad7_q1" class="form-select text-xs" data-list="frecuencia_gad7_phq9"></select><label class="form-label block">No poder dejar de preocuparse</label> <select name="app_gad7_q2" class="form-select text-xs" data-list="frecuencia_gad7_phq9"></select><label class="form-label block">Preocuparse demasiado</label> <select name="app_gad7_q3" class="form-select text-xs" data-list="frecuencia_gad7_phq9"></select><label class="form-label block">Problemas para relajarse</label> <select name="app_gad7_q4" class="form-select text-xs" data-list="frecuencia_gad7_phq9"></select><label class="form-label block">Estar tan inquieto que es difícil quedarse sentado</label> <select name="app_gad7_q5" class="form-select text-xs" data-list="frecuencia_gad7_phq9"></select><label class="form-label block">Enfadarse o irritarse con facilidad</label> <select name="app_gad7_q6" class="form-select text-xs" data-list="frecuencia_gad7_phq9"></select><label class="form-label block">Sentir miedo de que algo terrible pueda ocurrir</label> <select name="app_gad7_q7" class="form-select text-xs" data-list="frecuencia_gad7_phq9"></select><label class="form-label block mt-2">Puntuación:</label> <input type="text" name="app_gad7_score" class="form-input bg-gray-200" readonly><label class="form-label block mt-2">Interpretación:</label> <textarea name="app_gad7_interpretacion" class="form-textarea" rows="2"></textarea></div></div></div><div class="border rounded-md mt-4"><div class="section-header p-2 bg-yellow-50 hover:bg-yellow-100" onclick="toggleAccordion(this)"><h5 class="font-semibold text-sm text-yellow-800">Cuestionario de Depresión (PHQ-9)</h5><svg class="w-5 h-5 transform transition-transform text-yellow-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></div><div class="p-3 hidden text-xs"><div class="space-y-2"><label class="form-label block">Poco interés o alegría</label> <select name="app_phq9_q1" class="form-select text-xs" data-list="frecuencia_gad7_phq9"></select><label class="form-label block">Decaído, deprimido o desesperanzado</label> <select name="app_phq9_q2" class="form-select text-xs" data-list="frecuencia_gad7_phq9"></select><label class="form-label block">Problemas para dormir</label> <select name="app_phq9_q3" class="form-select text-xs" data-list="frecuencia_gad7_phq9"></select><label class="form-label block">Cansancio o poca energía</label> <select name="app_phq9_q4" class="form-select text-xs" data-list="frecuencia_gad7_phq9"></select><label class="form-label block">Poco apetito o comer demasiado</label> <select name="app_phq9_q5" class="form-select text-xs" data-list="frecuencia_gad7_phq9"></select><label class="form-label block">Sentirse mal consigo mismo</label> <select name="app_phq9_q6" class="form-select text-xs" data-list="frecuencia_gad7_phq9"></select><label class="form-label block">Problemas para concentrarse</label> <select name="app_phq9_q7" class="form-select text-xs" data-list="frecuencia_gad7_phq9"></select><label class="form-label block">Moverse o hablar lento, o estar inquieto</label> <select name="app_phq9_q8" class="form-select text-xs" data-list="frecuencia_gad7_phq9"></select><label class="form-label block">Pensamientos de querer hacerse daño</label> <select name="app_phq9_q9" class="form-select text-xs" data-list="frecuencia_gad7_phq9"></select><label class="form-label block mt-2">Puntuación:</label> <input type="text" name="app_phq9_score" class="form-input bg-gray-200" readonly><label class="form-label block mt-2">Interpretación:</label> <textarea name="app_phq9_interpretacion" class="form-textarea" rows="2"></textarea></div></div></div><div class="border rounded-md mt-4"><div class="section-header p-2 bg-yellow-50 hover:bg-yellow-100" onclick="toggleAccordion(this)"><h5 class="font-semibold text-sm text-yellow-800">Escala de Depresión Geriátrica (GDS-15)</h5><svg class="w-5 h-5 transform transition-transform text-yellow-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></div><div class="p-3 hidden text-xs"> <div class="space-y-2"><label class="form-label block">¿Está satisfecho con su vida?</label> <select name="app_gds15_q1" class="form-select text-xs" data-list="opciones_binarias"></select><label class="form-label block">¿Ha abandonado actividades?</label> <select name="app_gds15_q2" class="form-select text-xs" data-list="opciones_binarias"></select><label class="form-label block">¿Siente que su vida está vacía?</label> <select name="app_gds15_q3" class="form-select text-xs" data-list="opciones_binarias"></select><label class="form-label block">¿Se encuentra aburrido?</label> <select name="app_gds15_q4" class="form-select text-xs" data-list="opciones_binarias"></select><label class="form-label block">¿Está alegre la mayor parte del tiempo?</label> <select name="app_gds15_q5" class="form-select text-xs" data-list="opciones_binarias"></select><label class="form-label block">¿Teme que le suceda algo malo?</label> <select name="app_gds15_q6" class="form-select text-xs" data-list="opciones_binarias"></select><label class="form-label block">¿Se siente feliz la mayor parte del tiempo?</label> <select name="app_gds15_q7" class="form-select text-xs" data-list="opciones_binarias"></select><label class="form-label block">¿Se siente desamparado?</label> <select name="app_gds15_q8" class="form-select text-xs" data-list="opciones_binarias"></select><label class="form-label block">¿Prefiere quedarse en casa?</label> <select name="app_gds15_q9" class="form-select text-xs" data-list="opciones_binarias"></select><label class="form-label block">¿Siente que tiene más problemas de memoria?</label> <select name="app_gds15_q10" class="form-select text-xs" data-list="opciones_binarias"></select><label class="form-label block">¿Piensa que es maravilloso estar vivo?</label> <select name="app_gds15_q11" class="form-select text-xs" data-list="opciones_binarias"></select><label class="form-label block">¿Se siente inútil o despreciable?</label> <select name="app_gds15_q12" class="form-select text-xs" data-list="opciones_binarias"></select><label class="form-label block">¿Se siente lleno de energía?</label> <select name="app_gds15_q13" class="form-select text-xs" data-list="opciones_binarias"></select><label class="form-label block">¿Se encuentra sin esperanza?</label> <select name="app_gds15_q14" class="form-select text-xs" data-list="opciones_binarias"></select><label class="form-label block">¿Piensa que la mayoría está mejor?</label> <select name="app_gds15_q15" class="form-select text-xs" data-list="opciones_binarias"></select><label class="form-label block mt-2">Puntuación:</label> <input type="text" name="app_gds15_score" class="form-input bg-gray-200" readonly><label class="form-label block mt-2">Interpretación:</label> <textarea name="app_gds15_interpretacion" class="form-textarea" rows="2"></textarea></div></div></div>`
         };
         
@@ -559,4 +584,3 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // --- INICIAR LA APP ---
     init();
-});
